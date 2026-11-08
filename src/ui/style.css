@@ -142,3 +142,9 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0705; col
 .touch-jump { position: fixed; right: 24px; bottom: 112px; width: 64px; height: 64px; border-radius: 50%; font-size: 28px; border: 2px solid var(--gold);
   background: rgba(40, 24, 60, 0.55); color: #fff3d0; touch-action: none; }
 @media (pointer: fine) { .touch-act, .touch-jump { display: none !important; } }
+
+.bag { position: fixed; left: 16px; bottom: 16px; display: flex; gap: 6px; pointer-events: auto; }
+.bag[data-empty="1"] { display: none; }
+.bag .item { width: 42px; height: 42px; display: grid; place-items: center; font-size: 24px; border-radius: 10px;
+  background: rgba(40, 24, 60, 0.55); border: 1px solid rgba(240, 207, 116, 0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+@media (pointer: coarse) { .bag { bottom: auto; top: 14px; left: 16px; } }

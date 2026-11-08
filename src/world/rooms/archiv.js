@@ -45,6 +45,7 @@ export default defineRoom({
     ctx.wallFrame('east', 0.42).place('cuckooClock', { at: [5.4, 0, 0], y: 3.0, offset: 4, bird: 'pastelMint' });
     ctx.place('butterflies', { at: [0, 0, 0], area: [6, 1.5, 6], count: 3, y: 2.2 });
     ctx.place('paintedEgg', { at: [1.8, 0, 3.1], id: 'ei-archivtisch' });
+    ctx.place('antTrail', { at: [-2, 0, -7.2], length: 9, count: 30 });
     ctx.place('dust', { area: [14, 4.5, 14] });
     ctx.add(box(0.8, 0.02, 0.6, 0), 'paper', [-1.2, 0.012, 1.2], [0, 0.4, 0]);
   },

@@ -8,6 +8,7 @@ export default [
     name: 'spiralStairs',
     create(f, opts) {
       const H = opts.height ?? 4.9, N = opts.steps ?? 22, turns = opts.turns ?? 1.4, R = opts.radius ?? 1.4;
+      const walk = opts.walk ?? R * 0.62, size = opts.stepSize ?? 0.62;
       const end = opts.end ?? Math.PI, start = end - turns * Math.PI * 2;
       const rise = H / N;
       for (let i = 0; i < N; i++) {
@@ -16,11 +17,12 @@ export default [
         // Geländerstab außen
         if (i % 2 === 0) f.add(cyl(0.015, 0.015, 0.9, 4), 'brass', [Math.cos(a) * (R - 0.05), y + 0.45, Math.sin(a) * (R - 0.05)]);
         // Begehbare Stufe (dünne Platte, darunter läuft man durch)
-        f.collider(Math.cos(a) * R * 0.62, Math.sin(a) * R * 0.62, 0.62, 0.62, { top: y, bottom: Math.max(0, y - 0.12), shadow: false });
+        f.collider(Math.cos(a) * walk, Math.sin(a) * walk, size, size, { top: y, bottom: Math.max(0, y - 0.12), shadow: false });
       }
-      f.add(cyl(0.12, 0.12, H + 1.1, 10), opts.pole ?? 'brass', [0, (H + 1.1) / 2, 0]);
-      f.add(sphere(0.16, 10, 8), 'gold', [0, H + 1.15, 0]);
-      f.collider(0, 0, 0.3, 0.3);
+      const pole = opts.poleTop ?? H + 1.1;
+      f.add(cyl(0.12, 0.12, pole, 10), opts.pole ?? 'brass', [0, pole / 2, 0]);
+      if (opts.finial !== false) f.add(sphere(0.16, 10, 8), 'gold', [0, pole + 0.05, 0]);
+      f.collider(0, 0, 0.3, 0.3, { top: pole, bottom: 0 });
     },
   }),
 ];

@@ -128,15 +128,18 @@ export class Kit {
 }
 
 export class Frame {
-  constructor(kit, matrix, rotY) {
+  /** floorY: Kit-lokale Höhe des Fußbodens dieser Etage; bandH: Raumhöhe dieser Etage (für Kollider-Standardhöhe). */
+  constructor(kit, matrix, rotY, floorY = 0, bandH = undefined) {
     this.kit = kit;
     this.matrix = matrix;  // lokal → Kit-Gruppe
     this.rotY = rotY;
+    this.floorY = floorY;
+    this.bandH = bandH;
   }
 
   frame(at = [0, 0, 0], rotY = 0) {
     const m = new THREE.Matrix4().compose(_v.set(...at), _q.setFromAxisAngle(THREE.Object3D.DEFAULT_UP, rotY), _s.set(1, 1, 1));
-    return new Frame(this.kit, this.matrix.clone().multiply(m), this.rotY + rotY);
+    return new Frame(this.kit, this.matrix.clone().multiply(m), this.rotY + rotY, this.floorY, this.bandH);
   }
 
   _local(at, rot, scale) {
@@ -188,11 +191,12 @@ export class Frame {
    */
   collider(x, z, w, d, { shadow = true, top, bottom, owner } = {}) {
     const base = this.point(x, 0, z).y;
+    const fy = this.floorY ?? 0, rel = base - fy;
     // Dinge ohne Höhe über Kopfhöhe (Galerie-Regale, Wandbretter) blockieren nicht.
     // (auch umgedrehte Möbel an der Decke – nur schwebende Plattformen mit `bottom` zählen dort)
-    if (base > 1.5 && bottom === undefined) return this;
+    if (rel > 1.5 && bottom === undefined) return this;
     // Weicher Kontaktschatten unter allem, was auf dem Boden steht (gemergt → kaum Kosten).
-    if (shadow && (bottom === undefined || bottom <= 0.01) && Math.abs(base) < 0.05) {
+    if (shadow && (bottom === undefined || bottom <= 0.01) && Math.abs(rel) < 0.05) {
       const pad = Math.min(0.6, 0.25 + 0.15 * Math.min(w, d));
       this.add(new THREE.PlaneGeometry(w + pad, d + pad), 'contactShadow', [x, 0.022, z], [-Math.PI / 2, 0, 0]);
     }
@@ -203,7 +207,9 @@ export class Frame {
       minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
       minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
     }
-    this.kit._collider(minX, maxX, minZ, maxZ, top === undefined ? Infinity : base + top, bottom === undefined ? -Infinity : base + bottom, owner);
+    // Ohne Angaben reicht eine Box vom Boden bis knapp über die Decke dieser Etage (Stockwerke stören sich nicht).
+    const bandH = this.bandH ?? this.kit.room?.height ?? 6;
+    this.kit._collider(minX, maxX, minZ, maxZ, top === undefined ? fy + bandH + 0.6 : base + top, bottom === undefined ? fy - 0.5 : base + bottom, owner);
     return this;
   }
 
@@ -213,10 +219,10 @@ export class Frame {
     // Gemalter Lichtkegel auf dem Boden unter hängenden Lampen: hält entfernte Bereiche warm,
     // auch wenn gerade keine echte Lichtquelle aus dem Pool dort ist.
     const p = this.point(...at);
-    if (pool && p.y > 2.2) {
+    if (pool && p.y - (this.floorY ?? 0) > 2.2) {
       const r = Math.min(distance * 0.42, 4.5);
       this.kit._addGeo(new THREE.PlaneGeometry(r * 2, r * 2), 'lightPool',
-        new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(p.x, 0.03, p.z));
+        new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(p.x, (this.floorY ?? 0) + 0.03, p.z));
     }
     this.kit.spots.push(spot);
     return spot;

@@ -38,7 +38,8 @@ export default [
         const ids = [...new Set(occ.values())];
         const color = new Map(ids.map((id, i) => [id, PALETTE[i % PALETTE.length]]));
         for (const [k, id] of occ) {
-          const [x, z] = k.split(',').map(Number);
+          const [x, z, lv] = k.split(',').map(Number);
+          if (lv) continue; // Obergeschosse: weiter unten gestrichelt
           const cx = (x - mb.minX) * px, cz = (z - mb.minZ) * px;
           g.fillStyle = byId.get(id)?.endless ? '#d8c090' : color.get(id);
           g.fillRect(cx + 2, cz + 2, px - 4, px - 4);
@@ -50,7 +51,20 @@ export default [
         for (let i = 0; i <= cols; i++) { g.beginPath(); g.moveTo(i * px, 0); g.lineTo(i * px, h); g.stroke(); }
         for (let i = 0; i <= rows; i++) { g.beginPath(); g.moveTo(0, i * px); g.lineTo(w, i * px); g.stroke(); }
         g.fillStyle = '#3a2410';
+        // Obergeschosse: gestrichelter Rahmen + kleiner Name oben in der Zelle
+        g.save(); g.setLineDash([8, 6]); g.strokeStyle = '#7a2e3a'; g.lineWidth = 3;
         for (const def of byId.values()) {
+          const lv = (def.levels ?? [def.level ?? 0]).filter((l) => l > 0);
+          if (!lv.length || def.levels?.includes(0)) continue;
+          const [x, z] = def.cell;
+          g.strokeRect((x - mb.minX) * px + 8, (z - mb.minZ) * px + 8, px - 16, px - 16);
+          g.fillStyle = '#7a2e3a'; g.font = `italic 13px ${FONT_TITLE}`;
+          g.fillText(`↑ ${def.name.split(' ')[0]} (${lv[0]}. OG)`, (x - mb.minX + 0.5) * px, (z - mb.minZ) * px + 20);
+        }
+        g.restore();
+        g.fillStyle = '#3a2410';
+        for (const def of byId.values()) {
+          if ((def.level ?? 0) > 0 && !def.levels) continue;
           if (def.hidden && !kit.services.progress.has('rooms', def.id)) { const [hx, hz] = def.cell; g.fillStyle = '#e8d8b0'; g.fillRect((hx - mb.minX) * px + 2, (hz - mb.minZ) * px + 2, px - 4, px - 4); g.fillStyle = '#3a2410'; g.font = `28px ${FONT_TITLE}`; g.fillText('???', (hx - mb.minX + 0.5) * px, (hz - mb.minZ + 0.5) * px); continue; }
           const [x, z] = def.cell, [sw, sd] = def.size ?? [1, 1];
           const cx = (x - mb.minX + sw / 2) * px, cz = (z - mb.minZ + sd / 2) * px;

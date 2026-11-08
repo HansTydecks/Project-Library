@@ -75,6 +75,50 @@ export const FRIENDS = [
   },
 ];
 
+// Bewohner der oberen Etagen (Ausbaustufe 5)
+FRIENDS.push(
+  {
+    id: 'kleister', name: 'Meister Kleister, Buchbinder', room: 'buchbinderei',
+    lines: [
+      'Klopf, klopf! Jedes Buch hier wird von Hand gebunden. Von sehr kleinen Händen.',
+      'Der Hebel dort? Nicht zu weit drehen. Sonst fliegen die Bücher. Sagen wir … manchmal absichtlich.',
+      'Leim ist das Geheimnis. Und Geduld. Hauptsächlich Leim.',
+    ],
+  },
+  {
+    id: 'federleicht', name: 'Postmeisterin Federleicht', room: 'eulenpost',
+    lines: [
+      'Huu! Briefe hinein, Eulen hinaus. So einfach ist Post.',
+      'Wir stellen alles zu. Auch Briefe, die noch nicht geschrieben wurden.',
+      'Mit einer Feder kannst du am Briefkasten einen Brief schreiben. Dann bekommst du Antwort. Garantiert.',
+    ],
+  },
+  {
+    id: 'summ', name: 'Königin Summ', room: 'dachgarten',
+    lines: [
+      'Ssss … Willkommen in meinem Garten über den Dächern!',
+      'Meine Bienen bestäuben jede Blume. Und manchmal ein Buch, aus Versehen. Es riecht dann nach Lavendel.',
+      'Honig? Nimm dir ein Glas aus dem Stock. Ich weiß genau, wer Honig liebt: eine Teekanne im Teesalon.',
+    ],
+  },
+  {
+    id: 'wolle', name: 'Wolle, das Leitschaf', room: 'traumkammer',
+    lines: [
+      'Mäh. Wir springen, damit hier alle gut einschlafen.',
+      'Zählst du mit? Zehn Sprünge, dann bist du offiziell müde.',
+      'Ich hätte so gern ein Wollknäuel zum Kuscheln. Es gibt eins … in einer sehr großen Stube.',
+    ],
+  },
+  {
+    id: 'bim', name: 'Bim, die Turmkrähe', room: 'turm',
+    lines: [
+      'Krah! Von hier oben sehe ich alles. Auch dich. Hallo!',
+      'Die Turmuhr steht seit Jahren. Ihr fehlt ein kleines Zahnrad. Die Uhrmacherin hat welche.',
+      'In der Truhe liegt etwas Funkelndes. Den Schlüssel? Hat jemand verloren. Wo landet Verlorenes wohl?',
+    ],
+  },
+);
+
 export function createFriends({ progress, list = FRIENDS } = {}) {
   const byId = new Map(list.map((f) => [f.id, f]));
   const said = new Map();

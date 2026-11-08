@@ -108,10 +108,10 @@ export function createPathfinder({ doors, byId, roomAt }) {
     }
   }
   return function findPath(from, target) {
-    const start = roomAt(from.x, from.z);
+    const start = roomAt(from.x, from.z, from.y ?? 0);
     const goal = target.room;
     const eye = 1.5;
-    const pts = [new THREE.Vector3(from.x, eye, from.z)];
+    const pts = [new THREE.Vector3(from.x, (from.y ?? 0) + eye, from.z)];
     if (start && goal && start !== goal) {
       const prev = new Map([[start, null]]);
       const q = [start];
@@ -130,11 +130,12 @@ export function createPathfinder({ doors, byId, roomAt }) {
         const nx = d.axis === 'x' ? 1 : 0, nz = d.axis === 'z' ? 1 : 0;
         const c = fromRoom ? (({ cx, cz }) => ({ x: cx, z: cz }))(roomBounds(fromRoom)) : { x: from.x, z: from.z };
         const sign = ((d.x - c.x) * nx + (d.z - c.z) * nz) >= 0 ? 1 : -1;
-        pts.push(new THREE.Vector3(d.x - nx * sign * 1.6, eye, d.z - nz * sign * 1.6));
-        pts.push(new THREE.Vector3(d.x + nx * sign * 1.6, eye, d.z + nz * sign * 1.6));
+        const ey = (d.y ?? 0) + eye;
+        pts.push(new THREE.Vector3(d.x - nx * sign * 1.6, ey, d.z - nz * sign * 1.6));
+        pts.push(new THREE.Vector3(d.x + nx * sign * 1.6, ey, d.z + nz * sign * 1.6));
       }
     }
-    if (target.approach) pts.push(new THREE.Vector3(target.approach.x, eye, target.approach.z));
+    if (target.approach) pts.push(new THREE.Vector3(target.approach.x, Math.max(eye, target.pos.y), target.approach.z));
     pts.push(new THREE.Vector3(target.pos.x, Math.max(0.6, target.pos.y + 0.35), target.pos.z));
     return pts;
   };

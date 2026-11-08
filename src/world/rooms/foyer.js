@@ -72,6 +72,7 @@ export default defineRoom({
     ctx.wallFrame('south', 0.42).place('cuckooClock', { at: [-4.6, 0, 0], y: 3.4, scale: 1.1, offset: 1, secret: 'foyer-kuckuck', secretName: 'Der Kuckuck, der Besucher zählt', quip: '»Kuckuck! Du bist Besucher Nummer … äh … viele!«' });
     ctx.place('paintedEgg', { at: [-6.6, 2.55, -6.6], id: 'ei-standuhr' });
     if (ctx.kit.services.fx?.season === 'autumn') for (const x of [-1.6, 1.6]) ctx.place('pumpkin', { at: [x, 0, 7.0], scale: 0.9 });
+    ctx.place('parcelStack', { at: [-4.8, 0, 5.6], count: 3 });
     ctx.place('dust', { area: [14, 5, 14] });
 
     // Säulen
