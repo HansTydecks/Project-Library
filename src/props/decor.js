@@ -111,6 +111,13 @@ function windowSky(mode) {
   return t;
 }
 
+// Kristall-Materialien je Farbe teilen (ein Material = ein gemergter Draw Call pro Raum statt pro Kristall)
+const crystalMats = new Map();
+const crystalMat = (color) => {
+  if (!crystalMats.has(color)) crystalMats.set(color, new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.55, roughness: 0.2, metalness: 0.1, flatShading: true }));
+  return crystalMats.get(color);
+};
+
 export default [
   // Wimpelkette entlang lokal x (length), hängt durch
   defineProp({
@@ -332,7 +339,7 @@ export default [
     create(f, opts, kit) {
       const r = makeRng(seedOf(kit, opts, 'crystal'));
       const color = opts.color ?? '#b89aff', s = opts.scale ?? 1;
-      const m = new THREE.MeshStandardMaterial({ color, emissive: color, emissiveIntensity: 0.55, roughness: 0.2, metalness: 0.1, flatShading: true });
+      const m = crystalMat(color);
       f.add(sphere(0.18 * s, 7, 5), 'stoneDark', [0, 0.02, 0], [0, 0, 0], [1.3, 0.4, 1]);
       for (let i = 0; i < (opts.count ?? 6); i++) {
         const a = r.range(0, Math.PI * 2), d = i ? r.range(0.03, 0.14) * s : 0, h = (i ? r.range(0.14, 0.3) : 0.42) * s;
