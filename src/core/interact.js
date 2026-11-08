@@ -59,7 +59,10 @@ export function createInteraction({ camera, input }) {
     return true;
   }
 
+  let capture = null;
   function trigger() {
+    // Minispiel übernimmt Klick/E (z. B. Werfen, Angeln). Gibt die Übernahme false zurück, geht es normal weiter.
+    if (capture && input.state.enabled && capture(current) !== false) return true;
     if (!current || !input.state.enabled) return false;
     const ia = current.object.userData.interact;
     ia.onInteract?.(current);
@@ -73,6 +76,7 @@ export function createInteraction({ camera, input }) {
     remove(obj) { targets.delete(obj); if (current?.object === obj) setCurrent(null); },
     update,
     trigger,
+    setCapture(fn) { capture = fn ?? null; },
     get current() { return current; },
     onChange(fn) { listeners.add(fn); },
     refresh() { acc = 1; },

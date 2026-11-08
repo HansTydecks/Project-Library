@@ -77,5 +77,18 @@ export default defineRoom({
     ctx.sign('Teesalon – Hier ist immer Viertel nach Teezeit', [0, 4.7, ctx.hd - 0.46], Math.PI, { w: 4.4, h: 0.55, size: 40 });
     for (const [x, z, r] of [[-7.55, -3, Math.PI / 2], [-7.55, 4, Math.PI / 2]]) ctx.place('sconce', { at: [x, 2.6, z], rot: r, light: false });
     ctx.place('dust', { area: [14, 5, 14] });
+
+    // Kleine Details: Teekannen-Porträt, Zauberfenster, Wimpel, Kerzen, Plauder-Kissen, Mäusetür
+    // (Bereich um (4.6, −3.8) bleibt frei für ein Spiel)
+    const north = ctx.wallFrame('north', 0.42);
+    north.place('portrait', { at: [-5.0, 2.8, 0], subject: 'teekanne', width: 0.8, height: 1.0, bg: '#e890b8' });
+    north.place('magicWindow', { at: [4.4, 0, 0], y: 2.9, width: 1.3, height: 1.6, mode: 'day', curtain: 'pastelPink', quip: 'Draußen zieht eine Wolke vorbei, die aussieht wie ein Stück Kuchen. Es ist Viertel nach Teezeit, natürlich.' });
+    ctx.wallFrame('south', 0.6).place('bunting', { at: [0, 0, 0], length: 14.4, y: 5.7, sag: 0.3, colors: ['pastelPink', 'white', 'pastelMint', 'pastelLemon'] });
+    ctx.wallFrame('south', 0.5).place('mouseDoor', { at: [4.4, 0, 0], sign: 'Teestübchen', color: 'pastelPink' });
+    ctx.wallFrame('east', 0.42).place('wallShelfSmall', { at: [5.6, 0, 0], y: 2.5, width: 1.0, wood: 'white' });
+    ctx.place('candleCluster', { at: [-1.5, ty, 4.0], count: 4, wax: 'pastelPink' });
+    ctx.place('cushionPile', { at: [-5.6, 0, -6.35], colors: ['pastelPink', 'velvet', 'pastelMint', 'pastelLemon', 'velvetBlue'] });
+    ctx.place('hangingPlant', { at: [-6.3, 0, -4.8], top: H, y: 4.3, leaf: 'leavesPink', pot: 'porcelainBlue' });
+    ctx.place('hangingPlant', { at: [6.1, 0, 5.9], top: H, y: 4.1 });
   },
 });

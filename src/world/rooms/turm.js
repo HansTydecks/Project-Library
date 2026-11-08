@@ -39,6 +39,11 @@ export default defineRoom({
     l0.wallShelves('north', { id: '_turm0', unit: 2, height: 3.2, maxUnits: 6 });
     l0.wallShelves('west', { id: '_turm1', unit: 2, height: 3.2, maxUnits: 6 });
     ctx.sign('Wendelturm – immer im Kreis, immer nach oben', [0, 4.4, ctx.hd - 0.46], Math.PI, { w: 4.4, h: 0.55, size: 38 });
+    // Kleine Details (EG): Fenster über den Regalen, Wimpel, Kissen zum Treppe-Anschauen
+    l0.wallFrame('west', 0.42).place('magicWindow', { at: [-1.0, 0, 0], y: 5.3, width: 1.3, height: 1.8, mode: 'day', flowers: false, quip: 'Ein Fenster über den Regalen. Man sieht Wolken – und ganz klein, ganz oben, die Turmspitze.' });
+    l0.wallFrame('north', 0.8).place('bunting', { at: [0, 0, 0], length: 14.2, y: 6.3, sag: 0.6 });
+    l0.wallFrame('north', 0.42).place('wallShelfSmall', { at: [6.3, 0, 0], y: 1.9, width: 1.0, wood: 'woodRed' });
+    l0.place('cushionPile', { at: [4.6, 0, 4.8], colors: ['velvet', 'pastelLemon', 'velvetBlue', 'pastelPink', 'pastelMint'] });
 
     // ---- 1. Obergeschoss
     const l1 = ctx.level(1, FLOOR_H);
@@ -57,6 +62,15 @@ export default defineRoom({
     // Geländer um das Treppenauge – Westseite offen (dort kommt die Treppe an und geht weiter)
     for (const [x, z, w, d] of [[0, -2.05, 4.2, 0.1], [0, 2.05, 4.2, 0.1], [2.05, 0, 0.1, 4.2]]) { l1.add(box(w, 0.06, d, 0), 'brass', [x, 1.0, z]); l1.collider(x, z, w, d, { top: 1.1, bottom: 0.1, shadow: false }); }
     for (let i = 0; i < 9; i++) for (const [x, z] of [[-2 + i * 0.5, -2.05], [-2 + i * 0.5, 2.05], [2.05, -2 + i * 0.5]]) l1.add(cyl(0.015, 0.015, 1, 4), 'brass', [x, 0.5, z]);
+    // Kleine Details (1. OG): Gustavs Porträt, Abendfenster, Mäusetür, Schneekugel neben der Bank
+    const n1 = l1.wallFrame('north', 0.42);
+    n1.place('portrait', { at: [-1.0, 2.5, 0], subject: 'igel', width: 0.8, height: 1.0, bg: '#5a8a4a', caption: 'Gustav mit seinem Lieblingshut. Er hängt hier, damit er den Dachgarten nebenan im Blick hat.' });
+    n1.place('magicWindow', { at: [3.4, 0, 0], y: 2.4, width: 1.2, height: 1.5, mode: 'sunset', curtain: 'pastelPeach', quip: 'Von hier oben sieht der Sonnenuntergang aus wie Himbeertee mit Honig.' });
+    n1.place('wallShelfSmall', { at: [-4.4, 0, 0], y: 1.75, width: 1.1, wood: 'woodLight' });
+    l1.wallFrame('north', 0.5).place('mouseDoor', { at: [-4.4, 0, 0], sign: 'Turmzimmer', color: 'pastelLemon' });
+    l1.wallFrame('north', 0.7).place('bunting', { at: [0, 0, 0], length: 14.2, y: 4.7, sag: 0.5, colors: ['pastelLilac', 'pastelPeach', 'pastelMint', 'pastelLemon'] });
+    l1.place('sideTable', { at: [-5.8, 0, -4.65] });
+    l1.place('snowGlobe', { at: [-5.8, 0.62, -4.65], house: 'pastelSky', name: 'Turm-Schneekugel', quip: 'In der Kugel steht ein winziger Turm. Ganz oben winkt jemand. Bist du das?' });
 
     // ---- Turmspitze (offen, mit Geländer und Dach)
     const l2 = ctx.level(2, TOP_H);
@@ -71,6 +85,12 @@ export default defineRoom({
     // Ostseite offen: dort endet die Treppe
     for (const [x, z, w, d] of [[0, -2.05, 4.2, 0.1], [0, 2.05, 4.2, 0.1], [-2.05, 0, 0.1, 4.2]]) { l2.add(box(w, 0.06, d, 0), 'brass', [x, 1.0, z]); l2.collider(x, z, w, d, { top: 1.1, bottom: 0.1, shadow: false }); }
     l2.place('dust', { area: [14, 5, 14], count: 120 });
+    // Kleine Details (Spitze): Wimpel zwischen den Dachsäulen, Papiersterne unterm Dach, Sternguck-Kissen
+    for (const [x, z, r] of [[0, -7.4, 0], [0, 7.4, 0], [-7.4, 0, Math.PI / 2], [7.4, 0, Math.PI / 2]]) {
+      l2.place('bunting', { at: [x, 0, z], rot: r, length: 14.1, y: 5.3, sag: 0.8, seed: `turm${x}${z}` });
+    }
+    l2.place('paperStars', { at: [0, 0, 0], area: [11, 11], top: 5.48, maxDrop: 1.3, count: 14, avoid: 2.8, colors: ['pastelLemon', 'gold', 'white', 'pastelSky'] });
+    l2.place('cushionPile', { at: [-5.2, 0, 1.4], colors: ['velvetBlue', 'pastelLilac', 'velvet', 'pastelSky', 'pastelLemon'] });
     // Ein Licht unter dem Turmdach
     l2.light([0, 4.6, 0], { color: '#ffd8a0', intensity: 6, distance: 12 });
   },

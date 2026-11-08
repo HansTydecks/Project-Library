@@ -46,5 +46,18 @@ export default defineRoom({
     ctx.place('rubberDuck', { at: [-6.6, 0, 6.6], crown: true, name: 'Die Herzogin', secret: 'herzogin', secretName: 'Die Herzogin der Enten', quip: 'Eine Ente mit Krone. Sie ist hier die Chefin. Der Frosch bestreitet das.' });
     ctx.sign('Trankküche – Hier wird gekocht, was noch keinen Namen hat', [0, 4.6, hd - 0.46], Math.PI, { w: 4.6, h: 0.5, size: 36 });
     ctx.place('dust', { area: [14, 4.5, 14] });
+
+    // Kleine Details: Kristalle, Kesselkatzen-Porträt, Gewürzbretter, Nachtfenster, Goldfische
+    // (Bereich um (4.6, −2.4) bleibt frei für ein Spiel)
+    ctx.place('crystalCluster', { at: [-5.2, 0, 6.85], color: '#8ad8ff', scale: 1.1 });
+    ctx.place('crystalCluster', { at: [3.2, 0, 6.9], color: '#ff9ad8', scale: 0.9, count: 5 });
+    ctx.place('candleCluster', { at: [3.45, 0.81, -5.1], count: 3, wax: 'pastelMint' });
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('wallShelfSmall', { at: [-5.6, 0, 0], y: 1.75, width: 1.2, wood: 'woodDark' });
+    east.place('portrait', { at: [-5.6, 3.15, 0], subject: 'katze', width: 0.7, height: 0.9, bg: '#3a7a5a', title: 'Mixtura, die Kesselkatze', caption: 'Sie rührt jeden Trank genau dreimal um. Mit dem Schwanz. Der Frosch findet das unhygienisch, die Tränke finden es wunderbar.' });
+    const south = ctx.wallFrame('south', 0.42);
+    south.place('magicWindow', { at: [4.4, 0, 0], y: 2.5, width: 1.2, height: 1.5, mode: 'night', curtain: 'velvetGreen', quip: 'Draußen ist Vollmond. Die beste Zeit, um Mondscheintee einzukochen.' });
+    south.place('wallShelfSmall', { at: [-4.6, 0, 0], y: 1.9, width: 1.1, wood: 'woodLight' });
+    ctx.place('fishBowl', { at: [6.9, 0, 4.0], y: 0.95, name: 'Glas der Glücksfische', quips: ['Die Fische schnappen nach den Krümeln. Einer schillert kurz grün – Nebenwirkung vom Kesseldampf.', 'Blubb. (Übersetzung: »Mehr Krümel, weniger Zaubertrank, bitte.«)', 'Einer der Fische schlägt einen Salto. Der Frosch applaudiert ein bisschen neidisch.'] });
   },
 });

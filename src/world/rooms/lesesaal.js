@@ -136,5 +136,28 @@ export default defineRoom({
     ctx.place('balloonBooks', { at: [8, 0, -4], y: 6.6, count: 4, radius: 1.4 });
     // Wandleuchter an den Säulen
     for (let x = -hw + 5.4; x < hw - 2; x += 6) ctx.place('sconce', { at: [x, 3.2, -hd + 1.85], light: false });
+
+    // Kleine Details: Wimpel unter der Galerie (Mitte frei, dort hängt das Stapel-Schild)
+    for (let x = -hw + 2.4; x + 6 < hw - 2; x += 6) {
+      if (x < 0 && x + 6 > 0) continue;
+      ctx.place('bunting', { at: [x + 3, 0, -hd + 2.15], length: 5.6, y: gy - 0.18, sag: 0.4, colors: ['pastelLemon', 'pastelPink', 'pastelSky', 'pastelMint'] });
+    }
+    // Papiersterne über den Seitengängen
+    for (const sx of [-1, 1]) ctx.place('paperStars', { at: [sx * 6.5, 0, 0], area: [4.5, 24], top: 10, maxDrop: 2.2, count: 10, colors: ['pastelLemon', 'gold', 'pastelPink', 'pastelSky'] });
+    // Südwand (ohne Regale): Zauberfenster und Porträts zwischen den Türen
+    const south = ctx.wallFrame('south', 0.42);
+    south.place('magicWindow', { at: [-5.5, 0, 0], y: 3.4, width: 1.6, height: 2.4, mode: 'day', curtain: 'velvet', quip: 'Ein Fenster in einen Himmel, den es nur hier gibt. Perfektes Leselicht, jeden Tag.' });
+    south.place('magicWindow', { at: [5.5, 0, 0], y: 3.4, width: 1.6, height: 2.4, mode: 'sunset', curtain: 'velvet', quip: 'Hier geht die Sonne nie ganz unter. Damit niemand mitten im Kapitel aufhören muss.' });
+    south.place('portrait', { at: [9.5, 3.2, 0], subject: 'katze', width: 0.9, height: 1.15, bg: '#8a3a3a', caption: 'Die Bibliothekskatze, gemalt im Großen Lesesaal. Sie lag dabei auf dem Buch, das der Maler gerade las.' });
+    south.place('portrait', { at: [-9.5, 3.2, 0], subject: 'schaf', width: 0.9, height: 1.15, bg: '#3a5a7a', title: 'Wolle beim Lesen', caption: 'Wolle liest am liebsten Bücher über Wolken. Sie hält sie für entfernte Verwandte.' });
+    south.place('wallShelfSmall', { at: [-20.5, 0, 0], y: 1.85, width: 1.2, wood: 'woodDark' });
+    // Leseecke Südost: Sessel, Kerzen, Goldfische
+    ctx.place('armchair', { at: [6.4, 0, 13.0], rot: Math.PI + 0.35, cushion: 'velvetGreen', quip: 'Der gemütlichste Sessel im Saal. Wer hier sitzt, liest grundsätzlich »nur noch ein Kapitel«.' });
+    ctx.place('sideTable', { at: [7.65, 0, 13.55] });
+    ctx.place('candleCluster', { at: [7.65, 0.62, 13.55], count: 3 });
+    ctx.place('fishBowl', { at: [8.8, 0, 14.4], y: 1.0, name: 'Goldfischglas der Leseratten' });
+    // Kissenecke Südwest
+    ctx.place('cushionPile', { at: [-7.4, 0, 13.9], colors: ['velvet', 'velvetGreen', 'pastelLemon', 'pastelPink', 'velvetBlue'] });
+    ctx.place('bookPile', { at: [-6.2, 0, 14.5], count: 4 });
   },
 });

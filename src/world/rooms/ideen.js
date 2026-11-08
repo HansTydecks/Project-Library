@@ -55,5 +55,18 @@ export default defineRoom({
     ctx.place('standSign', { at: [5.6, 0, -3], rot: -0.6, text: 'Ideen bitte frei herumlaufen lassen.', size: 32, width: 1.0, signHeight: 0.36 });
     ctx.place('singingFlower', { at: [6.4, 0, 6.4], color: 'lilac', height: 1.1, name: 'Ideenblume', quip: 'Die Ideenblume singt nur Lieder, die es noch nicht gibt. Dieses hier ist neu. Gerade eben.' });
     ctx.place('dust', { area: [14, 4.5, 14], color: '#e8d0ff' });
+
+    // Kleine Details: Geistesblitz-Sterne, Wimpel, Zauberfenster, Denk-Kissen
+    // (Südwest-Viertel bleibt frei: Papierkorb + Wurflinie)
+    ctx.place('paperStars', { at: [1, 0, 0.5], area: [7, 6], top: 5.5, maxDrop: 1.0, count: 12, avoid: 1.2, colors: ['pastelLemon', 'gold', 'pastelLilac', 'pastelPink'] });
+    const east = ctx.wallFrame('east', 0.6);
+    east.place('bunting', { at: [0, 0, 0], length: 14.4, y: 5.05, sag: 0.4, colors: ['pastelLilac', 'pastelLemon', 'pastelMint', 'pastelPink'] });
+    const eastW = ctx.wallFrame('east', 0.42);
+    eastW.place('portrait', { at: [3.6, 2.6, 0], subject: 'drache', width: 0.7, height: 0.9, bg: '#5a4a8a', caption: 'Funki hatte hier seine allererste Idee: »Was, wenn Feuer kitzelt?« Der Rahmen erinnert sich noch daran.' });
+    eastW.place('wallShelfSmall', { at: [6.0, 0, 0], y: 1.75, width: 1.0, wood: 'woodLight' });
+    ctx.wallFrame('south', 0.42).place('magicWindow', { at: [-4.8, 0, 0], y: 2.5, width: 1.2, height: 1.5, mode: 'sunset', curtain: 'velvetBlue', quip: 'Bei Sonnenuntergang kommen die besten Ideen. Hier ist zum Glück immer Sonnenuntergang.' });
+    ctx.place('hangingPlant', { at: [6.2, 0, -6.2], top: 5.5, y: 3.7, leaf: 'leavesPink' });
+    ctx.place('cushionPile', { at: [6.25, 0, 3.4], colors: ['velvetBlue', 'pastelLilac', 'pastelLemon', 'velvet', 'pastelMint'] });
+    ctx.place('quillJar', { at: [-5.0, 0.83, -4.6], jar: 'pastelLilac', scrolls: false });
   },
 });

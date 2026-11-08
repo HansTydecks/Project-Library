@@ -37,5 +37,17 @@ export default defineRoom({
     ctx.place('walkingBook', { at: [-2, 0, 3.5], radius: 1.3, color: '#3a6ac0', name: 'Ein Liederbuch auf Wanderschaft' });
     ctx.sign('Spieluhrsaal – Musik, die sich selbst spielt', [0, 4.6, hd - 0.46], Math.PI, { w: 4.2, h: 0.55, size: 40 });
     ctx.place('dust', { area: [14, 6, 14] });
+
+    // Kleine Details: Wimpel, Sternenhimmel, Nachtfenster, Zuhörer-Kissen, Schneekugel
+    ctx.wallFrame('north', 1.0).place('bunting', { at: [0, 0, 0], length: 14.2, y: 6.3, sag: 0.5, colors: ['pastelSky', 'pastelLilac', 'white', 'pastelLemon'] });
+    ctx.place('paperStars', { at: [0, 0, 0], area: [11, 11], top: 7, maxDrop: 1.3, count: 14, avoid: 2.2, colors: ['pastelLemon', 'gold', 'pastelSky', 'white'] });
+    west.place('portrait', { at: [0, 4.55, 0], subject: 'schaf', width: 0.8, height: 1.0, bg: '#5a6aa8', caption: 'Wolle hat hier einmal mitgesungen. Seitdem summt die Spieluhr manchmal »Mäh« im Takt.' });
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('magicWindow', { at: [-5.0, 0, 0], y: 3.0, width: 1.3, height: 1.7, mode: 'night', curtain: 'velvetBlue', frame: 'woodDark', quip: 'Nachtmusik! Draußen blinzeln die Sterne im Dreivierteltakt.' });
+    east.place('wallShelfSmall', { at: [5.3, 0, 0], y: 2.3, width: 1.0, wood: 'woodDark' });
+    ctx.place('sideTable', { at: [6.4, 0, 5.3] });
+    ctx.place('snowGlobe', { at: [6.4, 0.62, 5.3], scale: 1.1, house: 'pastelLilac', name: 'Musik-Schneekugel', quip: 'Es schneit kleine Noten. Wenn man genau hinhört, klingt es wie ein Wiegenlied.' });
+    ctx.place('cushionPile', { at: [-4.0, 0, 6.3], colors: ['velvetBlue', 'pastelSky', 'pastelLilac', 'velvet', 'pastelLemon'] });
+    ctx.place('hangingPlant', { at: [6.3, 0, -6.4], top: 7, y: 4.7, scale: 1.1 });
   },
 });

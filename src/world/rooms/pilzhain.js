@@ -1,4 +1,5 @@
 import { defineRoom } from '../registry.js';
+import { cyl, sphere } from '../geo.js';
 
 // Pilzhain: leuchtende Riesenpilze, Sprungpilze und Wolken, auf denen man stehen kann.
 export default defineRoom({
@@ -41,6 +42,36 @@ export default defineRoom({
     ctx.place('mushrooms', { at: [-2.5, 0, -6] });
     ctx.place('flowers', { at: [5.8, 0, -7], width: 3, depth: 1.2 });
     ctx.place('flowers', { at: [-6.8, 0, 6.8], width: 2, depth: 2 });
+    // --- Kleine Haindetails
+    // Leuchtkristalle zwischen den Pilzen (sanft, ohne eigenes Licht)
+    ctx.place('crystalCluster', { at: [7.0, 0, 2.4], color: '#ff9ad8' });
+    ctx.place('crystalCluster', { at: [-2.0, 0, 7.0], color: '#9ad8ff', scale: 1.2 });
+    ctx.place('crystalCluster', { at: [3.4, 0, -7.0], color: '#ffd86a', scale: 0.9 });
+    // Wimpelkette zwischen zwei Riesenpilzen
+    ctx.place('bunting', { at: [5.7, 0, -0.3], rot: -Math.PI / 2, length: 8.0, y: 3.1, sag: 0.5 });
+    // Wichteltür im Stiel des größten Pilzes
+    ctx.place('mouseDoor', { at: [5.685, 0, 3.79], rot: -2.155, sign: 'Pilzwichtel', color: 'pastelLilac' });
+    ctx.place('mushrooms', { at: [-6.8, 0, -6.6], count: 6, radius: 0.7 });
+    ctx.place('lantern', { at: [-4.9, 0, -6.9], y: 0.18, light: false, color: '#ffb8f0' });
+    ctx.place('flowers', { at: [6.9, 0, -2.8], width: 1.2, depth: 1.2 });
+    // Pilz-Teetisch mit zwei Pilzhockern
+    const tea = ctx.frame([-2.4, 0, 4.6], 0.3);
+    tea.add(cyl(0.12, 0.18, 0.6, 10), 'mushroomStem', [0, 0.3, 0]);
+    tea.add(sphere(0.48, 16, 8), 'mushroomCapGold', [0, 0.6, 0], [0, 0, 0], [1, 0.25, 1]);
+    tea.add(cyl(0.5, 0.48, 0.1, 18), 'mushroomCapGold', [0, 0.64, 0]);
+    for (let i = 0; i < 5; i++) tea.add(sphere(0.05, 8, 5), 'dots', [Math.cos(i * 1.3) * 0.32, 0.69, Math.sin(i * 1.3) * 0.32], [0, 0, 0], [1, 0.3, 1]);
+    tea.collider(0, 0, 0.9, 0.9, { top: 0.69 });
+    for (const [x, z, cap] of [[-0.85, 0.1, 'mushroomCap'], [0.75, 0.5, 'mushroomCapBlue']]) {
+      tea.add(cyl(0.07, 0.1, 0.32, 8), 'mushroomStem', [x, 0.16, z]);
+      tea.add(cyl(0.22, 0.2, 0.08, 14), cap, [x, 0.34, z]);
+      tea.collider(x, z, 0.4, 0.4, { top: 0.38 });
+    }
+    tea.place('teapot', { at: [0.08, 0.7, -0.12], color: 'pastelMint', scale: 0.6 });
+    tea.place('teacup', { at: [-0.25, 0.7, 0.16], color: 'pastelPink' });
+    tea.place('teacup', { at: [0.28, 0.7, 0.2] });
+    // Wegweiser am Eingang
+    ctx.place('signpost', { at: [2.3, 0, -6.0], signs: [['Wintergarten', 0], ['Lesebad', Math.PI], ['Mondgarten', Math.PI / 2]] });
+
     ctx.place('fireflies', { area: [14, 4, 14], count: 90, color: '#ffb8f0' });
     ctx.place('dust', { area: [14, 6, 14], count: 200 });
   },

@@ -35,6 +35,22 @@ export default defineRoom({
     ctx.place('standSign', { at: [-2.4, 0, 3], rot: 0.5, text: 'Wer sich verläuft, ist einfach besonders gründlich.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('chandelier', { at: [0, 0, -0.4], y: 5.8, chain: 1.8, radius: 1.2, candles: 10, intensity: 14 });
     ctx.sign('Kartenraum – Du bist hier (ungefähr)', [0, 4.4, hd - 0.46], Math.PI, { w: 4, h: 0.55, size: 40 });
+    // --- Kleine Reisedetails
+    const south = ctx.wallFrame('south', 0.42), west = ctx.wallFrame('west', 0.42);
+    ctx.wallFrame('south', 0.5).place('mouseDoor', { at: [-4.8, 0, 0], sign: 'Kartenmaus', color: 'velvetGreen',
+      lines: ['»Wir sind verreist! Postkarten bitte unter der Tür durchschieben.«', '»Ein Entdecker? Wir haben schon alles entdeckt. Bis auf den Käse.«', 'Ein winziger Kompass wird unter der Tür durchgeschoben. Er zeigt auf Abendbrot.'] });
+    south.place('bunting', { at: [0, 0, 0.1], y: 5.6, length: 14.6, sag: 0.4 });
+    south.place('wallShelfSmall', { at: [4.4, 0, 0], y: 1.8, width: 1.2, wood: 'woodDark' });
+    west.place('portrait', { at: [4.6, 2.6, 0], subject: 'zauberer', bg: '#6a5a3a', caption: 'Gemalt auf seiner großen Reise. Er hatte sich verlaufen, nannte es aber »Forschungsumweg«.' });
+    west.place('magicWindow', { at: [-4.6, 0, 0], y: 2.5, width: 1.4, height: 1.4, mode: 'sea', curtain: 'velvetGreen', quip: 'Draußen liegt das Meer der ungeschriebenen Seiten. Ganz hinten winkt ein Schiff.' });
+    // Wegweiser ins Ungefähre
+    ctx.place('signpost', { at: [-5.6, 0, -3.6], signs: [['Irgendwo', 0.4], ['Nirgendwo', 2.6], ['Gleich da', -1.2]] });
+    // Beistelltisch mit Schneekugel und Federkiel
+    ctx.place('sideTable', { at: [4.2, 0, -3.6] });
+    ctx.place('snowGlobe', { at: [4.1, 0.63, -3.45], house: 'woodLight', quip: 'In der Kugel schneit es auf eine winzige Insel. Sie ist auf keiner Karte. Noch nicht.' });
+    ctx.place('quillJar', { at: [4.36, 0.63, -3.8], scrolls: false });
+    // Reisegepäck in der Ecke
+    ctx.place('parcelStack', { at: [-6.7, 0, 6.6], count: 4 });
     ctx.place('dust', { area: [14, 6, 14] });
   },
 });

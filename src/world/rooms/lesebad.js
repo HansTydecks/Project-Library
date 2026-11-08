@@ -37,6 +37,18 @@ export default defineRoom({
     ctx.place('standSign', { at: [4.2, 0, -2.8], rot: -0.5, text: 'Bitte nicht vom Beckenrand lesen. Nur im Becken.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('lantern', { at: [-1.2, 4.2, 0], hanging: true, chain: 1.4, color: '#c8eeff', intensity: 8, distance: 12 });
     ctx.place('lantern', { at: [5, 4.2, 5], hanging: true, chain: 1.4, color: '#ffe0f0', intensity: 5, distance: 8 });
+    // --- Kleine Baddetails
+    const west = ctx.wallFrame('west', 0.42), north = ctx.wallFrame('north', 0.42);
+    west.place('magicWindow', { at: [0, 0, 0], y: 2.5, width: 1.8, height: 1.4, mode: 'sea', curtain: 'velvetBlue', quip: 'Ein Meer ohne Ufer. Die Enten-Armada plant schon die Überfahrt.' });
+    north.place('wallShelfSmall', { at: [-4.8, 0, 0], y: 1.5, width: 1.4, wood: 'white' });
+    ctx.place('fishBowl', { at: [-6.8, 0, 3.2], name: 'Badegoldfische', quips: ['Die Goldfische finden das große Becken nebenan etwas angeberisch.', 'Blubb. (Übersetzung: »Wir baden auch. Immer.«)', 'Ein Fisch trägt eine winzige Badekappe. Sagt er.'] });
+    // Signalflaggen der Enten-Armada quer durch den Raum
+    ctx.place('bunting', { at: [0, 0, -3.0], y: 4.5, length: 15.1, sag: 0.8, colors: ['pastelSky', 'white', 'pastelPink', 'pastelLemon', 'pastelMint'] });
+    ctx.place('hangingPlant', { at: [-6.6, 0, -6.4], top: 6, y: 3.8, scale: 1.2 });
+    ctx.place('hangingPlant', { at: [6.5, 0, 3.4], top: 6, y: 3.6, leaf: 'leavesPink' });
+    ctx.place('crystalCluster', { at: [-7.0, 0, 7.0], color: '#9ad8ff' });
+    ctx.place('sideTable', { at: [6.7, 0, -3.2] });
+    ctx.place('snowGlobe', { at: [6.7, 0.63, -3.2], house: 'pastelSky', quip: 'In der Kugel schneit es auf ein winziges Badehaus. Pingo hätte auch gern so eins.' });
     ctx.sign('Lesebad – Bücher bitte nicht tunken', [0, 3.8, hd - 0.46], Math.PI, { w: 4, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 5, 14], color: '#d8f4ff' });
   },

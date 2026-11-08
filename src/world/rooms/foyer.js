@@ -75,6 +75,19 @@ export default defineRoom({
     ctx.place('parcelStack', { at: [-4.8, 0, 5.6], count: 3 });
     ctx.place('dust', { area: [14, 5, 14] });
 
+    // Kleine Details: Willkommens-Wimpel, Garderobe, Porträt, Zauberfenster, Mäusetür
+    ctx.wallFrame('south', 0.7).place('bunting', { at: [0, 0, 0], length: 14.4, y: 5.75, sag: 0.55 });
+    ctx.place('hangingPlant', { at: [-6.2, 0, 3.4], top: 6.5, y: 4.3, leaf: 'leavesPink' });
+    ctx.place('hangingPlant', { at: [6.2, 0, 3.4], top: 6.5, y: 4.1, scale: 1.1 });
+    ctx.place('paperStars', { at: [0, 0, -4.6], area: [5, 2.6], top: 6.5, maxDrop: 1.1, count: 9 });
+    ctx.place('umbrellaStand', { at: [3.1, 0, 7.05] });
+    ctx.place('hatRack', { at: [-3.1, 0, 7.0] });
+    const north = ctx.wallFrame('north', 0.42);
+    north.place('magicWindow', { at: [5.4, 0, 0], y: 2.7, width: 1.2, height: 1.6, mode: 'day', quip: 'Draußen ist der Garten, den es eigentlich gar nicht gibt. Die Wolken kommen trotzdem pünktlich.' });
+    north.place('wallShelfSmall', { at: [-5.1, 0, 0], y: 1.95, width: 1.1, wood: 'woodRed' });
+    ctx.wallFrame('north', 0.5).place('mouseDoor', { at: [-4.4, 0, 0], sign: 'Empfang', color: 'pastelMint' });
+    ctx.wallFrame('west', 0.42).place('portrait', { at: [-4.9, 4.6, 0], subject: 'zauberer', width: 0.8, height: 1.0, bg: '#4a3a7a' });
+
     // Säulen
     for (const [x, z] of [[-3.5, 1.5], [3.5, 1.5]]) {
       ctx.add(cyl(0.32, 0.38, 6.5, 14), 'stoneLight', [x, 3.25, z]);

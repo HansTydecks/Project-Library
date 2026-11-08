@@ -53,6 +53,7 @@ export default [
       });
       // Schlägel
       for (const sx of [-1, 1]) { f.add(cyl(0.01, 0.01, 0.4, 5), 'woodLight', [sx * 0.3, 0.76, 0.6], [Math.PI / 2, 0, 0.3]); f.add(sphere(0.04, 8, 6), 'candy', [sx * 0.3 + 0.06, 0.76, 0.8]); }
+      kit.services.events.on('xyloFlash', (n) => { const i = NOTES.indexOf(n); if (bars[i]) bars[i].hit = 1; });
       kit.onUpdate((dt) => { for (const b of bars) { b.hit = Math.max(0, b.hit - dt * 4); b.bar.position.y = b.y0 - b.hit * 0.02; b.bar.material.emissive?.setScalar(b.hit * 0.35); } });
       f.collider(0, 0, W + 0.2, 1.0);
       const sign = kit.services.makeSign('Tipp: c d e f g g a a a a g', { size: 40, w: 512, h: 96, bg: '#f6ead0', ink: '#5a2a3a' });
@@ -139,6 +140,7 @@ export default [
         birds.push({ g, y0: g.position.y, hop: 0, ph: i * 1.3 });
       }
       kit.services.events.on('notePlayed', () => { for (const b of birds) b.hop = 0.5 + Math.random() * 0.3; if (Math.random() < 0.6) kit.services.audio.play('chirp'); });
+      kit.services.events.on('sparrowsSing', () => { for (const b of birds) b.hop = 0.6; });
       kit.onUpdate((dt, t) => {
         for (const b of birds) {
           b.hop = Math.max(0, b.hop - dt);

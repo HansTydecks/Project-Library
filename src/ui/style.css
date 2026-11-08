@@ -148,3 +148,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0705; col
 .bag .item { width: 42px; height: 42px; display: grid; place-items: center; font-size: 24px; border-radius: 10px;
   background: rgba(40, 24, 60, 0.55); border: 1px solid rgba(240, 207, 116, 0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
 @media (pointer: coarse) { .bag { bottom: auto; top: 14px; left: 16px; } }
+
+.game-hud { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); pointer-events: none !important; z-index: 6;
+  background: var(--bg); border: 1px solid rgba(240, 200, 96, 0.55); border-radius: 999px; padding: 6px 18px; font-size: 17px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.5); white-space: nowrap; display: flex; gap: 12px; align-items: baseline; }
+.game-hud b { font-family: var(--font-title); color: var(--gold); font-weight: normal; }
+.game-hud.hidden { display: none; }
+@media (max-width: 600px) { .game-hud { font-size: 14px; padding: 4px 12px; top: 8px; } }

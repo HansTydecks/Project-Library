@@ -30,6 +30,7 @@ import { createUI, el } from './ui/ui.js';
 import { openProjectBook, openFillerBook, openIdeaNote } from './ui/bookPanel.js';
 import { openWizardDialog } from './ui/dialog.js';
 import { openJournal, openCatalog, openTravel } from './ui/journal.js';
+import { createGames } from './state/games.js';
 import { createProgress, createSecrets } from './state/progress.js';
 import { createFriends } from './npc/friends.js';
 import { createItems } from './state/items.js';
@@ -100,7 +101,9 @@ const items = createItems({
 });
 // Ostereier-Zustand: Jahreszeit (?season=winter|autumn|spring zum Testen), Feier-Timer, Kakaostunde (?cocoa)
 const fx = { season: season(new Date(), params.get('season')), party: 0, cocoaHour: params.has('cocoa'), paintedEggs: 0 };
+const games = createGames({ ui, progress, secrets, audio, interaction });
 const services = {
+  games,
   collision, lights, interaction, secrets, friends, items, events, progress, audio, index, fx,
   onTick: (fn) => engine.onUpdate(fn),
   get player() { return player; },
@@ -444,7 +447,7 @@ ui.jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); e.stop
 
 function showJournal() {
   openJournal(ui, {
-    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, items, paintedEggs: fx.paintedEggs, audio,
+    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, items, games, paintedEggs: fx.paintedEggs, audio,
     totalBooks: projects.length, totalIdeas: ideas.length,
     onHome: () => guideTo('room:foyer', 'Foyer'),
     onCatalog: () => events.emit('openCatalog'),

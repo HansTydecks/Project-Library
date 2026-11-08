@@ -40,6 +40,21 @@ export default defineRoom({
     l0.wallShelves('east', { id: '_lift0', unit: 2, height: 3.2, maxUnits: 6 });
     l0.wallShelves('north', { id: '_lift1', unit: 2, height: 3.2, maxUnits: 6 });
     l0.place('lantern', { at: [-5, 7, 5], hanging: true, chain: 4, intensity: 8, distance: 14 });
+    const s0 = l0.wallFrame('south', 0.42);
+    s0.place('magicWindow', { at: [-3.6, 0, 0], y: 2.4, mode: 'sunset', curtain: 'velvetBlue' });
+    s0.place('portrait', { at: [2.8, 2.3, 0], subject: 'zauberer', bg: '#3a3a6a' });
+    s0.place('mouseDoor', { at: [0.6, 0, 0], sign: 'Liftmaus' });
+    s0.place('wallShelfSmall', { at: [5.4, 0, 0], y: 1.7, width: 1.2 });
+    l0.place('cushionPile', { at: [-6.2, 0, 4.9] });
+    l0.place('fishBowl', { at: [5.6, 0, -3.4], name: 'Liftfische' });
+    l0.place('crystalCluster', { at: [6.6, 0, 3.6], color: '#9ad8ff' });
+    l0.place('paperStars', { area: [13, 13], top: 11.9, maxDrop: 8, count: 16, avoid: 2.4 });
+    l0.place('hangingPlant', { at: [-6, 0, -2.6], top: 11.9, y: 3.4 });
+    l0.place('sideTable', { at: [-6.6, 0, 2.8] });
+    l0.place('snowGlobe', { at: [-6.6, 0.62, 2.8], quip: 'In der Kugel schneit es auf ein winziges Wolkencafé.' });
+    l0.place('quillJar', { at: [-6.5, 0.62, 2.55] });
+    l0.place('candleCluster', { at: [-6.75, 0.62, 3.05], count: 3 });
+    l0.wallFrame('west', 0.42).place('bunting', { at: [-4.5, 0, 0], y: 3.6, length: 5, sag: 0.5 });
     ctx.sign('Bücherlift – Ostflügel & Wolkencafé', [0, 4.4, ctx.hd - 0.46], Math.PI, { w: 4, h: 0.5, size: 40 });
     // ---- 1. Obergeschoss
     const l1 = ctx.level(1, FLOOR_H);
