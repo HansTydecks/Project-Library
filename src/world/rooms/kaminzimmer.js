@@ -48,6 +48,22 @@ export default defineRoom({
     ctx.place('dustBunny', { at: [4, 0, -2], area: 2.5, color: '#e8c8b0' });
     ctx.place('standSign', { at: [1.2, 0, -2.8], rot: -0.4, text: 'Bitte den Drachen nicht wecken. Er schnarcht so schön.', size: 30, width: 1.1, signHeight: 0.38 });
     for (const z of [-4.5, 4.5]) west.place('sconce', { at: [z, 2.7, 0.02], intensity: 3 });
+    // --- Kleine Kamindetails
+    // Wimpel am Kaminsims und eine Kerzengruppe obendrauf
+    west.place('bunting', { at: [0, 0, 1.18], y: 1.74, length: 3.2, sag: 0.1, colors: ['velvet', 'pastelLemon', 'velvetGreen', 'pastelPeach'] });
+    ctx.place('candleCluster', { at: [-6.75, 1.77, 0.3], count: 3 });
+    // Mäusetür neben dem Kamin (dort ist es schön warm)
+    west.place('mouseDoor', { at: [3.0, 0, 0.1], sign: 'Kaminmaus', color: 'woodRed' });
+    // Ostwand: Porträt des kleinen Funki und ein verschneites Zauberfenster über dem Sofa
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('portrait', { at: [-4.2, 2.2, 0], subject: 'drache', bg: '#7a3a2a' });
+    east.place('magicWindow', { at: [3.6, 0, 0], y: 2.4, width: 1.3, height: 1.3, mode: 'night', curtain: 'velvetGreen', quip: 'Draußen rieselt leise Schnee. Drinnen knistert der Kamin. Genau richtig so.' });
+    // Sofaecke: Teppich, Beistelltisch mit Schneekugel, Kissenberg
+    ctx.place('rug', { at: [3.2, 0, 3.6], width: 1.8, depth: 2.8, material: 'carpetBlue' });
+    ctx.place('sideTable', { at: [5.2, 0, 5.4] });
+    ctx.place('snowGlobe', { at: [5.2, 0.63, 5.4], house: 'pastelLemon', quip: 'In der Kugel schneit es auf ein winziges Kaminzimmer. Darin schnarcht ein winziger Drache.' });
+    ctx.place('cushionPile', { at: [6.5, 0, 6.4], colors: ['velvet', 'velvetGreen', 'pastelPeach', 'pastelLemon'] });
+    ctx.place('hangingPlant', { at: [5.4, 0, -5.4], top: 5.5, y: 3.7 });
     ctx.sign('Kaminzimmer – Hier darf man einschlafen', [0, 4.0, hd - 0.46], Math.PI, { w: 4.2, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 4.5, 14] });
   },

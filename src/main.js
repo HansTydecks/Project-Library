@@ -22,6 +22,7 @@ import { fillerTitle, fillerLine } from './world/bookTitles.js';
 import { createSky } from './world/sky.js';
 import { createStacks } from './world/endless/stacks.js';
 import { createBookViewer } from './world/bookViewer.js';
+import { createDetailCuller } from './core/detail.js';
 
 import { createLibrarian } from './npc/librarian.js';
 import { createWisp, createPathfinder } from './npc/wisp.js';
@@ -30,6 +31,7 @@ import { createUI, el } from './ui/ui.js';
 import { openProjectBook, openFillerBook, openIdeaNote } from './ui/bookPanel.js';
 import { openWizardDialog } from './ui/dialog.js';
 import { openJournal, openCatalog, openTravel } from './ui/journal.js';
+import { createGames } from './state/games.js';
 import { createProgress, createSecrets } from './state/progress.js';
 import { createFriends } from './npc/friends.js';
 import { createItems } from './state/items.js';
@@ -100,7 +102,9 @@ const items = createItems({
 });
 // Ostereier-Zustand: Jahreszeit (?season=winter|autumn|spring zum Testen), Feier-Timer, Kakaostunde (?cocoa)
 const fx = { season: season(new Date(), params.get('season')), party: 0, cocoaHour: params.has('cocoa'), paintedEggs: 0 };
+const games = createGames({ ui, progress, secrets, audio, interaction });
 const services = {
+  games,
   collision, lights, interaction, secrets, friends, items, events, progress, audio, index, fx,
   onTick: (fn) => engine.onUpdate(fn),
   get player() { return player; },
@@ -179,6 +183,9 @@ const sky = createSky(scene);
 const shells = createShells({ scene, kits });
 const stacks = stapelDef ? createStacks({ def: stapelDef, occ, scene, services, projects }) : null;
 const viewer = createBookViewer({ scene, camera, engine });
+// Kleine Details in der Ferne ausblenden (spart Draw Calls beim Blick durch Türen); ?nocull zum Vergleichen
+const detail = createDetailCuller({ camera, kits });
+detail.enabled = !params.has('nocull');
 
 function roomAt(x, z, y = 0) {
   const [cx, cz] = worldToCell(x, z);
@@ -444,7 +451,7 @@ ui.jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); e.stop
 
 function showJournal() {
   openJournal(ui, {
-    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, items, paintedEggs: fx.paintedEggs, audio,
+    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, items, games, paintedEggs: fx.paintedEggs, audio,
     totalBooks: projects.length, totalIdeas: ideas.length,
     onHome: () => guideTo('room:foyer', 'Foyer'),
     onCatalog: () => events.emit('openCatalog'),
@@ -505,6 +512,7 @@ const ctxObj = { player: player.pos, camera, launch: (v) => player.launch(v), ge
 let fpsAcc = 0, fpsN = 0, fps = 0, detailAcc = 1;
 engine.onUpdate((dt, t) => {
   player.update(dt);
+  detail.update(dt);
   const id = roomAt(player.pos.x, player.pos.z, player.pos.y);
   const lvl = levelAt(player.pos.y);
   if (id && (id !== currentRoom || lvl !== currentLevel)) enterRoom(id, lvl);
@@ -570,7 +578,7 @@ start.querySelector('.enter').classList.remove('loading');
 
 if (DEBUG || params.has('test')) {
   window.__lib = {
-    THREE, scene, camera, player, input, interaction, events, wisp, ui, index, kits, collision, stacks, progress, librarian,
+    THREE, scene, camera, player, input, interaction, events, wisp, ui, index, kits, collision, stacks, progress, librarian, detail, engine,
     teleport: (x, z, yaw, y) => player.teleport(x, z, yaw, y),
     look: (yaw, pitch) => player.look(yaw, pitch),
     guide: (key) => guideTo(key, key),

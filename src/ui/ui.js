@@ -16,6 +16,7 @@ export function createUI({ root, input }) {
   const debug = root.appendChild(el('div', 'debug hidden'));
   const corner = root.appendChild(el('div', 'corner'));
   const bag = root.appendChild(el('div', 'bag hidden'));
+  const gameHud = root.appendChild(el('div', 'game-hud hidden'));
   const touchBtn = root.appendChild(el('button', 'touch-act hidden', '✋'));
   touchBtn.setAttribute('aria-label', 'Interagieren');
   const jumpBtn = root.appendChild(el('button', 'touch-jump hidden', '⤒'));
@@ -98,6 +99,13 @@ export function createUI({ root, input }) {
       if (text == null) { compass.classList.add('hidden'); return; }
       compass.classList.remove('hidden');
       compass.innerHTML = `<span class="arrow" style="transform: rotate(${angle}rad)">↑</span> ${esc(text)}`;
+    },
+
+    /** Minispiel-Anzeige oben in der Mitte (null blendet aus). */
+    setGameHud(title, text = '') {
+      if (title == null) { gameHud.classList.add('hidden'); return; }
+      gameHud.classList.remove('hidden');
+      gameHud.innerHTML = `<b>${esc(title)}</b>${text ? `<span>${esc(text)}</span>` : ''}`;
     },
 
     setDebug(text) { debug.classList.remove('hidden'); debug.textContent = text; },

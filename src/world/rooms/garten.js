@@ -1,5 +1,5 @@
 import { defineRoom } from '../registry.js';
-import { box, cyl, plane } from '../geo.js';
+import { box, cyl, plane, torus } from '../geo.js';
 
 // Der Innenhof-Garten unter dem Sternenhimmel.
 export default defineRoom({
@@ -67,6 +67,37 @@ export default defineRoom({
     const season = ctx.kit.services.fx?.season;
     if (season === 'winter') ctx.place('snowfall', { area: [ctx.b.w, 9, ctx.b.d], count: 900 });
     if (season === 'autumn') for (const [x, z] of [[-1.8, -3.6], [1.8, -3.6], [-14.5, 1.2], [14.5, 1.2]]) ctx.place('pumpkin', { at: [x, 0, z], scale: 1 + (x > 0 ? 0.3 : 0) });
+    // --- Kleine Gartendetails
+    // Mondschein-Picknick neben dem Tauschregal
+    ctx.place('rug', { at: [-13.2, 0, 5.1], width: 2.2, depth: 1.6, material: 'carpetRed' });
+    ctx.place('teapot', { at: [-13.7, 0.035, 4.8], color: 'pastelMint', scale: 0.7 });
+    ctx.place('teacup', { at: [-12.7, 0.035, 5.5] });
+    ctx.place('teacup', { at: [-12.5, 0.035, 4.7], color: 'pastelPink' });
+    ctx.place('cake', { at: [-13.2, 0.035, 5.35] });
+    ctx.place('bookPile', { at: [-14.0, 0.035, 5.6], count: 3 });
+    // Bienenstock am Ostbeet, die Bienen fliegen zu den Blumen
+    ctx.place('beehive', { at: [22.4, 0, -6.4] });
+    ctx.place('bees', { at: [22.4, 0, -6.4], count: 5, hive: [0, 1, 0], targets: [[-2.2, 0.5, 4.0], [-1.6, 0.5, 6.6], [-2.8, 0.5, 5.4]] });
+    // Mondsteine in den Ecken
+    ctx.place('crystalCluster', { at: [-22.6, 0, -6.6], color: '#b8c8ff', scale: 1.2 });
+    ctx.place('crystalCluster', { at: [22.6, 0, 6.4], color: '#e0b8ff' });
+    // Blumenkästen an der Südfassade
+    for (const x of [-5.2, 5.2]) ctx.place('planter', { at: [x, 0, 7.2], width: 2.2 });
+    // Wegweiser an der Ostkreuzung
+    ctx.place('signpost', { at: [14.0, 0, -1.9], signs: [['Riesenstube', 0], ['Archiv', Math.PI / 2], ['Wintergarten', -Math.PI / 2], ['Brunnen', Math.PI]] });
+    // Vogeltränke am Westweg
+    const bath = ctx.frame([-18.4, 0, -6.2], 0);
+    bath.add(cyl(0.22, 0.3, 0.08, 12), 'stoneLight', [0, 0.04, 0]);
+    bath.add(cyl(0.13, 0.18, 0.7, 10), 'stoneLight', [0, 0.43, 0]);
+    bath.add(cyl(0.45, 0.3, 0.15, 16), 'stoneLight', [0, 0.82, 0]);
+    bath.add(cyl(0.4, 0.4, 0.02, 16), 'water', [0, 0.925, 0]);
+    bath.add(torus(0.43, 0.05, 6, 18), 'stoneLight', [0, 0.93, 0], [Math.PI / 2, 0, 0]);
+    bath.collider(0, 0, 0.7, 0.7, { top: 0.96 });
+    // Wimpelketten zwischen den Bäumen
+    ctx.place('bunting', { at: [-10, 0, -1.5], rot: -2.246, length: 6.0, y: 3.0, sag: 0.6 });
+    ctx.place('bunting', { at: [10, 0, -1.5], rot: -0.896, length: 6.0, y: 3.0, sag: 0.6, colors: ['pastelSky', 'pastelLemon', 'pastelPink', 'pastelMint'] });
+
     ctx.place('fireflies', { area: [ctx.b.w - 4, 3, ctx.b.d - 3], count: 120 });
+    ctx.place('fireflyHunt', { at: [6.5, 0, 3] }); // Minispiel: Glühwürmchen-Jagd
   },
 });

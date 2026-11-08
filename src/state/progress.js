@@ -3,12 +3,12 @@
 const KEY = 'magische-bibliothek:v1';
 
 export function createProgress() {
-  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], items: [], itemsUsed: [], pilze: [], visits: 0, firstVisit: null };
+  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], items: [], itemsUsed: [], pilze: [], knocks: [], scores: {}, visits: 0, firstVisit: null };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) data = { ...data, ...JSON.parse(raw) };
   } catch { /* privat/blockiert */ }
-  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs', 'items', 'itemsUsed', 'pilze'].map((k) => [k, new Set(data[k] ?? [])]));
+  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs', 'items', 'itemsUsed', 'pilze', 'knocks'].map((k) => [k, new Set(data[k] ?? [])]));
   data.visits = (data.visits ?? 0) + 1;
   data.firstVisit ??= new Date().toISOString().slice(0, 10);
 
@@ -27,9 +27,18 @@ export function createProgress() {
     mark: (k, id) => mark(k)(id),
     remove: (k, id) => { if (sets[k].delete(id)) save(); },
     count: (k) => sets[k].size,
+    /** Bestwert eines Minispiels (undefined, wenn noch nie gespielt). */
+    best: (game) => data.scores?.[game],
+    /** Neuen Wert melden; lower = true, wenn kleiner besser ist (Zeiten). Gibt true bei neuem Rekord zurück. */
+    record(game, value, { lower = false } = {}) {
+      data.scores ??= {};
+      const old = data.scores[game];
+      if (old !== undefined && (lower ? value >= old : value <= old)) return false;
+      data.scores[game] = value; save(); return true;
+    },
     get visits() { return data.visits; },
     get firstVisit() { return data.firstVisit; },
-    reset() { for (const s of Object.values(sets)) s.clear(); save(); },
+    reset() { for (const s of Object.values(sets)) s.clear(); data.scores = {}; save(); },
   };
 }
 

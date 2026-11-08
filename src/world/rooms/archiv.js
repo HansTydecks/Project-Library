@@ -48,5 +48,17 @@ export default defineRoom({
     ctx.place('antTrail', { at: [-2, 0, -7.2], length: 9, count: 30 });
     ctx.place('dust', { area: [14, 4.5, 14] });
     ctx.add(box(0.8, 0.02, 0.6, 0), 'paper', [-1.2, 0.012, 1.2], [0, 0.4, 0]);
+
+    // Kleine Details: Zeitungs-Wimpel, Porträt, Nachtfenster, Krümelarchiv der Mäuse
+    ctx.wallFrame('north', 1.0).place('bunting', { at: [0, 0, 0], length: 14.2, y: 5.1, sag: 0.35, colors: ['paper', 'pastelLemon', 'cream', 'pastelSky'] });
+    const west = ctx.wallFrame('west', 0.42);
+    west.place('portrait', { at: [4.4, 2.75, 0], subject: 'eule', width: 0.8, height: 1.0, bg: '#6a5a3a', caption: 'Professor Puschel hat das Archiv einmal komplett gelesen. Rückwärts. Er sagt, das Ende sei besser als der Anfang.' });
+    west.place('magicWindow', { at: [-4.4, 0, 0], y: 2.65, width: 1.1, height: 1.5, mode: 'night', curtain: 'velvetGreen', frame: 'woodLight', quip: 'Draußen ist Nacht. Im Archiv ist es immer ein bisschen Nacht – da schlafen die alten Geschichten besser.' });
+    west.place('wallShelfSmall', { at: [-6.5, 0, 0], y: 1.65, width: 0.7, wood: 'woodDark' });
+    ctx.wallFrame('east', 0.5).place('mouseDoor', { at: [-5.8, 0, 0], sign: 'Krümelarchiv', color: 'woodRed' });
+    ctx.place('hangingPlant', { at: [6.3, 0, -6.3], top: 5.5, y: 3.7 });
+    ctx.place('quillJar', { at: [0.55, 0.81, 3.3], jar: 'porcelain' });
+    ctx.place('candleCluster', { at: [1.55, 0.81, 2.7], count: 3 });
+    ctx.place('paperStars', { at: [0, 0, 1], area: [8, 7], top: 5.5, maxDrop: 0.9, count: 8, avoid: 1.5, colors: ['paper', 'cream', 'pastelLemon'] });
   },
 });

@@ -1,7 +1,7 @@
 import { el, esc } from './ui.js';
 
 /** Das Entdeckungs-Tagebuch. */
-export function openJournal(ui, { rooms, progress, secrets, friends, items, paintedEggs = 0, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
+export function openJournal(ui, { rooms, progress, secrets, friends, items, games, paintedEggs = 0, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
   const box = el('div', 'journal');
   const foundBooks = progress.count('books'), foundIdeas = progress.count('ideas');
   const sec = secrets.list('secret'), eggs = secrets.list('egg');
@@ -27,6 +27,8 @@ export function openJournal(ui, { rooms, progress, secrets, friends, items, pain
     <h3>Ostereier (${eggs.filter((s) => s.found).length}/${eggs.length})</h3>
     <ul>${eggs.map((s) => s.found ? `<li>🥚 ${esc(s.name)}</li>` : '<li class="unknown">??? (gut versteckt)</li>').join('')}</ul>
     <div>Bemalte Eier eingesammelt: ${progress.count('eggs')} von ${paintedEggs}</div>
+    <h3>Minispiele & Bestwerte</h3>
+    <ul>${(games?.list() ?? []).map((g) => `<li>🎲 ${esc(g.name)} <span style="opacity:.6">· ${esc(roomName(g.room))}</span> – ${g.best === undefined ? '<span class="unknown">noch nicht gespielt</span>' : `Bestwert: ${esc(g.bestText)}`}</li>`).join('')}</ul>
     <div class="row">
       <button data-a="catalog">Zettelkatalog öffnen</button>
       <button data-a="home">Irrlicht nach Hause rufen</button>

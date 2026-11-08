@@ -40,5 +40,18 @@ export default defineRoom({
     if (ctx.kit.services.fx?.season === 'winter') ctx.place('snowfall', { area: [16, 9, 16] });
     ctx.place('crystalBall', { at: [-1.6, 1.02, -1.2], interact: true });
     ctx.place('pedestal', { at: [-1.6, 0, -1.2] });
+
+    // ---- Mehr Details: Wimpelketten, Blumenkästen, Sternguck-Ecke
+    ctx.place('bunting', { at: [-5, 0, 0], rot: Math.PI / 2, length: 13.2, y: 3.05, sag: 0.7 });
+    ctx.place('bunting', { at: [0, 0, -5.6], length: 15.1, y: 4.3, sag: 0.9 });
+    ctx.place('planter', { at: [4.2, 0, -7.15], width: 2.8 });
+    ctx.place('planter', { at: [-3.6, 0, 7.15], width: 2.4 });
+    ctx.place('cushionPile', { at: [-6.3, 0, 3.4], colors: ['velvetBlue', 'pastelSky', 'pastelLilac', 'pastelPink', 'pastelLemon'] });
+    ctx.place('sideTable', { at: [2.4, 0, 5.6] });
+    ctx.place('snowGlobe', { at: [2.35, 0.62, 5.5], house: 'pastelSky', name: 'Sternenkugel', quip: 'In der Kugel schneit es Sterne auf einen winzigen Balkon. Auf dem steht jemand, der genauso aussieht wie du.' });
+    ctx.place('teacup', { at: [2.6, 0.62, 5.8], color: 'pastelSky' });
+    ctx.place('compassRose', { at: [-1.6, 0, -1.2], radius: 1.4 });
+    ctx.place('scroll', { at: [-0.25, 0.75, 3.35], length: 0.32 });
+    ctx.place('bookPile', { at: [4.6, 0, 3.4], count: 4 });
   },
 });

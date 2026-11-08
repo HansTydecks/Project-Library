@@ -50,5 +50,17 @@ export default defineRoom({
     ctx.place('chandelier', { at: [0, 0, 0], y: 5.8, chain: 1.6, radius: 1.2, candles: 10, intensity: 14 });
     ctx.sign('Uhrmacherwerkstatt – Zeit ist, was man daraus macht', [0, 4.6, hd - 0.46], Math.PI, { w: 4.8, h: 0.55, size: 36 });
     ctx.place('dust', { area: [14, 6.5, 14] });
+
+    // Kleine Details: Feierabend-Fenster, Porträt der Uhrmacherin, Mäusetür, Riesen-Fingerhut
+    // (Bereich um (−4.2, 3.4) bleibt frei für ein Spiel)
+    south.place('magicWindow', { at: [0, 0, 0], y: 2.45, width: 1.3, height: 1.45, mode: 'sunset', frame: 'woodLight', curtain: 'velvetGreen', quip: 'Draußen ist immer Feierabend. Die Uhren hier drin wissen davon zum Glück nichts.' });
+    south.place('portrait', { at: [5.3, 4.6, 0], subject: 'maus', width: 0.7, height: 0.9, bg: '#a88a4a' });
+    ctx.wallFrame('south', 0.7).place('bunting', { at: [0, 0, 0], length: 14.2, y: 6.95, sag: 0.4, colors: ['pastelLemon', 'pastelPink', 'pastelMint', 'pastelLilac'] });
+    ctx.wallFrame('south', 0.5).place('mouseDoor', { at: [-3.6, 0, 0], sign: 'Tick & Tack', color: 'pastelSky' });
+    west.place('wallShelfSmall', { at: [-6.5, 0, 0], y: 1.9, width: 1.0, wood: 'woodRed' });
+    ctx.place('giantThimble', { at: [5.6, 0, -2.6], radius: 0.42, height: 0.65 });
+    ctx.place('hangingPlant', { at: [6.3, 0, 6.5], top: 7.5, y: 4.6 });
+    ctx.place('paperStars', { at: [0, 0, 0], area: [11, 11], top: 7.5, maxDrop: 1.3, count: 10, avoid: 2.4, colors: ['gold', 'pastelLemon', 'copper'] });
+    ctx.place('gearPuzzle', { at: [-7.0, 0, 4.4], rot: Math.PI / 2 }); // Minispiel: Zahnrad-Tresor
   },
 });

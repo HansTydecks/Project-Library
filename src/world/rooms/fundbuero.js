@@ -41,5 +41,25 @@ export default defineRoom({
     ctx.place('chandelier', { at: [0, 0, 0], y: 4, chain: 0.8, radius: 0.9, candles: 8, intensity: 11 });
     ctx.sign('Kabinett der verlorenen Dinge', [0, 3.6, hd - 0.46], Math.PI, { w: 3.8, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 4, 14] });
+
+    // ---- Mehr Details: Vermisstenanzeigen, Fundregal, Mäusetür, ein Fenster ins Nirgendwo
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('portrait', { at: [0, 2.4, 0], subject: 'katze', bg: '#5a3a6a', title: 'Vermisst: Die Katze', caption: 'Zuletzt gesehen auf einem warmen Buch. Sie ist gar nicht verloren – sie mag es nur, wenn man sie sucht.' });
+    east.place('wallShelfSmall', { at: [-3.4, 0, 0], y: 1.7, width: 1.6, wood: 'woodRed' });
+    east.place('wallShelfSmall', { at: [3.2, 0, 0], y: 2.3, width: 1.2 });
+    east.place('mouseDoor', { at: [3.4, 0, 0], sign: 'Fundmaus', color: 'pastelLilac', lines: [
+      '»Haben Sie zufällig einen Käsekrümel verloren? Wir hätten da einen gefunden.«',
+      '»Fundsachen bitte unter der Tür durchschieben. Aber nur kleine!«',
+      'Ein Zettel kommt heraus: »Bin selbst verloren gegangen. Melde mich, sobald ich mich gefunden habe.«',
+    ] });
+    ctx.wallFrame('north', 0.42).place('magicWindow', { at: [3.6, 0, 0], y: 2.3, width: 1.1, height: 1.4, mode: 'night', curtain: 'velvetBlue', quip: 'Dahinter liegt das Land, in das verlorene Dinge in den Urlaub fahren. Eine Socke winkt dir fröhlich zu.' });
+    ctx.place('bunting', { at: [0, 0, -2.4], length: 15.1, y: 4.5, sag: 0.5, colors: ['pastelPink', 'pastelSky', 'pastelLemon', 'pastelMint', 'white'] });
+    ctx.place('sideTable', { at: [-6.6, 0, -3.6] });
+    ctx.place('snowGlobe', { at: [-6.6, 0.62, -3.5], house: 'pastelLilac', name: 'Verlorene Schneekugel', quip: 'Drinnen schneit es auf ein winziges Fundbüro. Darin steht eine noch winzigere Schneekugel.' });
+    ctx.place('hourglass', { at: [-6.7, 0.62, -3.75] });
+    ctx.place('giantButton', { at: [-4.8, 0, 6.3], radius: 0.42, height: 0.12, material: 'pastelPink' });
+    ctx.place('yarnBall', { at: [-5.0, 0, 4.8], radius: 0.24, material: 'pastelMint', rot: 2.4 });
+    ctx.place('hangingPlant', { at: [-5.4, 0, -6.2], top: 5, y: 3.3, leaf: 'leaves' });
+    ctx.place('scroll', { at: [1.8, 0, -6.5], length: 0.4, rot: 0.4 });
   },
 });

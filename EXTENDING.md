@@ -202,6 +202,20 @@ Jede Interaktion mit `friend` trägt die Figur ins Tagebuch ein.
 - Geheimtür: Room-Def `secretDoors: ['nachbarId']` → auf der Nachbarseite steht ein Regal mit „falschem Buch“;
   `hidden: true` versteckt den Raum in Tagebuch, Karte und Bibliothekar, bis er betreten wurde.
 
+## Minispiele
+
+Reine Spiellogik (testbar) in `src/core/minigames.js`, Spiele-Props in `src/props/games.js`, Zentrale in `src/state/games.js`
+(`kit.services.games`): `register(id, { name, room, unit, lower, egg, eggName })`, `start(id, { onAbort })`, `hud(id, text)`,
+`capture(id, fn)` (Klick/E übernehmen, z. B. zum Werfen), `record(id, wert)` (Bestwert im Fortschritt, Tagebuch zeigt ihn),
+`win(id)` (Sieg-Osterei; alle zehn → »Spielemeister«), `end(id)`. Es läuft immer nur ein Spiel; ein neues bricht das alte ab.
+Hilfen in `games.js`: `scheduler(kit)` (Zeitplan über onUpdate) und `watchDistance()` (Abbruch beim Weggehen).
+
+## Detail-Bausteine
+
+`src/props/decor.js`: `bunting`, `hangingPlant`, `candleCluster`, `portrait` (Bewohner-Porträts), `mouseDoor` (fünf angeklopft →
+Osterei), `magicWindow` (Himmel zieht vorbei: day/night/sunset/sea), `fishBowl`, `crystalCluster`, `paperStars`, `cushionPile`,
+`snowGlobe`, `quillJar`, `wallShelfSmall`. Wandprops mit `ctx.wallFrame(side, 0.42).place(...)`.
+
 ## 4. Geheimnisse
 
 Jede Interaktion mit `secret: 'eindeutige-id'` wird automatisch registriert, im Tagebuch als „???“ gezählt und beim
@@ -224,3 +238,6 @@ Sprüche & Spezialfragen: `src/npc/librarian.js` (testbar, ohne three.js). Neue 
 - **Humor**: Der Bibliothekar ist liebevoll-verschroben. Kurze, augenzwinkernde Texte.
 - **Performance**: Lichter nur über `light()` (Licht-Pool, max. 12 aktive), viel statische Geometrie über `add()`,
   hohe Regalreihen als Buchwand-Textur (passiert automatisch über 2,4 m).
+  Kleine Einzelobjekte (`f.object`/`f.mesh`/`f.glow`, Radius ≤ 0,8 m) blendet `core/detail.js` je nach Größe ab
+  8–30 m Entfernung aus (über Kamera-Layer, `visible` bleibt frei). Ausnahme: `obj.userData.keepDetail = true`.
+  Vergleich: `?nocull`. Draw Calls ehrlich messen: `window.__lib.engine.renderer.info.render.calls` (nicht die Debug-Zeile).

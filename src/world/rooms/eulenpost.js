@@ -33,5 +33,20 @@ export default defineRoom({
     ctx.place('chandelier', { at: [0, 0, 0], y: 5.2, chain: 1.1, radius: 1, candles: 8, intensity: 12 });
     ctx.sign('Eulenpost – Wir finden jeden. Auch dich.', [0, 4.7, -hd + 0.46], 0, { w: 4, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 5.5, 14] });
+
+    // ---- Mehr Details: Briefleine, Wartebank, Schreibzeug, Papierflieger
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('portrait', { at: [-4.6, 2.5, 0], subject: 'eule', bg: '#2a5a4a', title: 'Postmeister Puschel', caption: 'Hat in seiner Laufbahn 1.000.000 Briefe zugestellt. 999.999 davon an die richtige Adresse.' });
+    east.place('wallShelfSmall', { at: [4.6, 0, 0], y: 1.7, width: 1.6, wood: 'woodLight' });
+    ctx.wallFrame('south', 0.42).place('magicWindow', { at: [3, 0, 0], y: 2.4, mode: 'sunset', curtain: 'velvetGreen', quip: 'Am Horizont fliegt eine Eule mit einem Paket, das größer ist als sie selbst. Sie schafft das.' });
+    ctx.place('bunting', { at: [0, 0, 3.2], length: 15.1, y: 4.9, sag: 0.6, colors: ['white', 'cream', 'pastelSky', 'pastelPink', 'paper'] });
+    ctx.place('paperPlanes', { at: [0, 0, 0], count: 4, radius: 2.6, y: 4.2 });
+    ctx.place('bench', { at: [-6.9, 0, 4.6], rot: Math.PI / 2, width: 1.8 });
+    ctx.place('scroll', { at: [-6.85, 0.47, 4.2], length: 0.36, rot: Math.PI / 2 });
+    ctx.place('umbrellaStand', { at: [-6.9, 0, 6.5] });
+    ctx.place('snailMailbox', { at: [-6.6, 0, -3.9] });
+    ctx.place('inkwell', { at: [3.4, 0.835, -0.15] });
+    ctx.place('quillJar', { at: [3.45, 0.83, -1.0], jar: 'pastelPink' });
+    ctx.place('hangingPlant', { at: [6.3, 0, -6.3], top: 6.5, y: 4.2, leaf: 'leavesPink' });
   },
 });

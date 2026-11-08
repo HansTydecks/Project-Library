@@ -59,6 +59,23 @@ Leuchtende Kleinigkeiten kann man einstecken (Tasche unten links, im Tagebuch un
 etwas, andere wünschen sich etwas – daraus entstehen kleine Rätselketten mit Belohnungen (eine Katze, die dir folgt, eine
 singende Riesenblume, eine reparierte Turmuhr, ein Dreifachsprung …). Taste `B` liest Briefe.
 
+## Minispiele
+
+Zehn kleine Spiele sind über die Bibliothek verteilt. Bestwerte stehen im Tagebuch, wer ein Spiel meistert, findet ein Osterei.
+
+| Spiel | Wo | Worum es geht |
+| --- | --- | --- |
+| **Hütchenspiel** | Teesalon | Unter welcher Teetasse liegt das Zuckerstück? Mirabelle schiebt immer schneller |
+| **Trank-Memo** | Trankküche | Der Kessel zeigt ein Rezept aus bunten Zutaten – nachbrauen, Runde um Runde länger |
+| **Papierkorb-Weitwurf** | Ideen-Kabinett | Zehn zerknüllte Ideen, ein Papierkorb: zielen und werfen |
+| **Glühwürmchen-Jagd** | Mondgarten | 45 Sekunden, zwölf Glühwürmchen, ein Glas |
+| **Spielzeug-Memory** | Spielzeugkammer | Sechs Paare an der Memory-Wand in möglichst wenigen Zügen |
+| **Spatzen-Echo** | Musikzimmer | Der Spatzenchor singt vor, du spielst es am Xylophon nach |
+| **Sternbilder** | Sternwarte | Großer Wagen, Kassiopeia und die Teekanne an der Sternkarte nachzeichnen |
+| **Ringflug** | Pilzhain | Mit Sprungpilzen durch sechs schwebende Ringe – auf Zeit |
+| **Bücher-Angeln** | Lesebad | Auswerfen, warten, im richtigen Moment ziehen – was hängt wohl am Haken? |
+| **Zahnrad-Tresor** | Uhrmacherwerkstatt | Verzahnte Räder drehen sich gegenseitig mit – alle Pfeile nach oben! |
+
 ## Bewohner & Ostereier
 
 Zwanzig Bewohner wollen kennengelernt werden – darunter (Tagebuch → „Bekanntschaften“): der Bibliothekar, Frau Fingerhut (Uhrmacher-Maus),
