@@ -10,7 +10,7 @@ export default defineRoom({
   cell: [-1, 0],
   height: 5.5,
   spawn: { at: [3, 3], yaw: Math.PI / 2 },
-  atmosphere: { fog: '#1a1020', density: 0.032, ambient: 1.0, ambientColor: '#e8c8ff', moon: 0 },
+  atmosphere: { fog: '#3a2448', density: 0.014, ambient: 1.4, ambientColor: '#e8c8ff', moon: 0 },
   build(ctx) {
     ctx.floor('parquet');
     ctx.ceiling('plaster');
@@ -21,9 +21,10 @@ export default defineRoom({
     ctx.place('rug', { at: [0, 0, 0], width: 6, depth: 5, material: 'carpetBlue' });
     // Große Pinnwand an der Westwand
     const west = ctx.wallFrame('west', 0.42);
-    west.place('corkboard', { at: [0, 2.2, 0], width: 6, height: 2.6, max: 30 });
-    west.place('sconce', { at: [-3.6, 2.8, 0], light: false });
-    west.place('sconce', { at: [3.6, 2.8, 0], light: false });
+    // (Mitte bleibt frei: dort ist die Tür zum Teesalon)
+    west.place('corkboard', { at: [-4.4, 2.2, 0], width: 5, height: 2.6, max: 30 });
+    west.place('sconce', { at: [-1.6, 2.8, 0], light: false });
+    west.place('sconce', { at: [-7.2, 2.8, 0], light: false });
 
     // Schreibtisch mit Schreibmaschine
     ctx.place('desk', { at: [-4.8, 0, -5.2], rot: Math.PI / 2 });
@@ -49,6 +50,9 @@ export default defineRoom({
     // Leuchtende Glühbirne unter der Decke (Ideen-Symbol)
     ctx.add(box(0.02, 1.4, 0.02, 0), 'iron', [1, 4.8, 0.5]);
     ctx.place('lantern', { at: [1, 3.9, 0.5], hanging: true, chain: 0.9, color: '#ffe68a', intensity: 9, distance: 10 });
+    ctx.place('bubbles', { at: [1, 0, 0.5], y: 0.6, area: [4, 4, 4], count: 16 });
+    ctx.place('paperPlanes', { at: [1, 0, 0.5], y: 3.2, radius: 3, count: 4 });
+    ctx.place('standSign', { at: [5.6, 0, -3], rot: -0.6, text: 'Ideen bitte frei herumlaufen lassen.', size: 32, width: 1.0, signHeight: 0.36 });
     ctx.place('dust', { area: [14, 4.5, 14], color: '#e8d0ff' });
   },
 });

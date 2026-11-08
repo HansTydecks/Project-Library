@@ -17,6 +17,8 @@ export function createUI({ root, input }) {
   const corner = root.appendChild(el('div', 'corner'));
   const touchBtn = root.appendChild(el('button', 'touch-act hidden', '✋'));
   touchBtn.setAttribute('aria-label', 'Interagieren');
+  const jumpBtn = root.appendChild(el('button', 'touch-jump hidden', '⤒'));
+  jumpBtn.setAttribute('aria-label', 'Springen');
 
   const stack = [];
   const listeners = { allClosed: new Set(), opened: new Set() };
@@ -108,7 +110,11 @@ export function createUI({ root, input }) {
     },
 
     touchButton: touchBtn,
-    showHud(on) { for (const n of [cross, hint, corner]) n.classList.toggle('hidden', !on); },
+    jumpButton: jumpBtn,
+    showHud(on) {
+      for (const n of [cross, hint, corner]) n.classList.toggle('hidden', !on);
+      jumpBtn.classList.toggle('hidden', !on || !input.state.touch);
+    },
   };
   return ui;
 }

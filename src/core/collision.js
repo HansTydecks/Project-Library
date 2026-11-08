@@ -1,5 +1,8 @@
-// 2D-Kollision (XZ-Ebene) mit achsenparallelen Boxen in einem Spatial Hash.
+// Kollision mit achsenparallelen Boxen in einem Spatial Hash (XZ-Ebene) – mit optionaler Höhe:
+// box.top (Oberkante, darauf kann man stehen) und box.bottom (Unterkante, z. B. schwebende Plattformen).
+// Boxen ohne Höhe sind unendlich hoch (Wände, Regale).
 const BUCKET = 4;
+const BODY_H = 1.75;  // Körperhöhe der Spielfigur
 
 export class CollisionWorld {
   constructor() {
@@ -14,6 +17,8 @@ export class CollisionWorld {
   /** box: {minX,maxX,minZ,maxZ}; owner: beliebiger Schlüssel zum späteren Entfernen */
   add(box, owner = 'static') {
     box.owner = owner;
+    box.top ??= Infinity;
+    box.bottom ??= -Infinity;
     const x0 = Math.floor(box.minX / BUCKET), x1 = Math.floor(box.maxX / BUCKET);
     const z0 = Math.floor(box.minZ / BUCKET), z1 = Math.floor(box.maxZ / BUCKET);
     box._keys = [];
@@ -58,11 +63,17 @@ export class CollisionWorld {
     return out;
   }
 
-  /** Schiebt einen Kreis (x,z,r) aus allen Boxen heraus. Gibt {x,z} zurück. */
-  resolve(x, z, r) {
+  /** Blockiert die Box einen Körper, dessen Füße auf Höhe y sind? */
+  static blocks(b, y) {
+    return y < b.top - 0.02 && y + BODY_H > b.bottom;
+  }
+
+  /** Schiebt einen Kreis (x,z,r) aus allen Boxen heraus, die auf Höhe y im Weg sind. Gibt {x,z} zurück. */
+  resolve(x, z, r, y = 0) {
     for (let iter = 0; iter < 3; iter++) {
       let moved = false;
       for (const b of this.query(x, z, r + 0.5)) {
+        if (!CollisionWorld.blocks(b, y)) continue;
         const cx = Math.max(b.minX, Math.min(x, b.maxX));
         const cz = Math.max(b.minZ, Math.min(z, b.maxZ));
         let dx = x - cx, dz = z - cz;
@@ -87,6 +98,29 @@ export class CollisionWorld {
       if (!moved) break;
     }
     return { x, z };
+  }
+
+  /** Höchste begehbare Oberfläche unter (x,z), höchstens step über y. Boden = 0. */
+  groundAt(x, z, r, y, step = 0.3) {
+    let g = 0;
+    const m = r * 0.6;
+    for (const b of this.query(x, z, r)) {
+      if (b.top === Infinity || b.top > y + step) continue;
+      if (x < b.minX - m || x > b.maxX + m || z < b.minZ - m || z > b.maxZ + m) continue;
+      if (b.top > g) g = b.top;
+    }
+    return g;
+  }
+
+  /** Tiefste Unterkante über dem Kopf (für Kopfstoßen unter schwebenden Plattformen). */
+  ceilingAt(x, z, y) {
+    let c = Infinity;
+    for (const b of this.query(x, z, 0.3)) {
+      if (b.bottom === -Infinity || b.bottom < y + BODY_H - 0.25) continue;
+      if (x < b.minX || x > b.maxX || z < b.minZ || z > b.maxZ) continue;
+      c = Math.min(c, b.bottom);
+    }
+    return c;
   }
 
   allBoxes() {

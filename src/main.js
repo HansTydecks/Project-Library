@@ -45,7 +45,7 @@ start.innerHTML = `<div>
   <h1>Die Magische Bibliothek</h1>
   <div class="sub">Ein endloses Archiv voller Projekte, Ideen und Geheimnisse</div>
   <div class="enter loading">Die Kerzen werden angezündet …</div>
-  <div class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> laufen · <kbd>Shift</kbd> rennen · Maus schauen · <kbd>E</kbd> / Klick interagieren · <kbd>Tab</kbd> Tagebuch · <kbd>M</kbd> Klang</div>
+  <div class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> laufen · <kbd>Shift</kbd> rennen · <kbd>Leertaste</kbd> springen (2× in der Luft!) · Maus schauen · <kbd>E</kbd> / Klick interagieren · <kbd>Tab</kbd> Tagebuch · <kbd>M</kbd> Klang</div>
 </div>`;
 document.body.appendChild(start);
 
@@ -75,7 +75,7 @@ const secrets = createSecrets({
   onFound: (s) => { ui.toast(`✦ Geheimnis entdeckt: ${s.name}`, { secret: true, ms: 5500 }); audio.play('secret'); },
 });
 
-const hemi = new THREE.HemisphereLight('#ffd8b0', '#2a1a10', 0.5);
+const hemi = new THREE.HemisphereLight('#ffd8b0', '#6a4868', 0.5);
 scene.add(hemi);
 const moon = new THREE.DirectionalLight('#a8b8ff', 0);
 moon.position.set(60, 80, -30);
@@ -184,24 +184,31 @@ for (const d of doors) {
 }
 let currentRoom = null;
 let activeKits = new Set(kits);
-const atmo = { fog: new THREE.Color('#1c130b'), density: 0.03, ambient: 0.5, ambientColor: new THREE.Color('#ffd8b0'), moon: 0, outdoor: 0, skyHidden: 0 };
+const atmo = { fog: new THREE.Color('#3a2630'), density: 0.012, ambient: 0.5, ambientColor: new THREE.Color('#ffd8b0'), moon: 0, outdoor: 0, skyHidden: 0 };
 const atmoTarget = { ...atmo, fog: atmo.fog.clone(), ambientColor: atmo.ambientColor.clone() };
+
+function doorBetween(a, b) { return doors.find((d) => (d.a === a && d.b === b) || (d.a === b && d.b === a)); }
+function throughView(a, n, m) {
+  const d1 = doorBetween(a, n), d2 = doorBetween(n, m);
+  if (!d1 || !d2 || d1.axis !== d2.axis) return false;
+  return d1.axis === 'x' ? Math.abs(d1.z - d2.z) < 6 : Math.abs(d1.x - d2.x) < 6;
+}
 
 function enterRoom(id) {
   currentRoom = id;
   const def = byId.get(id);
   if (!def) return;
   const a = def.atmosphere ?? {};
-  atmoTarget.fog.set(a.fog ?? '#1c130b');
-  atmoTarget.density = a.density ?? 0.03;
-  atmoTarget.ambient = a.ambient ?? 0.5;
+  atmoTarget.fog.set(a.fog ?? '#3a2630');
+  atmoTarget.density = a.density ?? 0.014;
+  atmoTarget.ambient = a.ambient ?? 1.3;
   atmoTarget.ambientColor.set(a.ambientColor ?? '#ffd8b0');
   atmoTarget.moon = a.moon ?? 0;
   atmoTarget.outdoor = def.outdoor ? 1 : 0;
   atmoTarget.skyHidden = a.skyHidden ? 1 : 0;
   const near = new Set([id, ...(neighbors.get(id) ?? [])]);
-  // Nachbarn zweiten Grades auch animieren (sichtbar durch Türen)
-  for (const n of [...near]) for (const m of neighbors.get(n) ?? []) near.add(m);
+  // Nachbarn zweiten Grades nur, wenn man durch zwei Türen in einer Linie hindurchsehen kann
+  for (const n of neighbors.get(id) ?? []) for (const m of neighbors.get(n) ?? []) if (m !== id && throughView(id, n, m)) near.add(m);
   activeKits = new Set(kits.filter((k) => near.has(k.id)));
   for (const k of kits) k.group.visible = activeKits.has(k);
   const first = progress.room(id);
@@ -289,6 +296,9 @@ interaction.onChange((hit) => {
   ui.setHint({ label: typeof ia.label === 'function' ? ia.label(hit) : ia.label, verb: ia.verb });
 });
 input.onPress('KeyE', () => interaction.trigger());
+input.onPress('Space', () => { if (input.state.enabled && !ui.modalOpen) player.jump(); });
+player.onJump((double) => audio.play(double ? 'sparkleJump' : 'jump'));
+player.onLand((impact) => audio.play(impact > 9 ? 'thud' : 'land'));
 input.onPress('Tab', () => { if (!ui.modalOpen && started) showJournal(); });
 input.onPress('KeyJ', () => { if (!ui.modalOpen && started) showJournal(); });
 input.onPress('KeyM', () => { const on = audio.toggle(); ui.toast(on ? '♪ Klänge an' : 'Klänge aus'); soundBtn.textContent = on ? '♪' : '♪̸'; });
@@ -305,6 +315,7 @@ window.addEventListener('mousemove', (e) => { if (downAt && Math.hypot(e.clientX
 window.addEventListener('mouseup', () => { downAt = null; });
 input.onTap(() => interaction.trigger());
 ui.touchButton.addEventListener('click', () => interaction.trigger());
+ui.jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); player.jump(); }, { passive: false });
 
 function showJournal() {
   openJournal(ui, {
@@ -363,7 +374,7 @@ ui.onAllClosed((gesture) => {
 ui.showHud(false);
 
 // ---------------------------------------------------------------- Loop
-const ctxObj = { player: player.pos, camera };
+const ctxObj = { player: player.pos, camera, launch: (v) => player.launch(v), get grounded() { return player.grounded; } };
 let fpsAcc = 0, fpsN = 0, fps = 0;
 engine.onUpdate((dt, t) => {
   player.update(dt);
@@ -380,7 +391,7 @@ engine.onUpdate((dt, t) => {
   atmo.outdoor += (atmoTarget.outdoor - atmo.outdoor) * k;
   scene.fog.color.copy(atmo.fog);
   scene.fog.density = atmo.density;
-  hemi.intensity = atmo.ambient * 0.85;
+  hemi.intensity = atmo.ambient * 1.25;
   if (scene.environment) scene.environmentIntensity = 0.07 + 0.08 * atmo.outdoor;
   hemi.color.copy(atmo.ambientColor);
   moon.intensity = atmo.moon * 0.9;

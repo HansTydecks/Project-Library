@@ -93,7 +93,7 @@ export default [
       f.add(cyl(R, R, 0.05, 24), 'stoneDark', [0, 0.02, 0]);
       const water = f.mesh(new THREE.CircleGeometry(R - 0.1, 32), 'water', [0, 0.42, 0], [-Math.PI / 2, 0, 0]);
       f.add(lathe([[0, 0], [0.35, 0], [0.25, 0.2], [0.15, 1.2], [0.5, 1.3], [0.55, 1.4], [0.1, 1.45], [0.08, 1.9], [0.25, 2.0], [0, 2.1]], 16), 'stoneLight', [0, 0, 0]);
-      f.collider(0, 0, R * 2, R * 2);
+      f.collider(0, 0, R * 2, R * 2, { top: 0.55 }); // Beckenrand (und: übers Wasser laufen!)
       // Tropfen-Partikel
       const N = 120;
       const geo = new THREE.BufferGeometry();

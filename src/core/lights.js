@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // Räume/Chunks melden nur "Lichtpunkte" an; der Pool weist seine Lichter den nächsten Punkten zu.
 // So kann die Bibliothek unendlich wachsen, ohne dass die Performance einbricht.
 const POOL = 12;
-const GAIN = 1.6;
+const GAIN = 2.1;
 
 export function createLightPool(scene) {
   const spots = new Set();
@@ -54,6 +54,7 @@ export function createLightPool(scene) {
       if (p.spot) {
         const s = p.spot;
         p.light.position.copy(s.pos);
+        if (p.colorKey !== s.color) { p.colorKey = s.color; p.light.color.set(s.color ?? '#ffb36b'); } // Farbwechsel (z. B. Kessel)
         let f = 1;
         if (s.flicker) {
           // Große Lichter (viele Kerzen) flackern kaum, einzelne Kerzen etwas mehr.

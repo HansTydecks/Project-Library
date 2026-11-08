@@ -27,7 +27,8 @@ die Bibliothek um Details, Räume oder Inhalte erweitern, ohne den Kern umzubaue
 - Statisches über `f.add(...)`, nur Animiertes über `f.object(...)` + `kit.onUpdate(...)`.
 - Interaktionen: `f.interactable(mesh, {...})` oder `f.hitbox(...)`; Geheimnisse mit `secret: 'id'` + `secretName`.
 - Zufall immer deterministisch (`kit.services.rng(seed)` / `makeRng`), damit die Bibliothek bei jedem Besuch gleich aussieht.
-- Texte: warm, verschroben, kurz. Keine Gruselelemente.
+- Texte: warm, verschroben, kurz. Keine Gruselelemente. Stimmung: magisch & whimsical, hell und bunt – kein Survival-/Horror-Look.
+- Die Figur kann springen (Doppelsprung). Plattformen über `collider(..., { top, bottom })`; Parcours-Maße in `EXTENDING.md`.
 - Flächen nie exakt aufeinanderlegen (Z-Fighting = Flackern): mind. 2–5 cm Abstand oder `polygonOffset`.
 - Kollider nur für begehbare Höhe (Türstürze, Galerien bekommen keine) – nach Raumänderungen Türen per Durchgangstest prüfen.
 - Performance-Budget grob: < 400 Draw Calls, < 400k Dreiecke im Blickfeld; hohe Regalreihen nutzen automatisch Buchwand-Texturen.

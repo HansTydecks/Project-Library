@@ -180,7 +180,9 @@ export class RoomCtx extends Frame {
     for (const side of Object.keys(SIDES)) {
       const wf = this.wallFrame(side);
       for (const seg of this.segments(side)) {
-        const style = seg.neighbor ? o.neighbor : o.open;
+        // Zwei Außenräume nebeneinander (z. B. Garten → Pilzhain): eigener Stil statt Hausfassade
+        const outdoorPair = seg.neighbor && o.neighborOutdoor && this.world_.byId?.get(seg.neighbor)?.outdoor;
+        const style = outdoorPair ? o.neighborOutdoor : seg.neighbor ? o.neighbor : o.open;
         if (typeof style === 'function') style(wf, seg, this, side);
         else EDGE_STYLES[style]?.(wf, seg, o, this, side);
       }
@@ -332,7 +334,7 @@ export const EDGE_STYLES = {
 /** Baut alle Räume. Gibt Kits und Metadaten zurück. */
 export function buildRooms(defs, services, rngFor) {
   const { occ, doors, byId } = layout(defs);
-  const worldInfo = { occ, doors, rngFor };
+  const worldInfo = { occ, doors, rngFor, byId };
   const kits = [];
   for (const def of defs) {
     if (def.endless) continue;

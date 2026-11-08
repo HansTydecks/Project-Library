@@ -139,4 +139,6 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0705; col
 .joystick .knob { position: absolute; left: 30px; top: 30px; width: 40px; height: 40px; border-radius: 50%; background: rgba(240,200,96,.5); }
 .touch-act { position: fixed; right: 24px; bottom: 24px; width: 74px; height: 74px; border-radius: 50%; font-size: 30px; border: 2px solid var(--gold);
   background: rgba(30,18,8,.75); color: var(--gold); z-index: 7; }
-@media (pointer: fine) { .touch-act { display: none !important; } }
+.touch-jump { position: fixed; right: 24px; bottom: 112px; width: 64px; height: 64px; border-radius: 50%; font-size: 28px; border: 2px solid var(--gold);
+  background: rgba(40, 24, 60, 0.55); color: #fff3d0; touch-action: none; }
+@media (pointer: fine) { .touch-act, .touch-jump { display: none !important; } }

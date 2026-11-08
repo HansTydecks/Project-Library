@@ -51,9 +51,9 @@ export class Kit {
     this.buckets.get(m).push(g);
   }
 
-  _collider(minX, maxX, minZ, maxZ) {
+  _collider(minX, maxX, minZ, maxZ, top, bottom) {
     const o = this.origin;
-    this.services.collision.add({ minX: minX + o.x, maxX: maxX + o.x, minZ: minZ + o.z, maxZ: maxZ + o.z }, this.colliderOwner);
+    this.services.collision.add({ minX: minX + o.x, maxX: maxX + o.x, minZ: minZ + o.z, maxZ: maxZ + o.z, top: top + o.y, bottom: bottom + o.y }, this.colliderOwner);
   }
 
   onUpdate(fn) { this.updaters.push(fn); }
@@ -143,6 +143,17 @@ export class Frame {
     return this;
   }
 
+  /** Statische Gruppe (z. B. aus mehreren Meshes gebaute Teetasse) → in die gemergte Geometrie übernehmen. */
+  addGroup(obj, at = [0, 0, 0], rot = [0, 0, 0], scale = 1) {
+    const base = this._local(at, rot, scale);
+    obj.updateMatrixWorld(true);
+    obj.traverse((o) => {
+      if (!o.isMesh || Array.isArray(o.material) || o.userData.hitbox) return;
+      this.kit._addGeo(o.geometry, o.material, base.clone().multiply(o.matrixWorld));
+    });
+    return this;
+  }
+
   /** Dynamisches Objekt (eigenes Mesh, kann animiert werden). */
   object(obj, at = [0, 0, 0], rot = [0, 0, 0], scale = 1) {
     obj.applyMatrix4(this._local(at, rot, scale));
@@ -161,12 +172,17 @@ export class Frame {
   world(x, y, z) { return this.point(x, y, z).add(this.kit.origin); }
 
   /** Kollisionsbox (lokal zentriert bei x,z mit Breite w (x) und Tiefe d (z)). */
-  collider(x, z, w, d, { shadow = true } = {}) {
-    // Kollision ist 2D: Dinge über Kopfhöhe (Galerie-Regale, Wandbretter) blockieren nicht.
+  /**
+   * Kollisionsbox. Ohne `top` unendlich hoch (Wand). Mit `top` (Höhe der Oberkante über dem Frame)
+   * kann man daraufspringen; mit `bottom` schwebt sie (man läuft darunter durch).
+   */
+  collider(x, z, w, d, { shadow = true, top, bottom } = {}) {
     const base = this.point(x, 0, z).y;
-    if (base > 1.5) return this;
+    // Dinge ohne Höhe über Kopfhöhe (Galerie-Regale, Wandbretter) blockieren nicht.
+    // (auch umgedrehte Möbel an der Decke – nur schwebende Plattformen mit `bottom` zählen dort)
+    if (base > 1.5 && bottom === undefined) return this;
     // Weicher Kontaktschatten unter allem, was auf dem Boden steht (gemergt → kaum Kosten).
-    if (shadow && Math.abs(base) < 0.05) {
+    if (shadow && (bottom === undefined || bottom <= 0.01) && Math.abs(base) < 0.05) {
       const pad = Math.min(0.6, 0.25 + 0.15 * Math.min(w, d));
       this.add(new THREE.PlaneGeometry(w + pad, d + pad), 'contactShadow', [x, 0.022, z], [-Math.PI / 2, 0, 0]);
     }
@@ -177,7 +193,7 @@ export class Frame {
       minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
       minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
     }
-    this.kit._collider(minX, maxX, minZ, maxZ);
+    this.kit._collider(minX, maxX, minZ, maxZ, top === undefined ? Infinity : base + top, bottom === undefined ? -Infinity : base + bottom);
     return this;
   }
 
@@ -243,4 +259,28 @@ export class Frame {
     const f = this.frame(opts.at ?? [0, 0, 0], opts.rot ?? 0);
     return prop.create(f, opts, this.kit);
   }
+}
+
+/**
+ * Fasst die unbewegten Kinder einer animierten Gruppe pro Material zu je einem Mesh zusammen
+ * (z. B. Augen, Hut und Panzer einer Schnecke) → weniger Draw Calls. `keep`: Kinder, die sich bewegen.
+ */
+export function compactGroup(group, keep = []) {
+  const keepSet = new Set(keep);
+  const byMat = new Map();
+  for (const c of [...group.children]) {
+    if (!c.isMesh || keepSet.has(c) || c.userData.hitbox || Array.isArray(c.material) || c.children.length) continue;
+    c.updateMatrix();
+    const g = (c.geometry.index ? c.geometry.toNonIndexed() : c.geometry.clone()).applyMatrix4(c.matrix);
+    for (const name of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(name)) g.deleteAttribute(name);
+    if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+    if (!byMat.has(c.material)) byMat.set(c.material, []);
+    byMat.get(c.material).push(g);
+    group.remove(c);
+  }
+  for (const [m, list] of byMat) {
+    const merged = list.length === 1 ? list[0] : mergeGeometries(list, false);
+    if (merged) group.add(new THREE.Mesh(merged, m));
+  }
+  return group;
 }
