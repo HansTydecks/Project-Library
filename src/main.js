@@ -58,7 +58,8 @@ async function waitFonts() {
 await waitFonts();
 
 // ---------------------------------------------------------------- Kern
-const engine = createEngine(document.getElementById('app'));
+// ?lowfx: ohne Nachbearbeitung/Reflexionen (schwache Geräte); ?fixedres: keine adaptive Auflösung
+const engine = createEngine(document.getElementById('app'), { lowFx: params.has('lowfx'), adaptive: !params.has('fixedres') });
 const { scene, camera, renderer } = engine;
 setMaxAnisotropy(Math.min(8, renderer.capabilities.getMaxAnisotropy()));
 const input = createInput(renderer.domElement);
@@ -379,7 +380,8 @@ engine.onUpdate((dt, t) => {
   atmo.outdoor += (atmoTarget.outdoor - atmo.outdoor) * k;
   scene.fog.color.copy(atmo.fog);
   scene.fog.density = atmo.density;
-  hemi.intensity = atmo.ambient;
+  hemi.intensity = atmo.ambient * 0.85;
+  if (scene.environment) scene.environmentIntensity = 0.07 + 0.08 * atmo.outdoor;
   hemi.color.copy(atmo.ambientColor);
   moon.intensity = atmo.moon * 0.9;
   audio.setOutdoor(atmo.outdoor);

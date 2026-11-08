@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { defineProp } from '../world/registry.js';
-import { mat } from '../world/materials.js';
+import { mat, hdr } from '../world/materials.js';
 import { tex } from '../world/textures.js';
 
 // Der Bibliothekar. Aus Primitiven gebaut: Robe, Sternenhut, Bart, Stab mit Orb.
@@ -58,7 +58,7 @@ export default defineProp({
     }
     const staff = new THREE.Group(); staff.position.set(0.55, 0, 0.25); root.add(staff);
     const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.035, 2.1, 6), mat('woodDark')); pole.position.y = 1.05; staff.add(pole);
-    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), new THREE.MeshBasicMaterial({ color: '#9ad0ff' })); orb.position.y = 2.15; staff.add(orb);
+    const orb = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), new THREE.MeshBasicMaterial({ color: hdr('#9ad0ff', 3) })); orb.position.y = 2.15; staff.add(orb);
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex.glow(), color: '#7ab8ff', transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false }));
     halo.scale.setScalar(0.9); halo.position.y = 2.15; staff.add(halo);
     for (let i = 0; i < 3; i++) {

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // Licht-Pool: Es existiert immer eine feste Anzahl PointLights (keine Shader-Neukompilierung).
 // Räume/Chunks melden nur "Lichtpunkte" an; der Pool weist seine Lichter den nächsten Punkten zu.
 // So kann die Bibliothek unendlich wachsen, ohne dass die Performance einbricht.
-const POOL = 10;
+const POOL = 12;
 const GAIN = 1.6;
 
 export function createLightPool(scene) {
@@ -18,25 +18,32 @@ export function createLightPool(scene) {
   let acc = 0;
   let desired = new Set();
 
-  function score(spot, px, pz, room) {
+  // Bonus für bereits zugewiesene Punkte (Hysterese): verhindert, dass Lichter beim Laufen
+  // ständig zwischen zwei fast gleich weit entfernten Punkten hin- und herspringen.
+  const HOLD = 4;
+
+  function score(spot, px, pz, room, held) {
     const p = spot.pos;
     const d = Math.hypot(p.x - px, p.z - pz);
-    return d + (spot.room && spot.room !== room ? 7 : 0) - (spot.priority ?? 0);
+    return d + (spot.room && spot.room !== room ? 7 : 0) - (spot.priority ?? 0) - (held.has(spot) ? HOLD : 0);
   }
 
   function update(dt, t, player, roomId) {
     acc += dt;
     if (acc > 0.25) {
       acc = 0;
+      const held = new Set(pool.filter((p) => p.spot && p.level > 0).map((p) => p.spot));
       const arr = [...spots].filter((s) => s.enabled !== false);
-      arr.sort((a, b) => score(a, player.x, player.z, roomId) - score(b, player.x, player.z, roomId));
+      const sc = new Map(arr.map((s) => [s, score(s, player.x, player.z, roomId, held)]));
+      arr.sort((a, b) => sc.get(a) - sc.get(b));
       desired = new Set(arr.slice(0, POOL));
     }
     const free = [...desired].filter((s) => !pool.some((p) => p.spot === s));
     for (const p of pool) {
       const want = p.spot && desired.has(p.spot);
-      if (want) p.level = Math.min(1, p.level + dt * 2);
-      else p.level = Math.max(0, p.level - dt * 3);
+      // langsames, weiches Ein-/Ausblenden statt Aufploppen
+      if (want) p.level = Math.min(1, p.level + dt * 0.9);
+      else p.level = Math.max(0, p.level - dt * 1.2);
       if (!want && p.level <= 0) {
         p.spot = free.shift() ?? null;
         if (p.spot) {
@@ -48,8 +55,13 @@ export function createLightPool(scene) {
         const s = p.spot;
         p.light.position.copy(s.pos);
         let f = 1;
-        if (s.flicker) f = 0.82 + 0.12 * Math.sin(t * 9.1 + s.seed) + 0.06 * Math.sin(t * 23.7 + s.seed * 3);
-        p.light.intensity = (s.intensity ?? 6) * f * p.level * GAIN;
+        if (s.flicker) {
+          // Große Lichter (viele Kerzen) flackern kaum, einzelne Kerzen etwas mehr.
+          const amp = (s.intensity ?? 6) > 8 ? 0.35 : 1;
+          f = 1 - amp * (0.07 + 0.05 * Math.sin(t * 7.3 + s.seed) + 0.025 * Math.sin(t * 17.1 + s.seed * 3));
+        }
+        const e = p.level * p.level * (3 - 2 * p.level);
+        p.light.intensity = (s.intensity ?? 6) * f * e * GAIN;
         if (s.onUpdate) s.onUpdate(f);
       } else {
         p.light.intensity = 0;
