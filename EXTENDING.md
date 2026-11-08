@@ -149,10 +149,16 @@ Materialien sind physikalisch (`pbr(map, rauheit, { bump })` bzw. `flat(farbe, r
 `goldenAcorn { kind: 'star' }` (Belohnung oben auf Plattformen), Tee (`teacup`, `teapot`, `pouringTeapot`, `orbitingCups`, `cake`),
 Trankküche (`cauldron`, `potionShelf`, `frogJar`, `magicBroom`), Musik (`piano`, `musicBox`, `floatingMusicNotes`, `violin`),
 Kosmos (`orrery`, `comet`, `moonLamp`), Riesendinge (`giantBook`, `giantPencil`, `giantCup`, `yarnBall`, `giantButton`, `giantThimble`),
-Pilzhain (`giantMushroom`, `fairyLights`, `lilyPond`, `snailMailbox`).
+Pilzhain (`giantMushroom`, `fairyLights`, `lilyPond`, `snailMailbox`), Kamin (`fireplace`, `sleepyDragon`, `knitting`, `rockingChair`),
+Karten (`mapTable { world: ctx.world_ }`, `wanderCompass { world }`, `balloonModel`, `mapRolls`, `compassRose`), Wintergarten
+(`singingFlower`, `hatCactus`, `butterflies`, `wateringCan`, `hammock`), Spielzeug (`bookTrain`, `letterBlock`, `rockingHorse`,
+`jackInTheBox`, `spinningTop`, `kite`, `teddy`), Bad (`bathPool`, `clawTub`, `clothesline`, `towelStack`), Uhren (`gear { flat }`,
+`cuckooClock`, `pendulumClock`, `floorClock`, `minuteJar`), Treppen (`spiralStairs { height, steps, turns, end }`).
 
 **Sprung-Parcours bauen**: Einfacher Sprung ≈ 1 m, Doppelsprung ≈ 1,8 m, Sprungpilz (power 10) ≈ 3 m + Doppelsprung.
-Stufen also höchstens ~0,9 m auseinander, mit Doppelsprung ~1,6 m. Möbel umgedreht an die Decke: ein `Frame` mit
+Stufen also höchstens ~0,9 m auseinander, mit Doppelsprung ~1,6 m. Kanten bis 0,3 m steigt man ohne Sprung hinauf
+(Treppen: Stufen < 0,3 m, siehe `spiralStairs` und die Galerie in `rooms/lesesaal.js`). Decken stoppen Sprünge automatisch.
+Glasdach: `ctx.ceiling('glassRoof', { roof: false })`. Möbel umgedreht an die Decke: ein `Frame` mit
 `makeRotationZ(Math.PI)` (siehe `rooms/teesalon.js`).
 
 ## 4. Geheimnisse

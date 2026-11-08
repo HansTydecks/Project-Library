@@ -149,9 +149,11 @@ export class RoomCtx extends Frame {
   ceiling(material = 'plaster', { uv = 3, roof = 'roof', beams = 'woodDark' } = {}) {
     const h = this.height;
     this.add(plane(this.b.w, this.b.d, uv), material, [0, h, 0], [Math.PI / 2, 0, 0]);
-    // Dach (von außen sichtbar)
+    // Dach (von außen sichtbar); roof: false z. B. für Glasdächer
     // Unterseite 6 cm über der Decke → kein Z-Fighting (Flackern) mit der Deckenfläche
-    this.add(box(this.b.w + 0.6, 0.5, this.b.d + 0.6, 2), roof, [0, h + 0.31, 0]);
+    if (roof) this.add(box(this.b.w + 0.6, 0.5, this.b.d + 0.6, 2), roof, [0, h + 0.31, 0]);
+    // Kopf stößt an die Decke (kein Durchspringen mit Pilzen/Doppelsprung)
+    this.collider(0, 0, this.b.w, this.b.d, { top: h + 0.5, bottom: h, shadow: false });
     if (beams) {
       const n = Math.floor(this.b.d / 4);
       for (let i = 1; i < n; i++) {

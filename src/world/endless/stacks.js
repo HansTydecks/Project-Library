@@ -37,6 +37,7 @@ export function createStacks({ def, occ, scene, services, projects }) {
     f.add(plane(CELL, CELL, 2), 'parquet', [0, 0, 0], [-Math.PI / 2, 0, 0]);
     f.add(plane(CELL, CELL, 3), 'plaster', [0, H, 0], [Math.PI / 2, 0, 0]);
     for (let z = -h + 2; z < h; z += 4) f.add(box(CELL, 0.3, 0.25, 1), 'woodDark', [0, H - 0.15, z]);
+    f.collider(0, 0, CELL, CELL, { top: H + 0.5, bottom: H - 0.3, shadow: false }); // Decke
 
     // Südgrenze schließen, wenn dort kein Raum anschließt
     if (cz === ez && !occ.has(cellKey(cx, cz + 1))) {
@@ -103,6 +104,7 @@ function pickType(r, cx, cz) {
   const table = [
     ['aisles', 46], ['aislesZ', 20], ['nook', 8], ['door', 4], ['empty', 4 + Math.min(depth, 10) * 0.5],
     ['lost', 5], ['stairs', 3], ['pillars', 6], ['dark', 1 + Math.min(depth, 20) * 0.3], ['sign', 6],
+    ['teatime', 4], ['bookTree', 4], ['duckPond', 3], ['bounce', 3], ['campfire', 3],
   ];
   const total = table.reduce((s, [, w]) => s + w, 0);
   let x = r.next() * total;
@@ -211,6 +213,65 @@ const CHUNK_TYPES = {
     f.hitbox([0, 1.5, 0], [CELL - 2, 3, 0.3], {
       label: 'Dunkelheit', verb: 'Lauschen',
       onInteract: () => services.ui.toast('Irgendwo blättert jemand eine Seite um. Dann noch eine.'),
+    });
+  },
+  // Ein gedeckter Teetisch mitten im Labyrinth – für wen?
+  teatime(f, r, { services }) {
+    rows(f, r, { along: 'x', count: 2, gapChance: 0.3 });
+    f.place('rug', { at: [0, 0, 0], width: 3, depth: 3, material: r.pick(['carpetRed', 'carpetBlue']) });
+    f.place('table', { at: [0, 0, 0], width: 1.4, depth: 1.4, material: 'woodLight' });
+    f.place('chair', { at: [0, 0, 1.0], rot: Math.PI });
+    f.place('chair', { at: [0, 0, -1.0] });
+    f.place('teapot', { at: [0, 0.81, 0], color: r.pick(['porcelainBlue', 'pastelPink']), scale: 0.8 });
+    f.place('orbitingCups', { at: [0, 0, 0], y: 1.6, radius: 0.9, count: 5 });
+    f.hitbox([0, 1, 0], [1.4, 0.6, 1.4], {
+      label: 'Gedeckter Tisch', verb: 'Platz nehmen',
+      onInteract: () => { services.ui.toast(r.pick(['Zwei Tassen. Eine ist noch warm. Die andere wartet auf dich.', 'Ein Zettel: »Bin gleich zurück. Seit 1923.«'])); services.progress.curio('teetisch'); },
+    });
+  },
+  // Ein Zimmerbaum, dessen Blätter Bücher sind
+  bookTree(f, r) {
+    rows(f, r, { along: 'z', count: 2, gapChance: 0.3 });
+    f.place('tree', { at: [0, 0, 0], lanterns: true });
+    f.place('balloonBooks', { at: [0, 0, 0], y: 3.2, count: 4, radius: 1.6 });
+    f.place('flowers', { at: [0, 0, 0], width: 3, depth: 3, kinds: ['pastelPink', 'pastelSky', 'flowerYellow'] });
+    if (r.chance(0.5)) f.place('snail', { at: [1.4, 0, 1.6], length: 1.5 });
+  },
+  // Ein winziger Teich im Teppich. Mit Ente. Natürlich.
+  duckPond(f, r) {
+    rows(f, r, { along: 'x', count: 2, gapChance: 0.5 });
+    f.place('lilyPond', { at: [0, 0, 0], radius: 1.3 });
+    f.place('rubberDuck', { at: [0.6, 0.12, 0.4], float: true, scale: 1.2, name: 'Labyrinth-Ente', quip: 'Die Ente hat sich nicht verlaufen. Sie wohnt hier. Du hast dich verlaufen.' });
+    f.place('standSign', { at: [1.8, 0, -1.4], rot: -0.5, text: 'Teich (sehr klein). Bitte nicht hineinfallen.', size: 30, width: 1.0, signHeight: 0.36 });
+  },
+  // Sprungpilz → Bücherinsel mit einem verirrten Werk obendrauf
+  bounce(f, r, { projects, services, kit, cx, cz }) {
+    rows(f, r, { along: 'x', count: 2, gapChance: 0.2 });
+    f.place('jumpMushroom', { at: [-1.5, 0, 0], scale: 0.85, power: 9.5, cap: r.pick(['mushroomCap', 'mushroomCapBlue', 'mushroomCapGold']) });
+    f.place('floatingIsland', { at: [1.4, 0, 0], y: 3.2, width: 2, depth: 2, kind: 'book', color: r.pick(['#c0405a', '#3a6ac0', '#3a9a6a']) });
+    const list = projects.filter((p) => p.kind !== 'idea');
+    if (!list.length) return;
+    const p = list[hash2(cx, cz, 7) % list.length];
+    const book = createBookMesh(p);
+    f.object(book, [1.4, 3.6, 0]);
+    kit.onUpdate((dt, t) => { book.rotation.y += dt * 0.6; });
+    f.glow([1.4, 3.6, 0], { color: '#ffd890', size: 1, opacity: 0.4 });
+    f.interactable(book, {
+      label: `Hoch oben: «${p.title}»`, verb: 'Aufheben', range: 3,
+      onInteract: () => { services.progress.curio(`hoch:${p.id}`); services.events.emit('openProject', { project: p, mesh: book, lost: true }); },
+    });
+  },
+  // Lagerfeuer (ganz ungefährlich) mit Staubmäusen drumherum
+  campfire(f, r, { services }) {
+    rows(f, r, { along: 'z', count: 2, gapChance: 0.4 });
+    for (let i = 0; i < 8; i++) { const a = (i / 8) * Math.PI * 2; f.add(box(0.25, 0.15, 0.2, 0), 'stoneLight', [Math.cos(a) * 0.6, 0.07, Math.sin(a) * 0.6], [0, -a, 0]); }
+    f.place('candle', { at: [0, 0, 0], height: 0.05, intensity: 5 });
+    f.glow([0, 0.3, 0], { color: '#ff9a4a', size: 1.6, opacity: 0.5 });
+    for (let i = 0; i < 3; i++) { const a = i * 2.1; f.place('dustBunny', { at: [Math.cos(a) * 1.4, 0, Math.sin(a) * 1.4], area: 1.2 }); }
+    f.place('bench', { at: [0, 0, 1.8], rot: Math.PI });
+    f.hitbox([0, 0.3, 0], [1.4, 0.6, 1.4], {
+      label: 'Lagerfeuer im Labyrinth', verb: 'Geschichte hören',
+      onInteract: () => { services.ui.toast(r.pick(['Die Staubmäuse erzählen von einem Buch, das so lang ist, dass es zweimal endet.', 'Gruselgeschichten gibt es hier nicht. Nur Kuschelgeschichten. Mit Happy End.'])); services.progress.curio('lagerfeuer'); },
     });
   },
   sign(f, r, { home }) {

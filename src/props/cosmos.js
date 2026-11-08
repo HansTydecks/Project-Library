@@ -60,7 +60,7 @@ export default [
     name: 'comet',
     create(f, opts, kit) {
       const R = opts.radius ?? 5, y = opts.y ?? 7;
-      const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), new THREE.MeshBasicMaterial({ color: hdr('#d8f0ff', 4) }));
+      const head = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), new THREE.MeshBasicMaterial({ color: hdr('#d8f0ff', 2.5) }));
       f.object(head);
       const N = 24;
       const geo = new THREE.BufferGeometry();
@@ -88,7 +88,7 @@ export default [
       const h = opts.height ?? 1.6;
       f.add(cyl(0.2, 0.25, 0.05, 14), 'brass', [0, 0.025, 0]);
       f.add(cyl(0.015, 0.015, h - 0.35, 6), 'brass', [0, (h - 0.35) / 2, 0]);
-      const moon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 14), new THREE.MeshBasicMaterial({ color: hdr('#fff4d8', 1.4) }));
+      const moon = new THREE.Mesh(new THREE.SphereGeometry(0.3, 20, 14), new THREE.MeshBasicMaterial({ color: hdr('#fff4d8', 1.15) }));
       f.object(moon, [0, h, 0]);
       for (const [x, y, z, r] of [[0.1, 0.12, 0.24, 0.06], [-0.12, -0.05, 0.25, 0.08], [0.05, -0.15, 0.25, 0.04]]) {
         const c = new THREE.Mesh(new THREE.CircleGeometry(r, 12), new THREE.MeshBasicMaterial({ color: hdr('#e0d0b0', 1.1) }));

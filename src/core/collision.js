@@ -3,6 +3,7 @@
 // Boxen ohne Höhe sind unendlich hoch (Wände, Regale).
 const BUCKET = 4;
 const BODY_H = 1.75;  // Körperhöhe der Spielfigur
+export const STEP = 0.3; // so hohe Kanten (Beckenrand, Teichufer, Stufen) steigt man einfach hinauf
 
 export class CollisionWorld {
   constructor() {
@@ -65,7 +66,7 @@ export class CollisionWorld {
 
   /** Blockiert die Box einen Körper, dessen Füße auf Höhe y sind? */
   static blocks(b, y) {
-    return y < b.top - 0.02 && y + BODY_H > b.bottom;
+    return y + STEP < b.top && y + BODY_H > b.bottom;
   }
 
   /** Schiebt einen Kreis (x,z,r) aus allen Boxen heraus, die auf Höhe y im Weg sind. Gibt {x,z} zurück. */
@@ -101,7 +102,7 @@ export class CollisionWorld {
   }
 
   /** Höchste begehbare Oberfläche unter (x,z), höchstens step über y. Boden = 0. */
-  groundAt(x, z, r, y, step = 0.3) {
+  groundAt(x, z, r, y, step = STEP) {
     let g = 0;
     const m = r * 0.6;
     for (const b of this.query(x, z, r)) {

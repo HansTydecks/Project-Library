@@ -69,6 +69,7 @@ export default defineRoom({
     ctx.place('dustBunny', { at: [-5.8, 0, -1.5], area: 2.5, secret: 'staubmaus' });
     ctx.place('balloonBooks', { at: [-4.2, 0, 0.5], y: 3.6, count: 3, radius: 0.9 });
     ctx.place('paperPlanes', { at: [0, 0, 2], y: 4.0, radius: 4.5, count: 3 });
+    ctx.wallFrame('south', 0.42).place('cuckooClock', { at: [-4.6, 0, 0], y: 3.4, scale: 1.1, offset: 1, secret: 'foyer-kuckuck', secretName: 'Der Kuckuck, der Besucher zählt', quip: '»Kuckuck! Du bist Besucher Nummer … äh … viele!«' });
     ctx.place('dust', { area: [14, 5, 14] });
 
     // Säulen

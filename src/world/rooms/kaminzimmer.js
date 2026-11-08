@@ -1,0 +1,54 @@
+import { defineRoom } from '../registry.js';
+import { WALL_T } from '../world.js';
+
+// Kaminzimmer der schläfrigen Sessel: Hier wird gelesen, gedöst und geschnarcht – auch vom Drachen.
+export default defineRoom({
+  id: 'kaminzimmer',
+  name: 'Kaminzimmer der schläfrigen Sessel',
+  description: 'Ein knisternder Kamin, ein schnarchender Minidrache und Strickzeug, das von selbst strickt.',
+  keywords: ['kamin', 'feuer', 'lesen', 'gemütlich', 'drache', 'sessel', 'stricken', 'warm', 'winter', 'schlafen'],
+  cell: [-2, 1],
+  height: 5.5,
+  spawn: { at: [5, 0], yaw: Math.PI / 2 },
+  atmosphere: { fog: '#4a3028', density: 0.012, ambient: 1.3, ambientColor: '#ffdcc0', moon: 0 },
+  build(ctx) {
+    const { hd } = ctx;
+    ctx.floor('parquet');
+    ctx.ceiling('plaster');
+    ctx.enclose({ inner: 'wpRed', wainscot: 'paneling' });
+    ctx.foundation();
+
+    const west = ctx.wallFrame('west', WALL_T);
+    west.place('fireplace', { at: [0, 0, 0], width: 3, height: 1.6, intensity: 6 });
+    west.place('cuckooClock', { at: [0, 0, 0.62], y: 3.4, scale: 1.1, offset: 2, bird: 'pastelPink', secret: 'kamin-kuckuck', secretName: 'Der Kuckuck über dem Kamin' });
+    ctx.place('rug', { at: [-4.2, 0, 0], width: 4, depth: 5, material: 'carpetRed' });
+    ctx.place('sleepyDragon', { at: [-5.0, 0, 0.2], rot: -Math.PI / 2, secret: 'minidrache' });
+    ctx.place('cat', { at: [-4.6, 0, -1.5], rot: 1.2, fur: 'fur', name: 'Kaminkatze', quip: 'Die Katze und der Drache teilen sich den Teppich. Die Katze hat die bessere Hälfte.' });
+    // Sessel ums Feuer
+    ctx.place('armchair', { at: [-2.3, 0, -2.4], rot: -Math.PI / 2 - 0.4, cushion: 'velvetGreen', quip: 'Dieser Sessel ist so bequem, dass er selbst eingeschlafen ist.' });
+    ctx.place('armchair', { at: [-2.3, 0, 2.4], rot: -Math.PI / 2 + 0.4, cushion: 'velvet' });
+    ctx.place('sideTable', { at: [-2.0, 0, 0] });
+    ctx.place('teapot', { at: [-2.0, 0.62, 0.1], color: 'pastelPink', scale: 0.7 });
+    ctx.place('teacup', { at: [-1.8, 0.62, -0.2] });
+    // Schaukelstuhl mit Strickzeug
+    ctx.place('rockingChair', { at: [-3.4, 0, 5.2], rot: -2.4, cushion: 'velvetBlue' });
+    ctx.place('knitting', { at: [-2.4, 0, 5.6], y: 0.75, secret: 'endlosschal' });
+    // Bücherturm hinauf zum Kaminsims
+    ctx.place('giantBook', { at: [-5.4, 0, 2.6], width: 1.4, depth: 1.0, thick: 0.55, color: '#3a6ac0' });
+    ctx.place('giantBook', { at: [-6.8, 0, 2.2], width: 1.4, depth: 1.0, thick: 0.55, color: '#e0a030' });
+    ctx.place('giantBook', { at: [-6.75, 0.55, 2.25], width: 1.3, depth: 0.95, thick: 0.55, color: '#c0405a', rot: 0.08 });
+    ctx.place('teddy', { at: [-7.0, 1.76, -0.9], rot: Math.PI / 2, scale: 0.9, name: 'Kaminteddy', secret: 'kaminteddy', secretName: 'Der Teddy auf dem Kaminsims', quip: 'Der Teddy wärmt sich die Pfoten. Er sagt, oben ist es am gemütlichsten.' });
+    ctx.place('candle', { at: [-7.0, 1.76, 0.9], height: 0.25, intensity: 2 });
+
+    ctx.wallShelves('south', { id: '_kamin', unit: 2, height: 3.0, maxUnits: 7 });
+    ctx.wallShelves('north', { id: '_kamin2', unit: 2, height: 3.0, maxUnits: 6 });
+    ctx.place('floorLamp', { at: [5.8, 0, -5.8], intensity: 4 });
+    ctx.place('sofa', { at: [4.6, 0, 3.6], rot: -Math.PI / 2, cushion: 'velvetGreen' });
+    ctx.place('bookPile', { at: [3.4, 0, 5.4], count: 6 });
+    ctx.place('dustBunny', { at: [4, 0, -2], area: 2.5, color: '#e8c8b0' });
+    ctx.place('standSign', { at: [1.2, 0, -2.8], rot: -0.4, text: 'Bitte den Drachen nicht wecken. Er schnarcht so schön.', size: 30, width: 1.1, signHeight: 0.38 });
+    for (const z of [-4.5, 4.5]) west.place('sconce', { at: [z, 2.7, 0.02], intensity: 3 });
+    ctx.sign('Kaminzimmer – Hier darf man einschlafen', [0, 4.0, hd - 0.46], Math.PI, { w: 4.2, h: 0.5, size: 40 });
+    ctx.place('dust', { area: [14, 4.5, 14] });
+  },
+});

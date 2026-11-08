@@ -90,6 +90,14 @@ export function createAudio() {
       const notes = [0, 4, 7, 12, 7, 4, 5, 9, 12, 17, 12, 9, 7, 11, 14, 19, 14, 11, 12];
       notes.forEach((st, i) => tone(262 * 2 ** (st / 12), 0.7, { gain: 0.09, delay: i * 0.16, type: 'triangle' }));
     },
+    cuckoo: () => { tone(740, 0.22, { gain: 0.1, type: 'triangle' }); tone(587, 0.35, { gain: 0.1, type: 'triangle', delay: 0.28 }); },
+    crackle: () => { for (let i = 0; i < 10; i++) setTimeout(() => noise(0.03, { freq: 1500 + Math.random() * 2500, q: 2, gain: 0.08 }), Math.random() * 900); },
+    choo: () => { noise(0.5, { freq: 900, q: 1.2, gain: 0.12, attack: 0.05 }); tone(460, 0.5, { gain: 0.05, type: 'square' }); tone(580, 0.5, { gain: 0.04, type: 'square' }); },
+    sing: () => {
+      const notes = [0, 2, 4, 5, 7, 9, 7, 4, 0];
+      notes.forEach((st, i) => tone(659 * 2 ** (st / 12), 0.35, { gain: 0.07, delay: i * 0.18, type: 'sine' }));
+    },
+    tickTock: () => { for (let i = 0; i < 4; i++) setTimeout(() => noise(0.03, { freq: i % 2 ? 2400 : 3200, q: 5, gain: 0.25 }), i * 500); },
     melody: () => {
       const notes = [0, 4, 7, 9, 7, 4, 2, 4, 0, -3, 0];
       notes.forEach((s, i) => { tone(392 * 2 ** (s / 12), 0.5, { gain: 0.1, delay: i * 0.35, type: 'triangle' }); });

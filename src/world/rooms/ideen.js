@@ -53,6 +53,7 @@ export default defineRoom({
     ctx.place('bubbles', { at: [1, 0, 0.5], y: 0.6, area: [4, 4, 4], count: 16 });
     ctx.place('paperPlanes', { at: [1, 0, 0.5], y: 3.2, radius: 3, count: 4 });
     ctx.place('standSign', { at: [5.6, 0, -3], rot: -0.6, text: 'Ideen bitte frei herumlaufen lassen.', size: 32, width: 1.0, signHeight: 0.36 });
+    ctx.place('singingFlower', { at: [6.4, 0, 6.4], color: 'lilac', height: 1.1, name: 'Ideenblume', quip: 'Die Ideenblume singt nur Lieder, die es noch nicht gibt. Dieses hier ist neu. Gerade eben.' });
     ctx.place('dust', { area: [14, 4.5, 14], color: '#e8d0ff' });
   },
 });

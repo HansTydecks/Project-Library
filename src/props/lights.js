@@ -3,6 +3,7 @@ import { defineProp } from '../world/registry.js';
 import { box, cyl, sphere, cone, lathe, torus } from '../world/geo.js';
 import { mat, hdr } from '../world/materials.js';
 import { tex } from '../world/textures.js';
+import { compactGroup } from '../world/kit.js';
 
 // Kerzen, Lampen, Kronleuchter, Laternen.
 function flame(f, at, size = 1) {
@@ -77,7 +78,10 @@ export default [
       const center = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 8), mat('brass'));
       g.add(center);
       const n = opts.candles ?? 8;
-      const parts = [];
+      // Flammen als ein InstancedMesh, Lichthöfe als eine Punktwolke → wenige Draw Calls pro Leuchter
+      const flames = new THREE.InstancedMesh(new THREE.SphereGeometry(0.02, 8, 6), mat('flame'), n);
+      const glowPos = new Float32Array(n * 3);
+      const fp = [];
       for (let i = 0; i < n; i++) {
         const a = (i / n) * Math.PI * 2;
         const x = Math.cos(a) * r, z = Math.sin(a) * r;
@@ -85,18 +89,24 @@ export default [
         arm.position.set(x / 2, 0, z / 2); arm.rotation.y = -a; g.add(arm);
         const c = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.025, 0.16, 8), mat('wax'));
         c.position.set(x, 0.1, z); g.add(c);
-        const fl = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 6), mat('flame'));
-        fl.scale.set(1, 2.2, 1); fl.position.set(x, 0.21, z); g.add(fl);
-        const gl = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex.glow(), color: '#ffaa44', transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
-        gl.scale.setScalar(0.4); gl.position.copy(fl.position); g.add(gl);
-        parts.push({ m: fl, g: gl });
+        fp.push(new THREE.Vector3(x, 0.21, z));
+        glowPos.set([x, 0.22, z], i * 3);
       }
+      compactGroup(g);
+      g.add(flames);
+      const gg = new THREE.BufferGeometry();
+      gg.setAttribute('position', new THREE.BufferAttribute(glowPos, 3));
+      const glows = new THREE.Points(gg, new THREE.PointsMaterial({ map: tex.glow(), color: '#ffaa44', size: 0.42, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
+      g.add(glows);
       f.object(g, [0, y, 0]);
       const seed = Math.random() * 10;
+      const fm = new THREE.Matrix4(), fs = new THREE.Vector3(), fq = new THREE.Quaternion();
       kit.onUpdate((dt, t) => {
         g.rotation.y = Math.sin(t * 0.3 + seed) * 0.03;
         g.rotation.z = Math.sin(t * 0.5 + seed) * 0.01;
-        for (const p of parts) { const k = 0.85 + 0.15 * Math.sin(t * 13 + p.m.position.x * 10); p.m.scale.y = 2.2 * k; p.g.material.opacity = 0.5 + 0.35 * k; }
+        fp.forEach((p, i) => { const k = 0.85 + 0.15 * Math.sin(t * 13 + p.x * 10); fm.compose(p, fq, fs.set(1, 2.2 * k, 1)); flames.setMatrixAt(i, fm); });
+        flames.instanceMatrix.needsUpdate = true;
+        glows.material.opacity = 0.6 + 0.2 * Math.sin(t * 9 + seed);
       });
       f.light([0, y - 0.2, 0], { color: '#ffb060', intensity: opts.intensity ?? 14, distance: opts.distance ?? 13, flicker: true, priority: 3 });
     },
@@ -115,12 +125,13 @@ export default [
       const top = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.14, 4), frame); top.position.y = 0.23; top.rotation.y = Math.PI / 4; g.add(top);
       const bottom = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.03, 0.24), frame); bottom.position.y = -0.16; g.add(bottom);
       const ring = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.01, 4, 10), frame); ring.position.y = 0.33; g.add(ring);
-      const core = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.26, 0.17), new THREE.MeshBasicMaterial({ color: hdr(opts.color ?? '#ffb050', 2.4), transparent: true, opacity: 0.85 }));
+      const core = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.26, 0.17), new THREE.MeshBasicMaterial({ color: hdr(opts.color ?? '#ffb050', 1.6), transparent: true, opacity: 0.85 }));
       g.add(core);
       if (opts.hanging) {
         const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, opts.chain ?? 1, 4), frame);
         chain.position.y = 0.33 + (opts.chain ?? 1) / 2; g.add(chain);
       }
+      compactGroup(g); // Rahmen, Kette & Kern → je ein Mesh pro Material
       f.object(g, [0, y, 0]);
       const gl = f.glow([0, y, 0], { color: opts.color ?? '#ffaa44', size: 1.2, opacity: 0.6 });
       const seed = Math.random() * 10;

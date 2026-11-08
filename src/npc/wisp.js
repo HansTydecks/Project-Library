@@ -8,7 +8,7 @@ export function createWisp({ scene, lights, findPath }) {
   const group = new THREE.Group();
   group.visible = false;
   scene.add(group);
-  const core = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8), new THREE.MeshBasicMaterial({ color: hdr('#d8f0ff', 4) }));
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8), new THREE.MeshBasicMaterial({ color: hdr('#d8f0ff', 2.8) }));
   group.add(core);
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex.glow(), color: '#88c8ff', transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
   halo.scale.setScalar(0.9);

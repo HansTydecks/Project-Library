@@ -42,10 +42,37 @@ export default defineRoom({
     }
     for (let x = -hw + 1; x <= hw - 1; x += 0.4) ctx.add(box(0.05, 0.9, 0.05, 0), 'brass', [x, gy + 0.55, -hd + 2]);
     ctx.add(box(ctx.b.w - 2, 0.06, 0.08, 1), 'brass', [0, gy + 1.0, -hd + 2]);
+    // Lücke im westlichen Geländer: dort kommt die Wendeltreppe an
+    const gap = [11.4, 13.6];
     for (const sx of [-1, 1]) {
-      for (let z = -hd + 2; z <= hd - 1; z += 0.4) ctx.add(box(0.05, 0.9, 0.05, 0), 'brass', [sx * (hw - 2), gy + 0.55, z]);
-      ctx.add(box(0.08, 0.06, ctx.b.d - 3, 1), 'brass', [sx * (hw - 2), gy + 1.0, 0.5]);
+      for (let z = -hd + 2; z <= hd - 1; z += 0.4) {
+        if (sx < 0 && z > gap[0] && z < gap[1]) continue;
+        ctx.add(box(0.05, 0.9, 0.05, 0), 'brass', [sx * (hw - 2), gy + 0.55, z]);
+      }
+      const spans = sx < 0 ? [[-hd + 2, gap[0]], [gap[1], hd - 1]] : [[-hd + 2, hd - 1]];
+      for (const [z0, z1] of spans) {
+        ctx.add(box(0.08, 0.06, z1 - z0, 1), 'brass', [sx * (hw - 2), gy + 1.0, (z0 + z1) / 2]);
+        ctx.collider(sx * (hw - 2), (z0 + z1) / 2, 0.12, z1 - z0, { top: gy + 1.2, bottom: gy + 0.1, shadow: false });
+      }
     }
+    // Begehbare Galerie: Böden, Geländer, Regalfront
+    ctx.collider(0, -hd + 1.2, ctx.b.w - 1, 1.6, { top: gy + 0.1, bottom: gy - 0.1, shadow: false });
+    ctx.collider(-hw + 1.2, 0, 1.6, ctx.b.d - 1, { top: gy + 0.1, bottom: gy - 0.1, shadow: false });
+    ctx.collider(hw - 1.2, 0, 1.6, ctx.b.d - 1, { top: gy + 0.1, bottom: gy - 0.1, shadow: false });
+    ctx.collider(0, -hd + 2, ctx.b.w - 2, 0.12, { top: gy + 1.2, bottom: gy + 0.1, shadow: false });
+    ctx.collider(0, -hd + 0.62, ctx.b.w, 0.45, { top: gy + 4, bottom: gy + 0.1, shadow: false });
+    ctx.collider(-hw + 0.62, 0, 0.45, ctx.b.d, { top: gy + 4, bottom: gy + 0.1, shadow: false });
+    ctx.collider(hw - 0.62, 0, 0.45, ctx.b.d, { top: gy + 4, bottom: gy + 0.1, shadow: false });
+    // Wendeltreppe (Südwest) + Absatz zur Galerie
+    ctx.place('spiralStairs', { at: [-20, 0, 12.5], height: gy + 0.1, steps: 22, turns: 1.35, radius: 1.5, end: Math.PI });
+    // Absatz nur zwischen oberster Stufe und Galerie (sonst stößt man auf den letzten Stufen dagegen)
+    ctx.add(box(0.95, 0.2, 2.2, 1), 'woodDark', [-21.62, gy, 12.5]);
+    ctx.collider(-21.62, 12.5, 0.95, 2.2, { top: gy + 0.1, bottom: gy - 0.1, shadow: false });
+    ctx.place('standSign', { at: [-17.6, 0, 14.4], rot: Math.PI * 0.85, text: 'Zur Galerie ↑ (Bitte nicht übers Geländer lehnen. Außer zum Winken.)', size: 26, width: 1.3, signHeight: 0.42 });
+    // Oben auf der Galerie
+    ctx.place('cat', { at: [6, gy + 0.1, -hd + 1.4], rot: 0.3, fur: 'beard', name: 'Galeriekatze', secret: 'galeriekatze', secretName: 'Die Katze auf der Galerie', quip: 'Die Galeriekatze hat den besten Überblick. Sie zählt die Leser. Du bist Nummer eins.' });
+    ctx.place('bookPile', { at: [-6, gy + 0.1, -hd + 1.5], count: 5 });
+    ctx.place('candle', { at: [-hw + 1.3, gy + 0.1, 4], height: 0.3, intensity: 3 });
     // Obere Regale auf der Galerie
     for (const side of ['north', 'east', 'west']) {
       const wf = ctx.wallFrame(side, 0.42);

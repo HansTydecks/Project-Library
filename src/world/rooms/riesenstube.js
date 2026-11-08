@@ -18,7 +18,10 @@ export default defineRoom({
     ctx.enclose({ inner: 'wpOchre', wainscot: false, trim: 'woodDark' });
     ctx.foundation();
     // Riesige Sockelleiste
-    for (const side of ['east', 'south']) ctx.wallFrame(side).add(box(16, 0.7, 0.12, 2), 'white', [0, 0.35, 0.46]);
+    for (const side of ['east', 'south']) {
+      const wf = ctx.wallFrame(side);
+      for (const [a, c] of ctx.freeSpans(side, { margin: 0, doorClear: 0.15 })) wf.add(box(c - a, 0.7, 0.12, 2), 'white', [(a + c) / 2, 0.35, 0.46]);
+    }
 
     // Buchtreppe an der Ostwand hinauf zum Regalbrett
     const stacks = [[5.6, 5.4, 1], [5.6, 3.6, 2], [5.6, 1.8, 3], [5.6, 0, 4], [5.6, -1.8, 5]];
@@ -39,7 +42,7 @@ export default defineRoom({
     ctx.place('goldenAcorn', { at: [4.4, sy, -6.8], label: 'Die Lesebrille-Putztuch-Eichel', secret: 'riesen-eichel', secretName: 'Die Eichel auf dem Riesenregal', quip: 'Oben angekommen! Von hier sieht die Riesin aus wie … nun ja, du siehst sie nicht. Sie ist gerade Tee holen.' });
 
     // Riesendinge auf dem Boden
-    ctx.place('giantPencil', { at: [-2.5, 0, 4.6], rot: 0.25, length: 6, radius: 0.32 });
+    ctx.place('giantPencil', { at: [-3, 0, 3.0], rot: 0.25, length: 6, radius: 0.32 });
     ctx.place('giantGlasses', { at: [-3.4, 0, -1.4], rot: 0.5 });
     ctx.place('yarnBall', { at: [-5.4, 0, -5.4], radius: 0.95 });
     ctx.place('giantCup', { at: [0.6, 0, -4.4], radius: 1.3, height: 1.4 });

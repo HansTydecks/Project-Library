@@ -4,7 +4,7 @@ import * as THREE from 'three';
 // Räume/Chunks melden nur "Lichtpunkte" an; der Pool weist seine Lichter den nächsten Punkten zu.
 // So kann die Bibliothek unendlich wachsen, ohne dass die Performance einbricht.
 const POOL = 12;
-const GAIN = 2.1;
+const GAIN = 1.85;
 
 export function createLightPool(scene) {
   const spots = new Set();

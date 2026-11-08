@@ -35,6 +35,7 @@ export default defineRoom({
     ctx.place('floatingIsland', { at: [3.5, 0, 0], y: 1.6, width: 2.2, depth: 2.2 });
     ctx.place('rubberDuck', { at: [3.5, 1.6, 0], name: 'Wolkenente', quip: 'Wie kommt die Ente auf die Wolke? Sie sagt: »Gute Frage.«', secret: 'wolkenente', secretName: 'Die Ente auf der Wolke' });
     ctx.place('standSign', { at: [-2.6, 0, 5.6], rot: 2.6, text: 'Bitte nicht die Wolken füttern. Sie werden sonst Gewitter.', size: 30, width: 1.1, signHeight: 0.38 });
+    ctx.place('kite', { at: [6, 0, 6], y: 6.5, color: '#ff8ab0' });
     ctx.place('crystalBall', { at: [-1.6, 1.02, -1.2], interact: true });
     ctx.place('pedestal', { at: [-1.6, 0, -1.2] });
   },

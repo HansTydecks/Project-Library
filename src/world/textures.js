@@ -314,6 +314,25 @@ export const tex = {
     }
   })),
 
+  // Kacheln (Bad, Kamin)
+  tiles: (base = '#a8d8f0', grout = '#f4f8ff') => cached(`tiles${base}${grout}`, () => canvasTexture(256, 256, (g, w, h) => {
+    g.fillStyle = grout; g.fillRect(0, 0, w, h);
+    const r = mulberry32(31);
+    for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) {
+      g.fillStyle = shade(base, (r() - 0.5) * 0.08);
+      g.fillRect(x * 64 + 3, y * 64 + 3, 58, 58);
+      g.fillStyle = 'rgba(255,255,255,0.25)'; g.fillRect(x * 64 + 6, y * 64 + 6, 20, 6);
+    }
+  })),
+
+  // Buchstabenklotz (Spielzeugkammer)
+  letterBlock: (letter = 'A', color = '#e85a5a') => cached(`block${letter}${color}`, () => canvasTexture(128, 128, (g, w, h) => {
+    g.fillStyle = '#fff6e0'; g.fillRect(0, 0, w, h);
+    g.fillStyle = color; g.fillRect(10, 10, w - 20, h - 20);
+    g.fillStyle = '#fff6e0'; g.font = `bold 84px ${FONT_TITLE}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(letter, w / 2, h / 2 + 6);
+  }, { repeat: false })),
+
   water: () => cached('water', () => canvasTexture(256, 256, (g, w, h) => {
     g.fillStyle = '#1b3d55'; g.fillRect(0, 0, w, h);
     const r = mulberry32(111);

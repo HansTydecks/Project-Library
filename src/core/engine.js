@@ -11,7 +11,7 @@ export function createEngine(container, { lowFx = false, adaptive = true } = {})
   renderer.setPixelRatio(ratio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.75;
+  renderer.toneMappingExposure = 1.6;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.info.autoReset = false; // Statistik über alle Passes eines Bildes
   container.appendChild(renderer.domElement);
