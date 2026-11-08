@@ -57,10 +57,10 @@ export default defineRoom({
     south.place('portrait', { at: [5.3, 4.6, 0], subject: 'maus', width: 0.7, height: 0.9, bg: '#a88a4a' });
     ctx.wallFrame('south', 0.7).place('bunting', { at: [0, 0, 0], length: 14.2, y: 6.95, sag: 0.4, colors: ['pastelLemon', 'pastelPink', 'pastelMint', 'pastelLilac'] });
     ctx.wallFrame('south', 0.5).place('mouseDoor', { at: [-3.6, 0, 0], sign: 'Tick & Tack', color: 'pastelSky' });
-    west.place('wallShelfSmall', { at: [-6.0, 0, 0], y: 1.9, width: 1.0, wood: 'woodRed' });
+    west.place('wallShelfSmall', { at: [-6.5, 0, 0], y: 1.9, width: 1.0, wood: 'woodRed' });
     ctx.place('giantThimble', { at: [5.6, 0, -2.6], radius: 0.42, height: 0.65 });
     ctx.place('hangingPlant', { at: [6.3, 0, 6.5], top: 7.5, y: 4.6 });
     ctx.place('paperStars', { at: [0, 0, 0], area: [11, 11], top: 7.5, maxDrop: 1.3, count: 10, avoid: 2.4, colors: ['gold', 'pastelLemon', 'copper'] });
-    ctx.place('gearPuzzle', { at: [-4.2, 0, 3.4], rot: Math.PI / 2 }); // Minispiel: Zahnrad-Tresor
+    ctx.place('gearPuzzle', { at: [-7.0, 0, 4.4], rot: Math.PI / 2 }); // Minispiel: Zahnrad-Tresor
   },
 });
