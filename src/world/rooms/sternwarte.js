@@ -31,6 +31,7 @@ export default defineRoom({
     // Wolkentreppe im Kreis nach oben (Springen!) – oben wartet ein Stern
     const steps = [[3.2, 3.2, 0.8], [4.8, 0.6, 1.6], [3.8, -2.6, 2.4], [1.0, -4.6, 3.2], [-2.2, -4.4, 4.0], [-4.6, -2.0, 4.8]];
     for (const [x, z, y] of steps) ctx.place('floatingIsland', { at: [x, 0, z], y, width: 1.9, depth: 1.9 });
+    ctx.place('paintedEgg', { at: [3.8, 2.4, -2.6], id: 'ei-wolkentreppe' });
     ctx.place('floatingIsland', { at: [-5.2, 0, 1.4], y: 5.6, width: 2.6, depth: 2.6 });
     ctx.place('goldenAcorn', { at: [-5.2, 5.6, 1.4], kind: 'star', label: 'Gefallener Stern', secret: 'sternschnuppe', secretName: 'Der Stern auf der Wolkentreppe', quip: 'Ein kleiner Stern, der zu spät zum Himmel kam. Er wartet hier auf die nächste Nacht.' });
     ctx.place('standSign', { at: [2.0, 0, 4.4], rot: -0.4, text: 'Wolkentreppe: Leertaste drücken. Oben zweimal.', size: 32, width: 1.1, signHeight: 0.36 });

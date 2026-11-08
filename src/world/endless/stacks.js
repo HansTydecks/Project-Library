@@ -11,6 +11,7 @@ import { createBookMesh } from '../books.js';
 const H = 5.2;
 const LOAD_R = 2;
 const UNLOAD_R = 3;
+const END_Z = -28; // »Das Ende der Bibliothek« (ein Osterei)
 
 export function createStacks({ def, occ, scene, services, projects }) {
   const [ex, ez] = def.cell;         // Eingangszelle
@@ -100,11 +101,15 @@ export function createStacks({ def, occ, scene, services, projects }) {
 }
 
 function pickType(r, cx, cz) {
+  // Feste Orte: Pip wohnt gleich neben dem Eingang, das »Ende« liegt tief im Norden
+  if (cx === -1 && cz === -4) return 'wichtel';
+  if (cx === 0 && cz === END_Z) return 'theEnd';
   const depth = -cz;
   const table = [
     ['aisles', 46], ['aislesZ', 20], ['nook', 8], ['door', 4], ['empty', 4 + Math.min(depth, 10) * 0.5],
     ['lost', 5], ['stairs', 3], ['pillars', 6], ['dark', 1 + Math.min(depth, 20) * 0.3], ['sign', 6],
     ['teatime', 4], ['bookTree', 4], ['duckPond', 3], ['bounce', 3], ['campfire', 3],
+    ['wichtel', 1.5],
   ];
   const total = table.reduce((s, [, w]) => s + w, 0);
   let x = r.next() * total;
@@ -272,6 +277,31 @@ const CHUNK_TYPES = {
     f.hitbox([0, 0.3, 0], [1.4, 0.6, 1.4], {
       label: 'Lagerfeuer im Labyrinth', verb: 'Geschichte hören',
       onInteract: () => { services.ui.toast(r.pick(['Die Staubmäuse erzählen von einem Buch, das so lang ist, dass es zweimal endet.', 'Gruselgeschichten gibt es hier nicht. Nur Kuschelgeschichten. Mit Happy End.'])); services.progress.curio('lagerfeuer'); },
+    });
+  },
+  // Pip, der Bücherwichtel, huscht zwischen den Regalen umher
+  wichtel(f, r) {
+    rows(f, r, { along: 'x', count: 2, gapChance: 0.6 });
+    f.place('friendGnome', { at: [0, 0, 0], friend: 'pip', spots: [[0, 0], [4.5, 1.2], [-4.2, -1.4], [1.8, -2.2], [-2.4, 2.4]] });
+    f.place('bookPile', { at: [-1.2, 0, 0.8], count: 7 });
+    f.place('candle', { at: [-1.6, 0, 1.4], height: 0.3, intensity: 3 });
+  },
+  // Osterei: das »Ende« der Bibliothek, mit einer Tür zurück nach Hause
+  theEnd(f, r, { services }) {
+    f.place('rug', { at: [0, 0, 0], width: 4, depth: 4, material: 'carpetRed' });
+    const s = services.makeSign('Hier ist das Ende der Bibliothek. (Nicht.)', { w: 1024, h: 128, size: 52 });
+    f.object(s, [0, 3.2, -2.4]).scale.set(5, 0.62, 1);
+    f.add(box(0.15, 2.4, 0.2, 0), 'woodDark', [-0.6, 1.2, 0]);
+    f.add(box(0.15, 2.4, 0.2, 0), 'woodDark', [0.6, 1.2, 0]);
+    f.add(box(1.35, 0.15, 0.2, 0), 'woodDark', [0, 2.45, 0]);
+    f.add(box(1.05, 2.3, 0.06, 1), 'pastelSky', [0, 1.15, 0]);
+    f.add(box(0.06, 0.06, 0.1, 0), 'gold', [0.38, 1.1, 0.05]);
+    f.glow([0, 1.2, 0.2], { color: '#ffe8a0', size: 2.2, opacity: 0.35 });
+    f.collider(0, 0, 1.4, 0.3);
+    services.secrets.register('ende-der-bibliothek', 'Das Ende der Bibliothek (das keins ist)', 'stapel', 'egg');
+    f.hitbox([0, 1.2, 0], [1.2, 2.4, 0.5], {
+      label: 'Tür mit der Aufschrift »Nach Hause«', verb: 'Öffnen',
+      onInteract: () => { services.secrets.found('ende-der-bibliothek'); services.events.emit('goHome'); },
     });
   },
   sign(f, r, { home }) {

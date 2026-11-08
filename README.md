@@ -32,6 +32,17 @@ Laufen musst du aber selbst.
 
 Im **Großen Lesesaal** führt eine Wendeltreppe hinauf auf die begehbare Galerie.
 
+## Bewohner & Ostereier
+
+Neun Bewohner wollen kennengelernt werden (Tagebuch → „Bekanntschaften“): der Bibliothekar, Frau Fingerhut (Uhrmacher-Maus),
+Professor Puschel (Eule mit Monokel), Mirabelle (plaudernde Teekanne), Ritter Rostfrei (auf der Galerie), Gustav (Gärtnerigel),
+Moos (Moosgolem), Lesefrida (Bücherraupe) und Pip, der Bücherwichtel in den Stapeln. Der Bibliothekar verrät auf „Wer wohnt hier?“,
+wo man suchen kann.
+
+Außerdem sind zwölf bemalte Eier versteckt, und es gibt Ostereier zum Selbstfinden – ein paar Hinweise ohne zu viel zu verraten:
+alte Tastenkombinationen, Zaubersprüche beim Bibliothekar, ein Buch, das nicht ganz im Regal steht, eine Tür ganz am Ende
+der Stapel, ungeduldiges Klingeln – und die Bibliothek kennt den Kalender (`?season=winter|autumn` zum Ausprobieren).
+
 Überall verstreut: Bücher mit Beinen, Staubmäuse, Quietscheenten, Papierflieger, Bücher an Luftballons und Schilder mit Ratschlägen.
 
 ## Steuerung

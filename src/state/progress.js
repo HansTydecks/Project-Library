@@ -3,12 +3,12 @@
 const KEY = 'magische-bibliothek:v1';
 
 export function createProgress() {
-  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], visits: 0, firstVisit: null };
+  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], visits: 0, firstVisit: null };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) data = { ...data, ...JSON.parse(raw) };
   } catch { /* privat/blockiert */ }
-  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios'].map((k) => [k, new Set(data[k])]));
+  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs'].map((k) => [k, new Set(data[k] ?? [])]));
   data.visits = (data.visits ?? 0) + 1;
   data.firstVisit ??= new Date().toISOString().slice(0, 10);
 
@@ -22,6 +22,7 @@ export function createProgress() {
   const mark = (k) => (id) => { if (sets[k].has(id)) return false; sets[k].add(id); save(); return true; };
   return {
     room: mark('rooms'), book: mark('books'), idea: mark('ideas'), secret: mark('secrets'), curio: mark('curios'),
+    friend: mark('friends'), egg: mark('eggs'),
     has: (k, id) => sets[k].has(id),
     count: (k) => sets[k].size,
     get visits() { return data.visits; },
@@ -34,8 +35,9 @@ export function createProgress() {
 export function createSecrets({ progress, onFound }) {
   const all = new Map();
   return {
-    register(id, name, room) { if (!all.has(id)) all.set(id, { id, name, room }); },
+    /** kind: 'secret' (Geheimnis im Raum) oder 'egg' (Osterei: Code, Zauberspruch, versteckte Mechanik) */
+    register(id, name, room, kind = 'secret') { if (!all.has(id)) all.set(id, { id, name, room, kind }); },
     found(id) { if (progress.secret(id)) onFound(all.get(id) ?? { id, name: id }); },
-    list() { return [...all.values()].map((s) => ({ ...s, found: progress.has('secrets', s.id) })); },
+    list(kind) { return [...all.values()].filter((s) => !kind || s.kind === kind).map((s) => ({ ...s, found: progress.has('secrets', s.id) })); },
   };
 }

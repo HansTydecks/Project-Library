@@ -42,3 +42,18 @@ test('Tageszeiten', () => {
   assert.equal(timeOfDay(20), 'evening');
   assert.equal(timeOfDay(2), 'night');
 });
+
+test('Zaubersprüche liefern eine Aktion', () => {
+  assert.equal(lib.ask('Federleicht!').action, 'feather');
+  assert.equal(lib.ask('abrakadabra').action, 'hat');
+  assert.equal(lib.ask('Ich hätte gern Kakao').action, 'cocoa');
+  assert.equal(lib.ask('Was ist der Sinn des Lebens?').action, 'fortyTwo');
+});
+
+test('normale Suchen haben keine Aktion', () => {
+  assert.equal(lib.ask('pixl garten').action, undefined);
+});
+
+test('kennt die Bewohner', () => {
+  assert.match(lib.ask('Wer wohnt hier?').text, /Eule/);
+});

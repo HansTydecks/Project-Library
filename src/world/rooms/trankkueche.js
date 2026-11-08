@@ -25,6 +25,7 @@ export default defineRoom({
     for (const u of [-5, -2, 1, 4.6]) west.place('potionShelf', { at: [u, 0, 0], width: 2.4, seed: `w${u}` });
     const north = ctx.wallFrame('north', 0.42);
     for (const u of [-5, 5]) north.place('potionShelf', { at: [u, 0, 0], width: 2.6, seed: `n${u}` });
+    west.place('paintedEgg', { at: [5.75, 2.17, 0.15], id: 'ei-traenke' });
     // Kräuter unter der Decke
     ctx.place('hangingHerbs', { at: [0, 0, -3], width: 5, y: 4.3 });
     ctx.place('hangingHerbs', { at: [0, 0, 3], width: 5, y: 4.3 });
@@ -42,7 +43,7 @@ export default defineRoom({
     ctx.place('lantern', { at: [4.5, 3.6, 4.5], hanging: true, chain: 1, color: '#ff9ad8', intensity: 6, distance: 8 });
     ctx.place('pottedPlant', { at: [6.6, 0, 6.6], scale: 1.2 });
     ctx.place('rubberDuck', { at: [-6.6, 0, 6.6], crown: true, name: 'Die Herzogin', secret: 'herzogin', secretName: 'Die Herzogin der Enten', quip: 'Eine Ente mit Krone. Sie ist hier die Chefin. Der Frosch bestreitet das.' });
-    ctx.sign('Trankküche – Hier wird gekocht, was noch keinen Namen hat', [0, 3.9, hd - 0.46], Math.PI, { w: 4.6, h: 0.5, size: 36 });
+    ctx.sign('Trankküche – Hier wird gekocht, was noch keinen Namen hat', [0, 4.6, hd - 0.46], Math.PI, { w: 4.6, h: 0.5, size: 36 });
     ctx.place('dust', { area: [14, 4.5, 14] });
   },
 });

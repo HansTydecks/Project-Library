@@ -4,7 +4,7 @@ const TYPE = { project: 'Werk', idea: 'Idee', room: 'Raum' };
 const CHIPS = ['Überrasch mich', 'Garten', 'Spiele', 'Blog', 'Ideen', 'Hilfe'];
 
 /** Gespräch mit dem Bibliothekar. */
-export function openWizardDialog(ui, { librarian, onGuide, onOpen, onClose, describe, greeting }) {
+export function openWizardDialog(ui, { librarian, onGuide, onOpen, onClose, describe, greeting, onAction }) {
   const box = el('div', 'dialog');
   box.innerHTML = `
     <div class="who">Der Bibliothekar</div>
@@ -31,6 +31,7 @@ export function openWizardDialog(ui, { librarian, onGuide, onOpen, onClose, desc
 
   function show(res) {
     speak(res.text);
+    if (res.action) onAction?.(res.action);
     list.innerHTML = '';
     for (const r of res.results) {
       const li = el('li');

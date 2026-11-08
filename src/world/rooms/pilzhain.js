@@ -25,9 +25,13 @@ export default defineRoom({
     ctx.place('floatingIsland', { at: [2.8, 0, 4.6], y: 4.6, width: 2.2, depth: 2.2 });
     ctx.place('jumpMushroom', { at: [-1.2, 3.4, 2.8], scale: 0.6, power: 9, cap: 'mushroomCapGold', glow: '#ffd86a', light: false });
     ctx.place('floatingIsland', { at: [-3.6, 0, 6.0], y: 6.6, width: 2.6, depth: 2.2 });
+    ctx.place('paintedEgg', { at: [2.8, 4.6, 4.6], id: 'ei-pilzwolke' });
     ctx.place('goldenAcorn', { at: [-3.6, 6.6, 6.0], secret: 'goldene-eichel' });
     ctx.place('standSign', { at: [-0.4, 0, -3.4], rot: 0.3, text: 'Sprungpilze: Draufspringen erlaubt. Sie sind kitzlig.', size: 30, width: 1.1, signHeight: 0.4 });
 
+    ctx.place('friendCaterpillar', { at: [4.6, 0, -5.4], rot: -2.6, friend: 'lesefrida' });
+    if (ctx.kit.services.fx?.season === 'winter') ctx.place('snowfall', { area: [16, 9, 16] });
+    if (ctx.kit.services.fx?.season === 'autumn') ctx.place('pumpkin', { at: [-2.6, 0, -5.4], scale: 1.6 });
     ctx.place('lilyPond', { at: [4.2, 0, -0.8], radius: 2, secret: 'opernfrosch' });
     ctx.place('snailMailbox', { at: [-6.4, 0, -3.4], rot: Math.PI / 2 });
     ctx.place('bench', { at: [-3.4, 0, -6.6] });

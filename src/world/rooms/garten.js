@@ -61,6 +61,11 @@ export default defineRoom({
     ctx.place('butterflies', { at: [0, 0, 0], area: [30, 2, 12], count: 10, y: 0.8 });
     ctx.place('kite', { at: [-14, 0, 3], y: 7.5, color: '#ffd86a' });
     ctx.place('kite', { at: [10, 0, -2], y: 8.5, color: '#8ad8ff', rot: 0.8 });
+    ctx.place('friendHedgehog', { at: [-8, 0, -1.8], length: 5, friend: 'gustav' });
+    ctx.place('paintedEgg', { at: [-22.6, 0, 6.6], id: 'ei-hecke' });
+    const season = ctx.kit.services.fx?.season;
+    if (season === 'winter') ctx.place('snowfall', { area: [ctx.b.w, 9, ctx.b.d], count: 900 });
+    if (season === 'autumn') for (const [x, z] of [[-1.8, -3.6], [1.8, -3.6], [-14.5, 1.2], [14.5, 1.2]]) ctx.place('pumpkin', { at: [x, 0, z], scale: 1 + (x > 0 ? 0.3 : 0) });
     ctx.place('fireflies', { area: [ctx.b.w - 4, 3, ctx.b.d - 3], count: 120 });
   },
 });

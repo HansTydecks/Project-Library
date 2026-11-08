@@ -17,6 +17,7 @@ export function createPlayer({ camera, input, collision }) {
   const landListeners = new Set();
   let vy = 0, grounded = true, airJumps = 0, airTime = 0;
   let wantJump = false;
+  let gravityScale = 1; // < 1 = Federleicht-Zauber
 
   function update(dt) {
     const s = input.state;
@@ -65,7 +66,7 @@ export function createPlayer({ camera, input, collision }) {
       if (grounded && pos.y - ground > 0.35) { grounded = false; airJumps = 1; } // von einer Kante gelaufen
       if (grounded) pos.y = ground; // kleine Stufe hinunter: einfach folgen
       else {
-        vy -= GRAVITY * dt;
+        vy -= GRAVITY * gravityScale * dt;
         pos.y += vy * dt;
         airTime += dt;
         const ceil = collision.ceilingAt(pos.x, pos.z, pos.y);
@@ -106,6 +107,8 @@ export function createPlayer({ camera, input, collision }) {
     onJump(fn) { jumpListeners.add(fn); },
     onLand(fn) { landListeners.add(fn); },
     jump() { wantJump = true; },
+    setGravityScale(k) { gravityScale = k; },
+    get gravityScale() { return gravityScale; },
     /** Schleudert die Figur nach oben (Sprungpilze, Magie). */
     launch(v) { vy = v; grounded = false; airJumps = 1; airTime = 0.01; },
     get grounded() { return grounded; },

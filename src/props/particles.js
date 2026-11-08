@@ -49,6 +49,27 @@ export default [
     },
   }),
 
+  // Schnee (Osterei im Winter: Dezember/Januar oder ?season=winter)
+  defineProp({
+    name: 'snowfall',
+    create(f, opts, kit) {
+      const area = opts.area ?? [16, 8, 16];
+      const n = opts.count ?? 500;
+      const p = points(n, area, '#ffffff', 0.09, 0.85);
+      f.object(p, [0, 0, 0]);
+      const pos = p.geometry.attributes.position.array;
+      const sp = Float32Array.from({ length: n }, () => 0.4 + Math.random() * 0.6);
+      kit.onUpdate((dt, t) => {
+        for (let i = 0; i < n; i++) {
+          pos[i * 3 + 1] -= sp[i] * dt;
+          pos[i * 3] += Math.sin(t * 0.7 + i) * dt * 0.15;
+          if (pos[i * 3 + 1] < 0) pos[i * 3 + 1] = area[1];
+        }
+        p.geometry.attributes.position.needsUpdate = true;
+      });
+    },
+  }),
+
   defineProp({
     name: 'fireflies',
     create(f, opts, kit) {
