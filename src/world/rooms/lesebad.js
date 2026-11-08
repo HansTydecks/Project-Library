@@ -51,5 +51,6 @@ export default defineRoom({
     ctx.place('snowGlobe', { at: [6.7, 0.63, -3.2], house: 'pastelSky', quip: 'In der Kugel schneit es auf ein winziges Badehaus. Pingo hätte auch gern so eins.' });
     ctx.sign('Lesebad – Bücher bitte nicht tunken', [0, 3.8, hd - 0.46], Math.PI, { w: 4, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 5, 14], color: '#d8f4ff' });
+    ctx.place('fishingSpot', { at: [0.6, 0, 3.6], rot: Math.PI }); // Minispiel: Bücher-Angeln
   },
 });

@@ -98,5 +98,6 @@ export default defineRoom({
     ctx.place('bunting', { at: [10, 0, -1.5], rot: -0.896, length: 6.0, y: 3.0, sag: 0.6, colors: ['pastelSky', 'pastelLemon', 'pastelPink', 'pastelMint'] });
 
     ctx.place('fireflies', { area: [ctx.b.w - 4, 3, ctx.b.d - 3], count: 120 });
+    ctx.place('fireflyHunt', { at: [6.5, 0, 3] }); // Minispiel: Glühwürmchen-Jagd
   },
 });

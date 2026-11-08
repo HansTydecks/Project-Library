@@ -61,5 +61,6 @@ export default defineRoom({
     ctx.place('giantThimble', { at: [5.6, 0, -2.6], radius: 0.42, height: 0.65 });
     ctx.place('hangingPlant', { at: [6.3, 0, 6.5], top: 7.5, y: 4.6 });
     ctx.place('paperStars', { at: [0, 0, 0], area: [11, 11], top: 7.5, maxDrop: 1.3, count: 10, avoid: 2.4, colors: ['gold', 'pastelLemon', 'copper'] });
+    ctx.place('gearPuzzle', { at: [-4.2, 0, 3.4], rot: Math.PI / 2 }); // Minispiel: Zahnrad-Tresor
   },
 });

@@ -52,5 +52,6 @@ export default defineRoom({
     ctx.place('cushionPile', { at: [6.2, 0, 4.2], colors: ['velvet', 'pastelPink', 'pastelLilac', 'velvetBlue', 'pastelLemon'] });
     ctx.place('hangingPlant', { at: [-6.3, 0, -6.2], top: 7, y: 4.6, leaf: 'leavesPink' });
     ctx.place('bookPile', { at: [5.6, 0, -3.3], count: 3 });
+    ctx.place('echoStand', { at: [0, 0, -1.0] }); // Minispiel: Spatzen-Echo
   },
 });

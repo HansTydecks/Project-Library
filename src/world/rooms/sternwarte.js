@@ -56,5 +56,6 @@ export default defineRoom({
     ctx.place('cushionPile', { at: [-2.6, 0, 3.4], rot: 0.5, colors: ['velvetBlue', 'pastelLilac', 'pastelSky', 'pastelLemon'] });
     ctx.place('dust', { area: [14, 8, 14] });
     ctx.sign('Sternwarte – Bitte nicht nach den Sternen greifen (außer einem)', [0, 4.6, hd - 0.46], Math.PI, { w: 4.8, h: 0.55, size: 36 });
+    ctx.place('starChart', { at: [-4.4, 0, -4.4], rot: Math.PI / 4 }); // Minispiel: Sternbilder
   },
 });

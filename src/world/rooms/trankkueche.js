@@ -59,5 +59,6 @@ export default defineRoom({
     south.place('magicWindow', { at: [4.4, 0, 0], y: 2.5, width: 1.2, height: 1.5, mode: 'night', curtain: 'velvetGreen', quip: 'Draußen ist Vollmond. Die beste Zeit, um Mondscheintee einzukochen.' });
     south.place('wallShelfSmall', { at: [-4.6, 0, 0], y: 1.9, width: 1.1, wood: 'woodLight' });
     ctx.place('fishBowl', { at: [6.9, 0, 4.0], y: 0.95, name: 'Glas der Glücksfische', quips: ['Die Fische schnappen nach den Krümeln. Einer schillert kurz grün – Nebenwirkung vom Kesseldampf.', 'Blubb. (Übersetzung: »Mehr Krümel, weniger Zaubertrank, bitte.«)', 'Einer der Fische schlägt einen Salto. Der Frosch applaudiert ein bisschen neidisch.'] });
+    ctx.place('potionSimon', { at: [4.6, 0, -2.4] }); // Minispiel: Trank-Memo
   },
 });

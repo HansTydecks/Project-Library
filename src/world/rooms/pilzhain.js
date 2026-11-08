@@ -73,5 +73,6 @@ export default defineRoom({
 
     ctx.place('fireflies', { area: [14, 4, 14], count: 90, color: '#ffb8f0' });
     ctx.place('dust', { area: [14, 6, 14], count: 200 });
+    ctx.place('ringRace', { at: [0, 0, 0], flag: [-5.4, 0, 0.8], rings: [[-3.6, 1.5, 0.6], [-1.6, 3.6, -1.0], [-1.2, 4.9, 2.8], [2.8, 6.2, 4.6], [2.2, 3.8, 1.2], [5.0, 1.5, 2.8]] }); // Minispiel: Ringflug
   },
 });

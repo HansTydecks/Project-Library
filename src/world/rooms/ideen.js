@@ -68,5 +68,6 @@ export default defineRoom({
     ctx.place('hangingPlant', { at: [6.2, 0, -6.2], top: 5.5, y: 3.7, leaf: 'leavesPink' });
     ctx.place('cushionPile', { at: [6.25, 0, 3.4], colors: ['velvetBlue', 'pastelLilac', 'pastelLemon', 'velvet', 'pastelMint'] });
     ctx.place('quillJar', { at: [-5.0, 0.83, -4.6], jar: 'pastelLilac', scrolls: false });
+    ctx.place('paperToss', { at: [-3.85, 0, 3.8], rot: Math.PI / 2 }); // Minispiel: Papierkorb-Weitwurf
   },
 });

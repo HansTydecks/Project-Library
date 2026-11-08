@@ -62,5 +62,6 @@ export default defineRoom({
     ctx.place('letterBlock', { at: [-6.9, 0.51, 3.78], letter: 'C', size: 0.5, spin: 0.25 });
     ctx.sign('Spielzeugkammer – Spielen ist auch Lesen (mit den Händen)', [0, 4.4, hd - 0.46], Math.PI, { w: 5, h: 0.55, size: 36 });
     ctx.place('dust', { area: [14, 6, 14] });
+    ctx.wallFrame('east', 0.42).place('memoryWall', { at: [-4, 0, 0] }); // Minispiel: Memory
   },
 });

@@ -90,5 +90,6 @@ export default defineRoom({
     ctx.place('cushionPile', { at: [-5.6, 0, -6.35], colors: ['pastelPink', 'velvet', 'pastelMint', 'pastelLemon', 'velvetBlue'] });
     ctx.place('hangingPlant', { at: [-6.3, 0, -4.8], top: H, y: 4.3, leaf: 'leavesPink', pot: 'porcelainBlue' });
     ctx.place('hangingPlant', { at: [6.1, 0, 5.9], top: H, y: 4.1 });
+    ctx.place('shellGame', { at: [4.6, 0, -3.8] }); // Minispiel: Hütchenspiel
   },
 });
