@@ -51,8 +51,7 @@ export default defineRoom({
     ctx.place('bunting', { at: [5.7, 0, -0.3], rot: -Math.PI / 2, length: 8.0, y: 3.1, sag: 0.5 });
     // Wichteltür im Stiel des größten Pilzes
     ctx.place('mouseDoor', { at: [5.685, 0, 3.79], rot: -2.155, sign: 'Pilzwichtel', color: 'pastelLilac' });
-    ctx.place('mushrooms', { at: [-6.8, 0, -6.6], count: 6, radius: 0.7 });
-    ctx.place('lantern', { at: [-4.9, 0, -6.9], y: 0.18, light: false, color: '#ffb8f0' });
+    ctx.place('flowers', { at: [-6.6, 0, -6.6], width: 1.4, depth: 1.2 });
     ctx.place('flowers', { at: [6.9, 0, -2.8], width: 1.2, depth: 1.2 });
     // Pilz-Teetisch mit zwei Pilzhockern
     const tea = ctx.frame([-2.4, 0, 4.6], 0.3);

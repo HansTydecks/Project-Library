@@ -34,5 +34,25 @@ export default defineRoom({
     ctx.place('chandelier', { at: [0, 0, 0], y: 4.7, chain: 1, radius: 1, candles: 8, intensity: 12 });
     ctx.sign('Buchbinderei – Jedes Buch ein Unikat', [0, 4.4, hd - 0.46], Math.PI, { w: 4, h: 0.5, size: 40 });
     ctx.place('dust', { area: [14, 5, 14] });
+
+    // ---- Mehr Details: Werkzeugbrett, Meisterporträt, Papierschnipsel, Heftzwirn
+    const north = ctx.wallFrame('north', 0.42);
+    north.place('wallShelfSmall', { at: [4.8, 0, 0], y: 1.7, width: 1.8, wood: 'woodRed' });
+    north.place('wallShelfSmall', { at: [4.8, 0, 0], y: 2.4, width: 1.4 });
+    north.place('portrait', { at: [-4.8, 2.5, 0], subject: 'igel', bg: '#6a4a2a', title: 'Meister Stachel', caption: 'Der erste Buchbinder der Bibliothek. Er lochte die Seiten mit seinen eigenen Stacheln – heute nimmt man dafür eine Ahle.' });
+    north.place('mouseDoor', { at: [-3.2, 0, 0], sign: 'Leimfrei', color: 'woodLight', lines: [
+      '»Wir binden hier winzige Bücher! Das kleinste hat nur eine Seite. Und die ist leer.«',
+      '»Vorsicht, frisch geleimt!«, piepst es. Die Tür klebt ein bisschen.',
+      'Durch das Schlüsselloch duftet es nach Papier und Käsebrot.',
+    ] });
+    ctx.wallFrame('east', 0.42).place('magicWindow', { at: [-4.8, 0, 0], y: 2.3, mode: 'day', curtain: 'velvetGreen', frame: 'woodLight', quip: 'Draußen üben frisch gebundene Bücher das Fliegen. Eins winkt mit dem Lesebändchen.' });
+    ctx.wallFrame('west', 0.6).place('bunting', { at: [0, 0, 0], length: 14, y: 4.6, sag: 0.4, colors: ['pastelPink', 'pastelLemon', 'pastelSky', 'pastelMint', 'pastelPeach'] });
+    ctx.place('paperStars', { area: [13, 13], top: 6, maxDrop: 1.3, count: 14, avoid: 1.8, colors: ['paper', 'cream', 'pastelLemon', 'pastelSky'] });
+    ctx.place('hangingPlant', { at: [-6.4, 0, -6.2], top: 6, y: 3.9 });
+    ctx.place('bookPile', { at: [-6.4, 0, -4.6], count: 6 });
+    ctx.place('bookPile', { at: [4.3, 0, -3.3], count: 4 });
+    ctx.place('yarnBall', { at: [-5.8, 0, -3.4], radius: 0.28, material: 'cream', rot: -Math.PI / 2 });
+    ctx.place('quillJar', { at: [1.35, 0.81, -3.3], scrolls: false });
+    ctx.place('candleCluster', { at: [3.0, 0.81, -4.0], count: 3 });
   },
 });

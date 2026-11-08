@@ -65,6 +65,22 @@ export default defineRoom({
     l1.place('armchair', { at: [-5.6, 0, -5.4], rot: 0.8, cushion: 'velvetBlue' });
     l1.place('pottedPlant', { at: [6.6, 0, -6.6], scale: 1.4, leaf: 'leavesPink' });
     l1.place('lantern', { at: [5, 7, 5], hanging: true, chain: 4, intensity: 8, distance: 14 });
+    const w1 = l1.wallFrame('west', 0.42);
+    w1.place('portrait', { at: [0, 2.4, 0], subject: 'teekanne', bg: '#5a3a6a', title: 'Mirabelle, Stammgast', caption: 'Fährt jeden Morgen hinauf ins Wolkencafé. Sie sagt, oben schmeckt der Tee nach Ferien.' });
+    w1.place('wallShelfSmall', { at: [-4.2, 0, 0], y: 1.7, width: 1.4, wood: 'woodRed' });
+    const e1 = l1.wallFrame('east', 0.42);
+    e1.place('magicWindow', { at: [0, 0, 0], y: 2.4, mode: 'day', curtain: 'velvetBlue', quip: 'Von hier oben sieht man über die Dächer der Bibliothek. Ein Schornstein winkt mit einer Rauchwolke.' });
+    e1.place('bunting', { at: [0, 0, 0], length: 13, y: 4.6, sag: 0.5 });
+    l1.place('sideTable', { at: [-6.7, 0, -3.9] });
+    l1.place('teacup', { at: [-6.6, 0.62, -3.75], color: 'pastelLilac' });
+    l1.place('candleCluster', { at: [-6.82, 0.62, -4.08], count: 2 });
+    l1.place('paperStars', { area: [13, 13], top: 11.9, maxDrop: 7, count: 14, avoid: 2.4, colors: ['pastelLilac', 'gold', 'pastelPink', 'pastelSky'] });
+    l1.place('hangingPlant', { at: [6.4, 0, 3.2], top: 11.9, y: 3.6, leaf: 'leaves' });
+    l1.place('hangingPlant', { at: [-6.2, 0, -1.8], top: 11.9, y: 3.3, leaf: 'leavesPink' });
+    l1.place('crystalCluster', { at: [6.6, 0, -4.8], color: '#ffa8d8' });
+    l1.place('letterBlock', { at: [6.85, 0, 4.5], size: 0.6, letter: '1', spin: 0.15 });
+    l1.place('letterBlock', { at: [6.95, 0, 5.3], size: 0.45, letter: 'O', spin: -0.12 });
+    l1.place('letterBlock', { at: [6.9, 0, 5.95], size: 0.45, letter: 'G', spin: 0.2 });
     // ---- Wolkencafé (offen)
     const l2 = ctx.level(2, TOP_H);
     l2.floor('tilesWhite', { uv: 1, hole });
@@ -84,6 +100,17 @@ export default defineRoom({
     l2.place('standSign', { at: [0, 0, 3.4], text: 'Wolkencafé: Kakao mit Aussicht. Bitte nicht die Wolken anknabbern.', size: 26, width: 1.3, signHeight: 0.42 });
     l2.light([0, 3.5, 0], { color: '#ffe0b0', intensity: 5, distance: 12 });
     for (const [x, z] of [[-7, -7], [7, -7], [-7, 7], [7, 7]]) l2.add(cyl(0.08, 0.1, 2.2, 8), 'brass', [x, 1.1, z]);
+    // Wimpel zwischen den Messingpfosten, Wolkenkissen, Menütafel
+    const cafeFlags = ['pastelPink', 'white', 'pastelSky', 'pastelLemon', 'pastelMint'];
+    for (const [x, z, r] of [[0, -7, 0], [0, 7, 0], [7, 0, Math.PI / 2], [-7, 0, Math.PI / 2]]) l2.place('bunting', { at: [x, 0, z], rot: r, length: 14, y: 2.2, sag: 0.35, colors: cafeFlags });
+    l2.place('teapot', { at: [-4.78, 0.81, 4.32], color: 'pastelPink', scale: 0.9, rot: 0.4 });
+    l2.place('candleCluster', { at: [4.25, 0.81, 4.75], count: 3, plate: 'gold' });
+    l2.place('cushionPile', { at: [-6.3, 0, 1.2], colors: ['white', 'pastelSky', 'pastelPink', 'white', 'pastelLemon'] });
+    l2.place('pottedPlant', { at: [-6.7, 0, 2.9], scale: 1.1, leaf: 'leavesPink' });
+    l2.place('pottedPlant', { at: [6.7, 0, -2.4], scale: 1.1 });
+    l2.place('pottedPlant', { at: [6.7, 0, 2.6], scale: 1.1 });
+    l2.place('standSign', { at: [-6.6, 0, -1.6], rot: Math.PI / 2, text: 'Heute: Kakao mit Wolkenhaube · Sternkekse · Tee, der nach Ferien schmeckt', size: 24, width: 1.3, signHeight: 0.46 });
+    l2.place('floatingIsland', { at: [0, 0, -5.4], y: 0.9, width: 1.6, depth: 1.2, kind: 'cloud' });
     if (ctx.kit.services.fx?.season === 'winter') l2.place('snowfall', { area: [16, 8, 16] });
   },
 });

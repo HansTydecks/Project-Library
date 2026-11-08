@@ -33,5 +33,24 @@ export default defineRoom({
     ctx.place('paintedEgg', { at: [-6.4, 0, 6.4], id: 'ei-musik' });
     ctx.sign('Musikzimmer – Hier spielt die Musik (du!)', [0, 4.6, hd - 0.46], Math.PI, { w: 4.4, h: 0.55, size: 38 });
     ctx.place('dust', { area: [14, 6, 14] });
+
+    // ---- Mehr Details: Grammophon-Ecke, Notenwimpel, Mäusechor hinter der Fußleiste
+    const east = ctx.wallFrame('east', 0.42);
+    east.place('portrait', { at: [-1.6, 2.6, 0], subject: 'maus', bg: '#7a3a5a', title: 'Maestra Fingerhut', caption: 'Dirigiert den Spatzenchor mit einem Zahnstocher. Die Spatzen tun so, als würden sie hinsehen.' });
+    east.place('mouseDoor', { at: [-4.2, 0, 0], sign: 'Mäusechor', color: 'pastelPink', lines: [
+      '»Do-Re-Mi-Fa-Käse!«, singt es hinter der Tür.',
+      '»Psst! Wir proben gerade unseren Kanon. Er hört nie auf.«',
+      'Hinter der Tür quietscht eine winzige Geige. Ziemlich gut sogar.',
+    ] });
+    const west = ctx.wallFrame('west', 0.42);
+    west.place('magicWindow', { at: [2.6, 0, 0], y: 2.4, mode: 'sunset', curtain: 'velvet', quip: 'Draußen singen die Wolken im Abendrot. Leider etwas zu tief.' });
+    west.place('wallShelfSmall', { at: [5.4, 0, 0], y: 1.8, width: 1.2, wood: 'woodRed' });
+    ctx.wallFrame('south', 0.42).place('violin', { at: [4.6, 2.4, 0], tilt: 0.25 });
+    ctx.place('bunting', { at: [0, 0, 4.6], length: 15.1, y: 4.9, sag: 0.6, colors: ['pastelPink', 'pastelLilac', 'pastelSky', 'pastelLemon', 'white'] });
+    ctx.place('sideTable', { at: [6.4, 0, -6.3] });
+    ctx.place('gramophone', { at: [6.4, 0.62, -6.3], rot: -2.4 });
+    ctx.place('cushionPile', { at: [6.2, 0, 4.2], colors: ['velvet', 'pastelPink', 'pastelLilac', 'velvetBlue', 'pastelLemon'] });
+    ctx.place('hangingPlant', { at: [-6.3, 0, -6.2], top: 7, y: 4.6, leaf: 'leavesPink' });
+    ctx.place('bookPile', { at: [5.6, 0, -3.3], count: 3 });
   },
 });

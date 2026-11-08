@@ -1,5 +1,5 @@
 import { defineRoom } from '../registry.js';
-import { box, cyl, plane } from '../geo.js';
+import { box, cyl, plane, torus } from '../geo.js';
 
 // Der Innenhof-Garten unter dem Sternenhimmel.
 export default defineRoom({
@@ -68,8 +68,6 @@ export default defineRoom({
     if (season === 'winter') ctx.place('snowfall', { area: [ctx.b.w, 9, ctx.b.d], count: 900 });
     if (season === 'autumn') for (const [x, z] of [[-1.8, -3.6], [1.8, -3.6], [-14.5, 1.2], [14.5, 1.2]]) ctx.place('pumpkin', { at: [x, 0, z], scale: 1 + (x > 0 ? 0.3 : 0) });
     // --- Kleine Gartendetails
-    // Bodenlaternen am Brunnenweg (nur Schein, kein eigenes Licht)
-    for (const [x, z] of [[-1.6, -2.9], [1.6, -2.9], [-1.6, 2.9]]) ctx.place('lantern', { at: [x, 0, z], y: 0.18, light: false, color: '#ffd890' });
     // Mondschein-Picknick neben dem Tauschregal
     ctx.place('rug', { at: [-13.2, 0, 5.1], width: 2.2, depth: 1.6, material: 'carpetRed' });
     ctx.place('teapot', { at: [-13.7, 0.035, 4.8], color: 'pastelMint', scale: 0.7 });
@@ -87,6 +85,14 @@ export default defineRoom({
     for (const x of [-5.2, 5.2]) ctx.place('planter', { at: [x, 0, 7.2], width: 2.2 });
     // Wegweiser an der Ostkreuzung
     ctx.place('signpost', { at: [14.0, 0, -1.9], signs: [['Riesenstube', 0], ['Archiv', Math.PI / 2], ['Wintergarten', -Math.PI / 2], ['Brunnen', Math.PI]] });
+    // Vogeltränke am Westweg
+    const bath = ctx.frame([-18.4, 0, -6.2], 0);
+    bath.add(cyl(0.22, 0.3, 0.08, 12), 'stoneLight', [0, 0.04, 0]);
+    bath.add(cyl(0.13, 0.18, 0.7, 10), 'stoneLight', [0, 0.43, 0]);
+    bath.add(cyl(0.45, 0.3, 0.15, 16), 'stoneLight', [0, 0.82, 0]);
+    bath.add(cyl(0.4, 0.4, 0.02, 16), 'water', [0, 0.925, 0]);
+    bath.add(torus(0.43, 0.05, 6, 18), 'stoneLight', [0, 0.93, 0], [Math.PI / 2, 0, 0]);
+    bath.collider(0, 0, 0.7, 0.7, { top: 0.96 });
     // Wimpelketten zwischen den Bäumen
     ctx.place('bunting', { at: [-10, 0, -1.5], rot: -2.246, length: 6.0, y: 3.0, sag: 0.6 });
     ctx.place('bunting', { at: [10, 0, -1.5], rot: -0.896, length: 6.0, y: 3.0, sag: 0.6, colors: ['pastelSky', 'pastelLemon', 'pastelPink', 'pastelMint'] });
