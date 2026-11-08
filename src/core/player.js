@@ -19,6 +19,7 @@ export function createPlayer({ camera, input, collision }) {
   let wantJump = false;
   let gravityScale = 1; // < 1 = Federleicht-Zauber
   let maxAir = 1;        // Sprünge in der Luft (Sternenstaub: 2)
+  let ride = null;       // { path(k, outVec3), dur, t, onEnd }
 
   function update(dt) {
     const s = input.state;
@@ -30,6 +31,18 @@ export function createPlayer({ camera, input, collision }) {
       pitch = Math.max(-1.45, Math.min(1.45, pitch));
     } else {
       input.consumeLook();
+    }
+
+    // Mitfahrt (Luftschiff-Rundflug): Position kommt vom Pfad, Umsehen bleibt frei
+    if (ride) {
+      ride.t += dt;
+      const k = Math.min(1, ride.t / ride.dur);
+      ride.path(k, pos);
+      vel.set(0, 0); vy = 0;
+      camera.position.set(pos.x, pos.y + EYE, pos.z);
+      camera.rotation.set(pitch, yaw, Math.sin(ride.t * 0.7) * 0.02);
+      if (k >= 1) { const done = ride.onEnd; ride = null; grounded = false; done?.(); }
+      return;
     }
 
     // Wunschrichtung
@@ -113,6 +126,9 @@ export function createPlayer({ camera, input, collision }) {
     /** Schleudert die Figur nach oben (Sprungpilze, Magie). */
     launch(v) { vy = v; grounded = false; airJumps = maxAir; airTime = 0.01; },
     setMaxAirJumps(n) { maxAir = n; },
+    /** Fahrt auf einem Pfad: path(k∈[0,1], out) setzt die Fußposition. */
+    ride(path, dur, onEnd) { ride = { path, dur, t: 0, onEnd }; },
+    get riding() { return !!ride; },
     get grounded() { return grounded; },
     teleport(x, z, faceYaw = yaw, y = 0) {
       pos.set(x, y, z); vel.set(0, 0); yaw = faceYaw; pitch = 0; vy = 0; grounded = true;

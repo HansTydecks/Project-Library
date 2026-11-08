@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createSequenceWatcher, season, createRepeatCounter } from '../src/core/eastereggs.js';
+import { createSequenceWatcher, season, createRepeatCounter, matchMelody, MELODIES } from '../src/core/eastereggs.js';
 
 test('Konami-Code wird erkannt, auch nach Fehleingaben', () => {
   const hits = [];
@@ -20,4 +20,11 @@ test('Wiederholungszähler löst nach n Mal im Zeitfenster aus', () => {
   const c = createRepeatCounter(3, 10);
   assert.equal(c(0), false); assert.equal(c(1), false); assert.equal(c(2), true);
   assert.equal(c(30), false);
+});
+
+test('Melodien werden am Ende der gespielten Töne erkannt', () => {
+  assert.equal(matchMelody(['h', 'c', ...MELODIES.entchen.notes]), 'entchen');
+  assert.equal(matchMelody(MELODIES.tonleiter.notes), 'tonleiter');
+  assert.equal(matchMelody(['c', 'd', 'e']), null);
+  assert.equal(matchMelody([...MELODIES.entchen.notes, 'c']), null);
 });

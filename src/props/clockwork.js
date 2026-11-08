@@ -81,6 +81,7 @@ export default [
       const bz = bird.position.clone(), out = new THREE.Vector3(0, 0, 0.14 * s).applyAxisAngle(THREE.Object3D.DEFAULT_UP, f.rotY);
       let next = 3 + (opts.offset ?? 0), pop = 0;
       const wp = f.world(0, y, 0);
+      kit.services.events.on('cuckooConcert', () => { pop = 1.2; next = 9; });
       kit.onUpdate((dt, t, ctx) => {
         const now = new Date();
         hands[0].rotation.z = -(now.getMinutes() / 60) * Math.PI * 2;

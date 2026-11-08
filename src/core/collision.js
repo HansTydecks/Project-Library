@@ -37,6 +37,9 @@ export class CollisionWorld {
     return box;
   }
 
+  /** Box in der Höhe verschieben (Aufzug). x/z bleiben gleich, daher bleibt der Spatial Hash gültig. */
+  moveBox(box, top, bottom) { box.top = top; box.bottom = bottom; }
+
   removeOwner(owner) {
     const list = this.byOwner.get(owner);
     if (!list) return;

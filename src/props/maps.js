@@ -105,7 +105,7 @@ export default [
       });
       f.hitbox([0, 1.0, 0], [W, 0.2, D], {
         label: 'Große Bibliothekskarte', verb: 'Studieren', secret: opts.secret, secretName: 'Die Karte, die sich selbst zeichnet',
-        onInteract: () => kit.services.ui.toast(`Die Karte zeigt ${byId.size - 1} Räume – und zeichnet neue von selbst ein, sobald sie entstehen. Der rosa Punkt bist du.`),
+        onInteract: () => kit.services.events.emit('openTravel'),
       });
     },
   }),

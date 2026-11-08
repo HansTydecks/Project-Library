@@ -119,6 +119,40 @@ FRIENDS.push(
   },
 );
 
+// Ostflügel & neue Tiere (Ausbaustufe 6)
+FRIENDS.push(
+  { id: 'tatze', name: 'Tante Tatze, Pflegerin der Fabelwesen', room: 'fabelwesen', lines: [
+    'Willkommen in der Pflegestation! Pssst, das Phönixküken schläft. Meistens.',
+    'Funki, der kleine grüne Drache, sucht einen Freund. Er liebt Funkenbeeren. Die wachsen da, wo die Wühlmaus wohnt.',
+    'Ich pflege alles, was Flügel, Hörner oder sehr viele Beine hat. Und manchmal Bücher mit Eselsohren.',
+  ] },
+  { id: 'woelkchen', name: 'Wölkchen, die Café-Wolke', room: 'buecherlift', lines: [
+    'Ein Kakao? Mit Sahne? Mit Wolke? Alles hausgemacht!',
+    'Hier oben ist das Wetter immer gut. Ich mache es nämlich selbst.',
+    'Wenn ich lache, nieselt es ein bisschen. Entschuldigung!',
+  ] },
+  { id: 'moewenstein', name: 'Kapitänin Möwenstein', room: 'luftschiffhafen', lines: [
+    'Ahoi! Der »Wolkenwal« fliegt einmal rund um die ganze Bibliothek. Ticket gefällig?',
+    'Ich bin seit 300 Jahren unfallfrei. Bis auf das eine Mal mit dem Mond.',
+    'Halt dich gut fest. Oder auch nicht – die Gondel hält dich schon.',
+  ] },
+  { id: 'pingo', name: 'Pingo, der Badepinguin', room: 'lesebad', lines: [
+    'Ich rutsche für mein Leben gern. Willst du sehen? Stups mich an!',
+    'Im Fundbüro liegt ein Fischkeks. Den hat bestimmt jemand für mich verloren.',
+    'Ich komme vom Südpol. Glaube ich. Vielleicht auch aus dem Kühlschrank.',
+  ] },
+  { id: 'erna', name: 'Erna, die Bücherschildkröte', room: 'garten', lines: [
+    'Ich bringe diese Bücher … ins … Archiv. Ich bin … seit 1953 … unterwegs.',
+    'Eile mit Weile. Und Weile mit … noch mehr Weile.',
+    'Langsam lesen … ist auch … lesen.',
+  ] },
+  { id: 'zwitscher', name: 'Maestro Zwitscher und Chor', room: 'musikzimmer', lines: [
+    'Tschilp! Spiel uns was auf dem Xylophon! Wir singen mit.',
+    'Kennst du »Alle meine Entchen«? c d e f g g, a a a a g …',
+    'Die Orgel ist zu laut für uns. Aber wir lieben sie trotzdem.',
+  ] },
+);
+
 export function createFriends({ progress, list = FRIENDS } = {}) {
   const byId = new Map(list.map((f) => [f.id, f]));
   const said = new Map();

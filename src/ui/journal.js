@@ -74,3 +74,22 @@ export function openCatalog(ui, { docs, progress, describe, onGuide }) {
   setTimeout(() => input.focus(), 50);
   return close;
 }
+
+/** Schnellreise über den Kartentisch: Liste bereits besuchter Räume. */
+export function openTravel(ui, { rooms, progress, current, onTravel }) {
+  const box = el('div', 'journal');
+  const known = rooms.filter((r) => progress.has('rooms', r.id));
+  box.innerHTML = `<h2>Schnellreise</h2><div style="font-style:italic">Tippe auf einen Raum, den du schon kennst – ein Irrlicht trägt dich in einem Wusch dorthin.</div>
+    <div class="list"></div><div class="row"><button data-a="close">Lieber zu Fuß</button></div>`;
+  const list = box.querySelector('.list');
+  const close = ui.openModal(box);
+  for (const r of known) {
+    const row = el('div', `catalog-row${r.id === current ? ' seen' : ''}`);
+    row.innerHTML = `<div><div class="t">${esc(r.name)}</div><div class="k">${esc(r.description ?? '')}</div></div><button>${r.id === current ? 'Hier bist du' : 'Hinreisen'}</button>`;
+    row.querySelector('button').addEventListener('click', () => { if (r.id === current) return; close(true); onTravel(r); });
+    list.appendChild(row);
+  }
+  if (!known.length) list.appendChild(el('div', null, 'Noch keine Räume entdeckt. Seltsam – du stehst doch in einem.'));
+  box.querySelector('[data-a=close]').addEventListener('click', () => close(true));
+  return close;
+}

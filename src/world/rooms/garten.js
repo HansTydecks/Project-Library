@@ -56,6 +56,7 @@ export default defineRoom({
     ctx.place('jumpMushroom', { at: [-12, 0, -5.4], scale: 0.8, power: 9.5 });
     ctx.place('jumpMushroom', { at: [12, 0, -5.4], scale: 0.8, power: 9.5, cap: 'mushroomCapBlue', glow: '#8ad8ff' });
     ctx.place('snail', { at: [-6, 0, -6.6], length: 3 });
+    ctx.place('turtle', { at: [0, 0, 0], friend: 'erna', from: [10, 0, -6], to: [10, 0, 6] });
     ctx.place('standSign', { at: [1.8, 0, 3.6], rot: 0.2, text: 'Rasen betreten erlaubt. Hüpfen ausdrücklich erwünscht.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('fairyLights', { at: [-8, 0, -4], length: 16, y: 4.2, sag: 1.2 });
     ctx.place('butterflies', { at: [0, 0, 0], area: [30, 2, 12], count: 10, y: 0.8 });

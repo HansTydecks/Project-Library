@@ -28,6 +28,8 @@ export default defineRoom({
     ctx.place('clothesline', { at: [-3.6, 0, 5.8], length: 4.5, height: 2.1, count: 6 });
     ctx.place('towelStack', { at: [6.6, 0, -6.6] });
     ctx.place('towelStack', { at: [6.6, 0, 1.6], count: 3 });
+    ctx.place('penguin', { at: [0, 0, 0], friend: 'pingo', from: [-5.2, 0, -4.2], to: [3, 0, -4.2],
+      wants: { item: 'fischkeks', egg: 'pingo-fisch', eggName: 'Pingo einen Fischkeks geschenkt', text: 'Pingo schnappt sich den Fischkeks, schluckt ihn in einem Happs – und tanzt vor Freude im Kreis!' } });
     ctx.place('bubbles', { at: [-1, 0, 0], y: 0.3, area: [7, 4, 5], count: 18 });
     ctx.place('pottedPlant', { at: [-6.6, 0, -6.6], scale: 1.4 });
     ctx.place('pottedPlant', { at: [6.6, 0, 6.8], scale: 1.2, leaf: 'leavesPink' });

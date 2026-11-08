@@ -98,6 +98,13 @@ export function createAudio() {
       notes.forEach((st, i) => tone(659 * 2 ** (st / 12), 0.35, { gain: 0.07, delay: i * 0.18, type: 'sine' }));
     },
     tickTock: () => { for (let i = 0; i < 4; i++) setTimeout(() => noise(0.03, { freq: i % 2 ? 2400 : 3200, q: 5, gain: 0.25 }), i * 500); },
+    drum: () => { tone(90, 0.5, { glide: 50, gain: 0.3 }); noise(0.25, { freq: 180, q: 0.8, gain: 0.25, type: 'lowpass' }); },
+    harp: () => [0, 4, 7, 12, 16, 19, 24].forEach((st, i) => tone(262 * 2 ** (st / 12), 1.4, { gain: 0.06, delay: i * 0.07, type: 'triangle' })),
+    organ: () => [0, 4, 7, 12].forEach((st) => { tone(131 * 2 ** (st / 12), 1.6, { gain: 0.05, type: 'square' }); tone(262 * 2 ** (st / 12), 1.6, { gain: 0.03, type: 'sine' }); }),
+    chirp: () => { tone(2400, 0.08, { glide: 3200, gain: 0.05 }); tone(2800, 0.08, { glide: 3600, gain: 0.04, delay: 0.12 }); },
+    neigh: () => { tone(700, 0.4, { glide: 500, type: 'sawtooth', gain: 0.05 }); tone(900, 0.3, { glide: 600, type: 'sawtooth', gain: 0.04, delay: 0.15 }); },
+    roar: () => { noise(0.5, { freq: 400, q: 1.5, gain: 0.15, attack: 0.05 }); tone(180, 0.4, { glide: 260, type: 'sawtooth', gain: 0.05 }); },
+    honk: () => { tone(330, 0.35, { type: 'square', gain: 0.06 }); tone(440, 0.35, { type: 'square', gain: 0.04 }); },
     melody: () => {
       const notes = [0, 4, 7, 9, 7, 4, 2, 4, 0, -3, 0];
       notes.forEach((s, i) => { tone(392 * 2 ** (s / 12), 0.5, { gain: 0.1, delay: i * 0.35, type: 'triangle' }); });
@@ -115,6 +122,13 @@ export function createAudio() {
       return enabled;
     },
     unlock() { if (enabled && ensure()) ctx.resume(); },
+    /** Einzelner Ton für Instrumente: c d e f g a h c2 (Xylophon-Klang). */
+    note(name, { type = 'triangle', gain = 0.12, dur = 0.9 } = {}) {
+      if (!enabled || !ensure() || ctx.state !== 'running') return;
+      const st = { c: 0, d: 2, e: 4, f: 5, g: 7, a: 9, h: 11, c2: 12 }[name] ?? 0;
+      const fr = 523.25 * 2 ** (st / 12);
+      tone(fr, dur, { type, gain }); tone(fr * 2, dur * 0.4, { type: 'sine', gain: gain * 0.25 });
+    },
     play(name) {
       if (!enabled || !ensure() || ctx.state !== 'running') return;
       sounds[name]?.();

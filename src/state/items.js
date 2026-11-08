@@ -11,6 +11,9 @@ export const ITEMS = {
   honig: { name: 'Glas Honig', icon: '🍯', desc: 'Von den Dachgarten-Bienen. Eine gewisse Teekanne hätte gern Honig.' },
   sternenstaub: { name: 'Sternenstaub', icon: '✨', desc: 'Glitzert in der Hand. Der Bibliothekar weiß, was man damit macht.' },
   brief: { name: 'Brief der Eulenpost', icon: '✉️', desc: 'Adressiert an dich. Absender: die Bibliothek.' },
+  beere: { name: 'Funkenbeere', icon: '🫐', desc: 'Knistert leise. Kleine Drachen sind ganz verrückt danach.' },
+  ticket: { name: 'Flugticket', icon: '🎫', desc: 'Gültig für einen Rundflug mit dem Luftschiff »Wolkenwal«.' },
+  fischkeks: { name: 'Fischkeks', icon: '🐟', desc: 'Aus dem Fundbüro. Riecht nach Meer. Ein gewisser Pinguin wäre begeistert.' },
 };
 
 export function createItems({ progress, catalog = ITEMS, onChange = () => {} }) {

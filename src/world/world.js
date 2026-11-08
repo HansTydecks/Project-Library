@@ -101,7 +101,10 @@ export class RoomCtx extends Frame {
     const c = Object.create(this);
     const dy = (l - roomLevels(this.def)[0]) * FLOOR_H;
     c.matrix = new THREE.Matrix4().makeTranslation(0, dy, 0).multiply(this.matrix);
-    c.lvl = l; c.height = height; c.floorY = dy; c.bandH = height;
+    // Liegt eine weitere Etage darüber, enden die Kollider knapp unter deren Boden –
+    // sonst ragen Wände/Regale des Erdgeschosses in die Türen des Obergeschosses.
+    const above = roomLevels(this.def).includes(l + 1);
+    c.lvl = l; c.height = height; c.floorY = dy; c.bandH = above ? Math.min(height, FLOOR_H) - 0.65 : height;
     return c;
   }
 
@@ -201,9 +204,16 @@ export class RoomCtx extends Frame {
 
   /** Fundament unter dem Raum (die Bibliothek schwebt auf einem Felsen über den Wolken).
    *  Im Obergeschoss: Steinsockel bis hinunter auf das Dach des Raums darunter. */
-  foundation({ depth = 30, material = 'stoneDark' } = {}) {
+  foundation({ depth = 30, material = 'stoneDark', skirt = true } = {}) {
     const absY = this.kit.origin.y + (this.floorY ?? 0);
     if (absY < 0.1) { this.add(box(this.b.w, depth, this.b.d, 3), material, [0, -depth / 2 - 0.05, 0]); return this; }
+    if (!skirt) {
+      // Schwebende Plattform: dicke Platte mit Konsolen und einem kleinen Steinzapfen darunter
+      this.add(box(this.b.w, 0.8, this.b.d, 2), 'stoneLight', [0, -0.8, 0]);
+      for (const sx of [-1, 1]) for (const sz of [-1, 1]) this.add(box(0.9, 2.4, 0.9, 1), 'stoneDark', [sx * (this.hw - 1.2), -2.2, sz * (this.hd - 1.2)], [sz * 0.25, 0, -sx * 0.25]);
+      this.add(new THREE.ConeGeometry(4, 7, 6), 'stoneDark', [0, -4.6, 0], [Math.PI, 0, 0]);
+      return this;
+    }
     const { occ, byId } = this.world_;
     const [cx0, cz0] = this.def.cell, [sw, sd] = this.def.size ?? [1, 1];
     for (let i = 0; i < sw; i++) for (let j = 0; j < sd; j++) {

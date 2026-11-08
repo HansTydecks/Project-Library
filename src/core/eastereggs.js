@@ -17,6 +17,23 @@ export function createSequenceWatcher(onSequence, sequences = { konami: KONAMI }
   return { push };
 }
 
+/** Gemeinfreie Kinderlied-Anfänge als Tonfolgen (Tonnamen). */
+export const MELODIES = {
+  entchen: { name: 'Alle meine Entchen', notes: ['c', 'd', 'e', 'f', 'g', 'g', 'a', 'a', 'a', 'a', 'g'] },
+  haenschen: { name: 'Hänschen klein', notes: ['g', 'e', 'e', 'f', 'd', 'd', 'c', 'd', 'e', 'f', 'g', 'g', 'g'] },
+  tonleiter: { name: 'Die Tonleiter', notes: ['c', 'd', 'e', 'f', 'g', 'a', 'h', 'c2'] },
+};
+
+/** Prüft, ob die zuletzt gespielten Töne mit einer bekannten Melodie enden. Gibt deren Schlüssel oder null zurück. */
+export function matchMelody(played, melodies = MELODIES) {
+  for (const [key, m] of Object.entries(melodies)) {
+    const n = m.notes.length;
+    if (played.length < n) continue;
+    if (m.notes.every((t, i) => played[played.length - n + i] === t)) return key;
+  }
+  return null;
+}
+
 /** Jahreszeit für Deko-Ostereier. override z. B. per ?season=winter. */
 export function season(date = new Date(), override = null) {
   if (override) return override;

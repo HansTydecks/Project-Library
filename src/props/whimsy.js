@@ -403,10 +403,19 @@ export default [
       const c = f.world(0, 0, 0); // Weltkoordinaten (Spielerposition ist in Welt)
       const ty = c.y + top;
       let squish = 0;
+      // Pilz-Tour: alle Sprungpilze der (festen) Räume einmal benutzt → Osterei
+      const svc = kit.services, fx = svc.fx;
+      const tour = kit.room && !kit.room.endless ? `${kit.id}:${Math.round(c.x)},${Math.round(c.y)},${Math.round(c.z)}` : null;
+      if (tour) { (fx.mushrooms ??= new Set()).add(tour); svc.secrets.register('pilztour', 'Alle Sprungpilze der Bibliothek ausprobiert', null, 'egg'); }
       kit.onUpdate((dt, t, ctx) => {
         const p = ctx.player;
         if (Math.hypot(p.x - c.x, p.z - c.z) < R * 1.05 && Math.abs(p.y - ty) < 0.05) {
-          ctx.launch(power); squish = 1; kit.services.audio.play('boing');
+          ctx.launch(power); squish = 1; svc.audio.play('boing');
+          if (tour && svc.progress.mark('pilze', tour)) {
+            const done = [...fx.mushrooms].filter((id) => svc.progress.has('pilze', id)).length;
+            if (done >= fx.mushrooms.size) { svc.secrets.found('pilztour'); svc.ui.toast('Pilz-Tour komplett! Jeder Sprungpilz der Bibliothek hat dich einmal hochgeschleudert. Boing!', { ms: 6000 }); }
+            else if (done > 1) svc.ui.toast(`Pilz-Tour: ${done}/${fx.mushrooms.size} Sprungpilze ausprobiert.`, { ms: 2200 });
+          }
         }
         squish = Math.max(0, squish - dt * 2.5);
         cap.scale.set(1 + squish * 0.25, 1 - squish * 0.4 + Math.sin(t * 2 + c.x) * 0.01, 1 + squish * 0.25);
