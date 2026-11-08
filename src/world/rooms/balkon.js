@@ -10,7 +10,7 @@ export default defineRoom({
   cell: [2, 0],
   outdoor: true,
   spawn: { at: [-5, 0], yaw: -Math.PI / 2 },
-  atmosphere: { fog: '#18203a', density: 0.006, ambient: 0.8, ambientColor: '#a0b4ff', moon: 1 },
+  atmosphere: { fog: '#2a3060', density: 0.005, ambient: 1.15, ambientColor: '#a0b4ff', moon: 1 },
   build(ctx) {
     const { hw, hd } = ctx;
     ctx.floor('stoneLight', { uv: 1.5 });
@@ -32,6 +32,9 @@ export default defineRoom({
     ctx.place('lamppost', { at: [-5, 0, -6.6], intensity: 6 });
     ctx.place('lamppost', { at: [-5, 0, 6.6], intensity: 6 });
     ctx.place('armchair', { at: [3.8, 0, 4.4], rot: Math.PI * 0.75, cushion: 'velvetBlue', quip: 'Von hier sieht man die Wolken unter sich ziehen. Eine wohlige Gänsehaut.' });
+    ctx.place('floatingIsland', { at: [3.5, 0, 0], y: 1.6, width: 2.2, depth: 2.2 });
+    ctx.place('rubberDuck', { at: [3.5, 1.6, 0], name: 'Wolkenente', quip: 'Wie kommt die Ente auf die Wolke? Sie sagt: »Gute Frage.«', secret: 'wolkenente', secretName: 'Die Ente auf der Wolke' });
+    ctx.place('standSign', { at: [-2.6, 0, 5.6], rot: 2.6, text: 'Bitte nicht die Wolken füttern. Sie werden sonst Gewitter.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('crystalBall', { at: [-1.6, 1.02, -1.2], interact: true });
     ctx.place('pedestal', { at: [-1.6, 0, -1.2] });
   },

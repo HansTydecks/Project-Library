@@ -290,6 +290,30 @@ export const tex = {
     g.putImageData(img, 0, 0);
   }, { repeat: false, srgb: false })),
 
+  // Sternenhimmel für Kuppeln/Decken
+  starfield: () => cached('starfield', () => canvasTexture(512, 512, (g, w, h) => {
+    const grd = g.createLinearGradient(0, 0, w, h);
+    grd.addColorStop(0, '#141a4a'); grd.addColorStop(0.5, '#2a1a5a'); grd.addColorStop(1, '#10284a');
+    g.fillStyle = grd; g.fillRect(0, 0, w, h);
+    const r = mulberry32(99);
+    for (let i = 0; i < 40; i++) {
+      g.globalAlpha = 0.08; g.fillStyle = r() > 0.5 ? '#ff9ad8' : '#7ad8ff';
+      g.beginPath(); g.arc(r() * w, r() * h, 20 + r() * 60, 0, 7); g.fill();
+    }
+    g.globalAlpha = 1;
+    for (let i = 0; i < 500; i++) {
+      const s = r() < 0.92 ? 0.6 + r() : 1.6 + r() * 1.5;
+      g.fillStyle = ['#ffffff', '#fff2c0', '#c8e4ff', '#ffd0f0'][Math.floor(r() * 4)];
+      g.beginPath(); g.arc(r() * w, r() * h, s, 0, 7); g.fill();
+    }
+    g.strokeStyle = 'rgba(255,230,160,0.5)'; g.lineWidth = 1;
+    for (let k = 0; k < 6; k++) {
+      g.beginPath(); let x = r() * w, y = r() * h; g.moveTo(x, y);
+      for (let j = 0; j < 4; j++) { x += (r() - 0.5) * 90; y += (r() - 0.5) * 90; g.lineTo(x, y); g.fillStyle = '#fff6c8'; g.fillRect(x - 1.5, y - 1.5, 3, 3); }
+      g.stroke();
+    }
+  })),
+
   water: () => cached('water', () => canvasTexture(256, 256, (g, w, h) => {
     g.fillStyle = '#1b3d55'; g.fillRect(0, 0, w, h);
     const r = mulberry32(111);

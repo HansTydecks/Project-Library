@@ -2,6 +2,9 @@ import * as THREE from 'three';
 
 const EYE = 1.65;
 const RADIUS = 0.32;
+const GRAVITY = 17;
+const JUMP_V = 6.0;      // ≈ 1,05 m hoch
+const DOUBLE_V = 5.2;    // magischer Doppelsprung in der Luft
 
 export function createPlayer({ camera, input, collision }) {
   const pos = new THREE.Vector3(0, 0, 0);
@@ -10,6 +13,10 @@ export function createPlayer({ camera, input, collision }) {
   let bobT = 0, bobAmt = 0;
   let stepAcc = 0;
   const stepListeners = new Set();
+  const jumpListeners = new Set();
+  const landListeners = new Set();
+  let vy = 0, grounded = true, airJumps = 0, airTime = 0;
+  let wantJump = false;
 
   function update(dt) {
     const s = input.state;
@@ -44,22 +51,47 @@ export function createPlayer({ camera, input, collision }) {
     vel.y += (wz - vel.y) * k;
 
     const nx = pos.x + vel.x * dt, nz = pos.z + vel.y * dt;
-    const r = collision.resolve(nx, nz, RADIUS);
+    const r = collision.resolve(nx, nz, RADIUS, pos.y);
     pos.x = r.x; pos.z = r.z;
+
+    // Springen & Schwerkraft
+    if (wantJump) {
+      wantJump = false;
+      if (grounded) { vy = JUMP_V; grounded = false; airJumps = 1; for (const fn of jumpListeners) fn(false); }
+      else if (airJumps > 0) { vy = Math.max(vy, DOUBLE_V); airJumps--; for (const fn of jumpListeners) fn(true); }
+    }
+    const ground = collision.groundAt(pos.x, pos.z, RADIUS, pos.y);
+    if (!grounded || pos.y > ground + 0.001) {
+      if (grounded && pos.y - ground > 0.35) { grounded = false; airJumps = 1; } // von einer Kante gelaufen
+      if (grounded) pos.y = ground; // kleine Stufe hinunter: einfach folgen
+      else {
+        vy -= GRAVITY * dt;
+        pos.y += vy * dt;
+        airTime += dt;
+        const ceil = collision.ceilingAt(pos.x, pos.z, pos.y);
+        if (vy > 0 && pos.y + 1.75 > ceil) { pos.y = ceil - 1.75; vy = 0; }
+        if (pos.y <= ground) {
+          const impact = -vy;
+          pos.y = ground; vy = 0; grounded = true; airJumps = 0;
+          if (airTime > 0.15) for (const fn of landListeners) fn(impact);
+          airTime = 0;
+        }
+      }
+    } else if (pos.y < ground) pos.y = ground; // kleine Stufe hinauf
 
     // Kopfwippen & Schritte
     const sp = vel.length();
-    bobAmt += ((sp > 0.3 ? 1 : 0) - bobAmt) * Math.min(1, dt * 6);
+    bobAmt += ((sp > 0.3 && grounded ? 1 : 0) - bobAmt) * Math.min(1, dt * 6);
     bobT += dt * sp * 2.1;
     stepAcc += dt * sp;
-    if (stepAcc > (running ? 1.6 : 1.25)) {
+    if (grounded && stepAcc > (running ? 1.6 : 1.25)) {
       stepAcc = 0;
       for (const fn of stepListeners) fn(running);
     }
 
     camera.position.set(
       pos.x,
-      EYE + Math.sin(bobT * 2) * 0.035 * bobAmt,
+      pos.y + EYE + Math.sin(bobT * 2) * 0.035 * bobAmt,
       pos.z,
     );
     camera.rotation.set(pitch + Math.sin(bobT * 2) * 0.004 * bobAmt, yaw, Math.sin(bobT) * 0.004 * bobAmt);
@@ -71,8 +103,14 @@ export function createPlayer({ camera, input, collision }) {
     get pitch() { return pitch; },
     update,
     onStep(fn) { stepListeners.add(fn); },
+    onJump(fn) { jumpListeners.add(fn); },
+    onLand(fn) { landListeners.add(fn); },
+    jump() { wantJump = true; },
+    /** Schleudert die Figur nach oben (Sprungpilze, Magie). */
+    launch(v) { vy = v; grounded = false; airJumps = 1; airTime = 0.01; },
+    get grounded() { return grounded; },
     teleport(x, z, faceYaw = yaw) {
-      pos.set(x, 0, z); vel.set(0, 0); yaw = faceYaw; pitch = 0;
+      pos.set(x, 0, z); vel.set(0, 0); yaw = faceYaw; pitch = 0; vy = 0; grounded = true;
       update(0);
     },
     look(newYaw, newPitch = 0) { yaw = newYaw; pitch = newPitch; },

@@ -11,14 +11,14 @@ export function createEngine(container, { lowFx = false, adaptive = true } = {})
   renderer.setPixelRatio(ratio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.45;
+  renderer.toneMappingExposure = 1.75;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.info.autoReset = false; // Statistik über alle Passes eines Bildes
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#120c08');
-  scene.fog = new THREE.FogExp2('#1a120b', 0.03);
+  scene.fog = new THREE.FogExp2('#3a2630', 0.012);
 
   // Sanfte Umgebungsreflexionen (Messing, Marmor, Lack glänzen dezent)
   if (!lowFx) {

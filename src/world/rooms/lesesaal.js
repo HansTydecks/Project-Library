@@ -21,7 +21,7 @@ export default defineRoom({
   size: [3, 2],
   height: 10,
   spawn: { at: [0, 13], yaw: 0 },
-  atmosphere: { skyHidden: true, fog: '#1a120b', density: 0.02, ambient: 1.0, ambientColor: '#ffd0a0', moon: 0 },
+  atmosphere: { skyHidden: true, fog: '#3a2a2a', density: 0.01, ambient: 1.35, ambientColor: '#ffd0a0', moon: 0 },
   shelves: BAYS,
   build(ctx) {
     ctx.floor('parquet', { uv: 2.5 });
@@ -98,6 +98,13 @@ export default defineRoom({
     ctx.sign('Endlose Stapel – Betreten auf eigene Gefahr', [0, 4.2, -hd + 0.5], 0, { w: 4.6, h: 0.55, size: 44 });
     ctx.place('signpost', { at: [2.6, 0, -hd + 2.6], signs: [['Endlose Stapel', Math.PI / 2], ['Foyer', -Math.PI / 2]] });
 
+    // Kleine Wunder zwischen den Regalen
+    ctx.place('paperPlanes', { at: [0, 0, 2], y: 5.2, radius: 9, count: 6 });
+    ctx.place('bookworm', { at: [1.1, 0.81, -hd + 23.2], secret: 'buecherwurm' });
+    ctx.place('walkingBook', { at: [0, 0, 11], radius: 2.2, color: '#3a9a6a', name: 'Ein Lexikon auf Morgenspaziergang' });
+    ctx.place('snail', { at: [-6, 0, -hd + 2.2], length: 5, quip: 'Die Schnecke will zu den Endlosen Stapeln. Sie ist optimistisch.' });
+    ctx.place('standSign', { at: [-2.6, 0, hd - 2.6], rot: 0.3, text: 'Ruhe bitte! (Flüstern erlaubt, Kichern geduldet.)', size: 32, width: 1.1, signHeight: 0.36 });
+    ctx.place('balloonBooks', { at: [8, 0, -4], y: 6.6, count: 4, radius: 1.4 });
     // Wandleuchter an den Säulen
     for (let x = -hw + 5.4; x < hw - 2; x += 6) ctx.place('sconce', { at: [x, 3.2, -hd + 1.85], light: false });
   },

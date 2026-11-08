@@ -97,13 +97,13 @@ den Endlosen Stapeln – dort keine Räume platzieren.
 | `place(prop, { at, rot, … })` | Prop platzieren |
 | `add(geo, mat, at, rot, scale)` | statische Geometrie (wird zusammengeführt) |
 | `object(mesh, at, rot)` | dynamisches Objekt |
-| `collider(x, z, w, d, { shadow })` | Kollisionsbox (2D; über 1,5 m Höhe ignoriert). Auf dem Boden entsteht automatisch ein weicher Kontaktschatten (`shadow: false` schaltet ihn ab) |
+| `collider(x, z, w, d, { top, bottom, shadow })` | Kollisionsbox. Ohne `top` unendlich hoch (Wand). Mit `top` kann man daraufspringen (Tische, Pilze, Riesenbücher); mit `bottom` schwebt sie (Wolken: man läuft darunter durch). Ohne `bottom` über 1,5 m Höhe ignoriert. Auf dem Boden entsteht automatisch ein weicher Kontaktschatten (`shadow: false`) |
 | `light(at, { color, intensity, distance, flicker, pool })` | Lichtpunkt (vom Licht-Pool bedient). Hängende Lichter (> 2,2 m) malen zusätzlich einen Lichtkegel auf den Boden (`pool: false` schaltet ihn ab) |
 | `glow(at, { color, size })` | leuchtender Halo |
 | `hitbox(at, size, { label, verb, onInteract, secret })` | unsichtbare Interaktionszone |
 | `sign(text, at, rotY)` | beschriftetes Schild |
 | `frame(at, rotY)` | verschachteltes Koordinatensystem |
-| `kit.onUpdate((dt, t, { player }) => …)` | Animation pro Frame (nur wenn Raum in der Nähe) |
+| `kit.onUpdate((dt, t, { player, launch, grounded }) => …)` | Animation pro Frame (nur wenn Raum in der Nähe). `player` ist die Fußposition (mit `y`), `launch(v)` schleudert die Figur hoch (Sprungpilze) |
 
 Koordinaten in `build()` sind **raumlokal**: `(0, 0, 0)` = Raummitte auf dem Boden, `ctx.hw`/`ctx.hd` = halbe Breite/Tiefe.
 
@@ -144,6 +144,17 @@ Materialien sind physikalisch (`pbr(map, rauheit, { bump })` bzw. `flat(farbe, r
 
 ---
 
+**Fertige verspielte Props** (frei kombinierbar): `walkingBook`, `dustBunny`, `rubberDuck`, `snail`, `paperPlanes`,
+`balloonBooks`, `bookworm`, `bubbles`, `standSign { text }`, `jumpMushroom { power }`, `floatingIsland { y, kind: 'cloud'|'book' }`,
+`goldenAcorn { kind: 'star' }` (Belohnung oben auf Plattformen), Tee (`teacup`, `teapot`, `pouringTeapot`, `orbitingCups`, `cake`),
+Trankküche (`cauldron`, `potionShelf`, `frogJar`, `magicBroom`), Musik (`piano`, `musicBox`, `floatingMusicNotes`, `violin`),
+Kosmos (`orrery`, `comet`, `moonLamp`), Riesendinge (`giantBook`, `giantPencil`, `giantCup`, `yarnBall`, `giantButton`, `giantThimble`),
+Pilzhain (`giantMushroom`, `fairyLights`, `lilyPond`, `snailMailbox`).
+
+**Sprung-Parcours bauen**: Einfacher Sprung ≈ 1 m, Doppelsprung ≈ 1,8 m, Sprungpilz (power 10) ≈ 3 m + Doppelsprung.
+Stufen also höchstens ~0,9 m auseinander, mit Doppelsprung ~1,6 m. Möbel umgedreht an die Decke: ein `Frame` mit
+`makeRotationZ(Math.PI)` (siehe `rooms/teesalon.js`).
+
 ## 4. Geheimnisse
 
 Jede Interaktion mit `secret: 'eindeutige-id'` wird automatisch registriert, im Tagebuch als „???“ gezählt und beim
@@ -161,7 +172,7 @@ Sprüche & Spezialfragen: `src/npc/librarian.js` (testbar, ohne three.js). Neue 
 
 ## Stil-Leitfaden
 
-- **Warm & gemütlich**: Kerzen-/Lampenlicht (`#ffb36b`), dunkles Holz, Messing, Samt. Draußen: kühles Mondlicht.
+- **Hell, warm & verspielt**: Kerzen-/Lampenlicht (`#ffb36b`), Holz, Messing, Samt – dazu Bonbonfarben (`pastelPink`, `pastelMint` …) und Funkeln. Nie düster: Räume eher zu hell als zu dunkel. Draußen: violett-blaues Mondlicht.
 - **Magisch, nicht gruselig**: Liminal-Momente dürfen seltsam sein, aber freundlich.
 - **Humor**: Der Bibliothekar ist liebevoll-verschroben. Kurze, augenzwinkernde Texte.
 - **Performance**: Lichter nur über `light()` (Licht-Pool, max. 12 aktive), viel statische Geometrie über `add()`,

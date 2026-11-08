@@ -71,6 +71,25 @@ export function createAudio() {
     knock: () => [0, 180, 360].forEach((d) => setTimeout(() => noise(0.08, { freq: 180, q: 3, gain: 0.5, type: 'lowpass' }), d)),
     splash: () => noise(0.6, { freq: 1800, q: 0.7, gain: 0.25, attack: 0.01 }),
     magic: () => [0, 3, 7, 10, 14].forEach((s, i) => tone(392 * 2 ** (s / 12), 0.9, { gain: 0.07, delay: i * 0.05, type: 'sine' })),
+    jump: () => tone(300, 0.18, { glide: 520, gain: 0.07, type: 'triangle' }),
+    sparkleJump: () => [0, 5, 9, 14].forEach((st, i) => tone(784 * 2 ** (st / 12), 0.35, { gain: 0.05, delay: i * 0.035 })),
+    land: () => noise(0.08, { freq: outdoor > 0.5 ? 1500 : 350, q: 0.8, gain: 0.16 }),
+    thud: () => { noise(0.18, { freq: 180, q: 0.8, gain: 0.3, type: 'lowpass' }); tone(70, 0.2, { gain: 0.15 }); },
+    boing: () => { tone(160, 0.5, { glide: 640, gain: 0.14, type: 'sine' }); tone(330, 0.35, { glide: 900, gain: 0.05, type: 'triangle', delay: 0.04 }); },
+    bubble: () => { for (let i = 0; i < 6; i++) tone(300 + Math.random() * 500, 0.12, { glide: 900 + Math.random() * 600, gain: 0.05, delay: i * 0.08 + Math.random() * 0.05 }); },
+    pop: () => { noise(0.05, { freq: 1200, q: 2, gain: 0.25 }); tone(880, 0.12, { glide: 1400, gain: 0.06 }); },
+    quack: () => { tone(520, 0.14, { glide: 380, type: 'sawtooth', gain: 0.07 }); tone(500, 0.16, { glide: 360, type: 'sawtooth', gain: 0.07, delay: 0.18 }); },
+    slurp: () => noise(0.5, { freq: 700, q: 3, gain: 0.15, attack: 0.1 }),
+    snore: () => { noise(1.2, { freq: 260, q: 1.5, gain: 0.12, attack: 0.5 }); },
+    note: () => tone(523 * 2 ** (Math.floor(Math.random() * 8) * 2 / 12), 0.8, { type: 'triangle', gain: 0.1 }),
+    musicbox: () => {
+      const notes = [12, 7, 4, 7, 12, 14, 16, 14, 12, 7, 9, 7, 4, 2, 0];
+      notes.forEach((st, i) => { tone(523 * 2 ** (st / 12), 0.9, { gain: 0.07, delay: i * 0.22 }); tone(1046 * 2 ** (st / 12), 0.4, { gain: 0.02, delay: i * 0.22 }); });
+    },
+    piano: () => {
+      const notes = [0, 4, 7, 12, 7, 4, 5, 9, 12, 17, 12, 9, 7, 11, 14, 19, 14, 11, 12];
+      notes.forEach((st, i) => tone(262 * 2 ** (st / 12), 0.7, { gain: 0.09, delay: i * 0.16, type: 'triangle' }));
+    },
     melody: () => {
       const notes = [0, 4, 7, 9, 7, 4, 2, 4, 0, -3, 0];
       notes.forEach((s, i) => { tone(392 * 2 ** (s / 12), 0.5, { gain: 0.1, delay: i * 0.35, type: 'triangle' }); });

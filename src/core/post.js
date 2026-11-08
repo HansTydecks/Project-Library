@@ -11,9 +11,11 @@ const GradeShader = {
   uniforms: {
     tDiffuse: { value: null },
     uTime: { value: 0 },
-    uVignette: { value: 0.32 },
+    uVignette: { value: 0.12 },
     uWarm: { value: new THREE.Vector3(1.04, 1.0, 0.94) },
-    uGrain: { value: 0.025 },
+    uGrain: { value: 0.0 },
+    uSat: { value: 1.18 },
+    uLift: { value: new THREE.Vector3(0.012, 0.008, 0.02) },
     uRes: { value: new THREE.Vector2(1, 1) },
   },
   vertexShader: /* glsl */`
@@ -21,8 +23,8 @@ const GradeShader = {
     void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
   fragmentShader: /* glsl */`
     uniform sampler2D tDiffuse;
-    uniform float uTime, uVignette, uGrain;
-    uniform vec3 uWarm;
+    uniform float uTime, uVignette, uGrain, uSat;
+    uniform vec3 uWarm, uLift;
     uniform vec2 uRes;
     varying vec2 vUv;
     float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
@@ -31,7 +33,9 @@ const GradeShader = {
       vec3 col = c.rgb * uWarm;
       // Schatten leicht ins Blau-Violette, Lichter warm (Split-Toning)
       float l = dot(col, vec3(0.2126, 0.7152, 0.0722));
-      col += vec3(-0.004, 0.0, 0.012) * (1.0 - smoothstep(0.0, 0.25, l));
+      // Märchenhaft: kräftigere Farben und leicht violett aufgehellte Schatten (nie pechschwarz)
+      col = mix(vec3(l), col, uSat);
+      col += uLift * (1.0 - smoothstep(0.0, 0.3, l));
       // Vignette (elliptisch, weich)
       vec2 q = vUv - 0.5;
       q.x *= uRes.x / uRes.y * 0.75;
@@ -53,7 +57,7 @@ export function createPost({ renderer, scene, camera }) {
   const composer = new EffectComposer(renderer, target);
   composer.addPass(new RenderPass(scene, camera));
 
-  const bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.55, 0.6, 0.82);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.75, 0.7, 0.78);
   composer.addPass(bloom);
 
   const grade = new ShaderPass(GradeShader);

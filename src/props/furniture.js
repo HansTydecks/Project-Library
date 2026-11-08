@@ -18,7 +18,7 @@ export default [
       f.add(box(w - 0.2, 0.1, d - 0.2, 1), 'woodDark', [0, h - 0.08, 0]);
       legs(f, w - 0.1, d - 0.1, h - 0.03);
       if (opts.felt) f.add(plane(w - 0.3, d - 0.3, 0), 'velvetGreen', [0, h + 0.031, 0], [-Math.PI / 2, 0, 0]);
-      f.collider(0, 0, w, d);
+      f.collider(0, 0, w, d, { top: h + 0.03 }); // man kann auf Tische springen
     },
   }),
 
@@ -33,7 +33,7 @@ export default [
       f.add(box(0.05, 0.5, 0.05, 0), m, [0.2, 0.75, -0.21]);
       f.add(box(0.44, 0.18, 0.04, 0), m, [0, 0.88, -0.21]);
       f.add(box(0.3, 0.05, 0.03, 0), m, [0, 0.68, -0.21]);
-      f.collider(0, 0, 0.5, 0.5);
+      f.collider(0, 0, 0.5, 0.5, { top: 0.5 });
     },
   }),
 
@@ -49,7 +49,7 @@ export default [
       for (const x of [-0.4, 0.4]) for (const z of [-0.36, 0.36]) f.add(cyl(0.04, 0.03, 0.06, 6), 'woodDark', [x, 0.03, z]);
       // Wolldecke
       f.add(box(0.7, 0.03, 0.5, 0), opts.blanket ?? 'cloth', [0.05, 0.58, 0.1], [0, 0.2, 0.05]);
-      f.collider(0, 0, 0.95, 0.9);
+      f.collider(0, 0, 0.95, 0.9, { top: 0.5 });
       if (opts.interact !== false) {
         f.hitbox([0, 0.6, 0], [0.9, 0.8, 0.9], {
           label: 'Gemütlicher Sessel', verb: 'Hinsetzen',
@@ -69,7 +69,7 @@ export default [
       f.add(box(0.2, 0.3, 0.9, 0), c, [w / 2 - 0.1, 0.6, 0]);
       for (let i = 0; i < 2; i++) f.add(box(w / 2 - 0.25, 0.1, 0.62, 0), c, [(i - 0.5) * (w / 2 - 0.15), 0.52, 0.07]);
       f.add(box(0.36, 0.3, 0.1, 0), 'velvet', [-w / 2 + 0.4, 0.7, -0.2], [0, 0.3, 0.2]);
-      f.collider(0, 0, w, 0.95);
+      f.collider(0, 0, w, 0.95, { top: 0.5 });
     },
   }),
 
@@ -85,7 +85,7 @@ export default [
         f.add(sphere(0.02, 6, 4), 'brass', [x, y, d / 2]);
       }
       f.add(plane(w - 0.3, d - 0.25, 0), 'velvetGreen', [0, 0.831, 0], [-Math.PI / 2, 0, 0]);
-      f.collider(0, 0, w, d);
+      f.collider(0, 0, w, d, { top: 0.82 });
     },
   }),
 
@@ -117,7 +117,7 @@ export default [
         f.add(box(0.06, 0.45, 0.45, 0), 'iron', [x, 0.225, 0]);
         f.add(box(0.06, 0.5, 0.06, 0), 'iron', [x, 0.7, -0.29]);
       }
-      f.collider(0, 0, w, 0.55);
+      f.collider(0, 0, w, 0.55, { top: 0.48 });
     },
   }),
 
@@ -137,7 +137,7 @@ export default [
       f.add(cyl(0.32, 0.32, 0.04, 16), 'woodRed', [0, 0.6, 0]);
       f.add(cyl(0.04, 0.05, 0.58, 8), 'woodDark', [0, 0.3, 0]);
       f.add(cyl(0.2, 0.24, 0.04, 12), 'woodDark', [0, 0.02, 0]);
-      f.collider(0, 0, 0.6, 0.6);
+      f.collider(0, 0, 0.6, 0.6, { top: 0.62 });
     },
   }),
 
@@ -160,7 +160,7 @@ export default [
     name: 'pedestal',
     create(f, opts) {
       f.add(lathe([[0, 0], [0.32, 0], [0.32, 0.08], [0.22, 0.12], [0.18, 0.9], [0.26, 0.95], [0.3, 1.02], [0, 1.02]], 16), opts.material ?? 'stoneLight', [0, 0, 0]);
-      f.collider(0, 0, 0.6, 0.6);
+      f.collider(0, 0, 0.6, 0.6, { top: 0.95 });
     },
   }),
 ];

@@ -10,7 +10,7 @@ export default defineRoom({
   cell: [0, 0],
   height: 6.5,
   spawn: { at: [0, 5.5], yaw: 0 },
-  atmosphere: { fog: '#1c130b', density: 0.03, ambient: 1.0, ambientColor: '#ffd8b0', moon: 0 },
+  atmosphere: { fog: '#3a2630', density: 0.012, ambient: 1.4, ambientColor: '#ffd8b0', moon: 0 },
   build(ctx) {
     ctx.floor('marble', { uv: 4 });
     ctx.ceiling('plaster');
@@ -63,6 +63,12 @@ export default defineRoom({
       ctx.place('sconce', { at: [x, 2.6, z], rot: r, light: false });
     }
     ctx.sign('Willkommen! Bitte leise wandeln.', [0, 4.5, -7.5], 0, { w: 3.4, h: 0.55, size: 48 });
+    // Verspielte Mitbewohner
+    ctx.place('walkingBook', { at: [4.6, 0, 5.6], radius: 1.1, secret: 'laufbuch' });
+    ctx.place('standSign', { at: [1.9, 0, 6.4], rot: -0.3, text: 'Bitte nicht die Bücher füttern.' });
+    ctx.place('dustBunny', { at: [-5.8, 0, -1.5], area: 2.5, secret: 'staubmaus' });
+    ctx.place('balloonBooks', { at: [-4.2, 0, 0.5], y: 3.6, count: 3, radius: 0.9 });
+    ctx.place('paperPlanes', { at: [0, 0, 2], y: 4.0, radius: 4.5, count: 3 });
     ctx.place('dust', { area: [14, 5, 14] });
 
     // Säulen

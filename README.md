@@ -17,11 +17,19 @@ Laufen musst du aber selbst.
 | **Mondgarten** | Innenhof unter Sternen: Wunschbrunnen, Glühwürmchen, Feenring, Tauschregal |
 | **Sternenbalkon** | Über dem Wolkenmeer, mit Teleskop und Kristallkugel |
 | **Die Endlosen Stapel** | Prozedural erzeugte, unendliche Regal-Gänge mit verirrten Büchern und Liminal-Momenten |
+| **Teesalon der schwebenden Tassen** | Endlos gießende Kanne, kreisende Tassen, Torte zum Auspusten, Kopfüber-Ecke an der Decke |
+| **Trankküche** | Kessel zum Umrühren (wechselt die Farbe), leuchtende Tränke, Froschkönig im Ruhestand, fegender Besen |
+| **Spieluhrsaal** | Selbstspielender Flügel, riesige Spieluhr mit tanzender Eule, schwebende Noten |
+| **Sternwarte** | Sternendecke, Planetenmaschine zum Anschubsen, Kometen, Wolkentreppe zu einem gefallenen Stern |
+| **Stube der Riesin** | Alles XXL: Bücher als Treppe zum Riesenregal, Bleistift, Brille, Teetasse mit Riesenente |
+| **Leuchtender Pilzhain** | Riesenpilze, Sprungpilze, Wolkeninseln, Opernfrosch im Seerosenteich, Schneckenpost |
+
+Überall verstreut: Bücher mit Beinen, Staubmäuse, Quietscheenten, Papierflieger, Bücher an Luftballons und Schilder mit Ratschlägen.
 
 ## Steuerung
 
-`W A S D` laufen · `Shift` rennen · Maus schauen · `E` / Klick interagieren · `Tab` Tagebuch · `M` Klang an/aus.
-Auf dem Handy: linker Daumen = Joystick, rechts wischen = umsehen, tippen = interagieren.
+`W A S D` laufen · `Shift` rennen · `Leertaste` springen (in der Luft nochmal = Doppelsprung) · Maus schauen · `E` / Klick interagieren · `Tab` Tagebuch · `M` Klang an/aus.
+Auf dem Handy: linker Daumen = Joystick, rechts wischen = umsehen, tippen = interagieren, ⤒-Knopf = springen.
 
 ## Lokal starten
 

@@ -10,7 +10,7 @@ export default defineRoom({
   cell: [1, 0],
   height: 5.5,
   spawn: { at: [0, 4], yaw: 0 },
-  atmosphere: { fog: '#16120c', density: 0.032, ambient: 1.0, ambientColor: '#ffe0b0', moon: 0 },
+  atmosphere: { fog: '#3a2a22', density: 0.014, ambient: 1.35, ambientColor: '#ffe0b0', moon: 0 },
   build(ctx) {
     ctx.floor('parquet');
     ctx.ceiling('plaster');
@@ -38,6 +38,10 @@ export default defineRoom({
     ctx.place('painting', { at: [hw - 0.46, 2.9, -3.5], rot: -Math.PI / 2, motif: 'cat', title: 'Ihre Hoheit, die Archivkatze', caption: 'Sie hat das Archiv 1802 gegründet. Sagt sie.', secret: 'katzenportraet', secretName: 'Das Porträt der Archivkatze' });
     ctx.place('chandelier', { at: [0, 0, 1], y: 4.2, chain: 1.2, radius: 0.8, candles: 8, intensity: 12 });
     ctx.sign('Archiv – Was war, bleibt.', [0, 4.2, hd - 0.46], Math.PI, { w: 3, h: 0.5 });
+    ctx.place('dustBunny', { at: [-4.5, 0, 0.5], area: 3 });
+    ctx.place('dustBunny', { at: [4.5, 0, -4.5], area: 2, color: '#c8c0b0' });
+    ctx.place('standSign', { at: [-2.4, 0, -5.4], rot: 0.4, text: 'Hier wird nichts weggeworfen. Auch nicht dieses Schild.', size: 30, width: 1.1, signHeight: 0.38 });
+    ctx.place('snail', { at: [3, 0, 6.6], length: 3, shell: 'pastelSky', quip: 'Die Archivschnecke sortiert alphabetisch. Sie ist bei »A«.' });
     ctx.place('dust', { area: [14, 4.5, 14] });
     ctx.add(box(0.8, 0.02, 0.6, 0), 'paper', [-1.2, 0.012, 1.2], [0, 0.4, 0]);
   },

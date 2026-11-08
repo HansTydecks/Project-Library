@@ -11,11 +11,11 @@ export default defineRoom({
   size: [3, 1],
   outdoor: true,
   spawn: { at: [0, -5], yaw: Math.PI },
-  atmosphere: { fog: '#141a2e', density: 0.012, ambient: 0.8, ambientColor: '#9ab0ff', moon: 0.9 },
+  atmosphere: { fog: '#28305a', density: 0.008, ambient: 1.15, ambientColor: '#9ab0ff', moon: 0.9 },
   build(ctx) {
     const { hw, hd } = ctx;
     ctx.floor('grass', { uv: 3 });
-    ctx.enclose({ neighbor: 'facade', open: 'hedge', facadeHeight: 7.2 });
+    ctx.enclose({ neighbor: 'facade', neighborOutdoor: 'hedge', open: 'hedge', facadeHeight: 7.2 });
     ctx.foundation();
 
     // Kieswege
@@ -52,6 +52,12 @@ export default defineRoom({
     ctx.place('cat', { at: [12, 0.45, 4.6], rot: Math.PI, fur: 'beard', name: 'Weiße Katze', secret: 'katze-garten', quip: 'Die weiße Katze zählt Sterne. Du störst. Sie verzeiht dir.' });
     ctx.place('bench', { at: [12, 0, 4.6], rot: Math.PI });
 
+    ctx.place('rubberDuck', { at: [0.9, 0.42, 0.6], float: true, scale: 1.2, name: 'Brunnenente', secret: 'brunnenente', secretName: 'Die Ente im Wunschbrunnen', quip: 'Die Ente wünscht sich auch etwas. Sie verrät es aber nicht.' });
+    ctx.place('jumpMushroom', { at: [-12, 0, -5.4], scale: 0.8, power: 9.5 });
+    ctx.place('jumpMushroom', { at: [12, 0, -5.4], scale: 0.8, power: 9.5, cap: 'mushroomCapBlue', glow: '#8ad8ff' });
+    ctx.place('snail', { at: [-6, 0, -6.6], length: 3 });
+    ctx.place('standSign', { at: [1.8, 0, 3.6], rot: 0.2, text: 'Rasen betreten erlaubt. Hüpfen ausdrücklich erwünscht.', size: 30, width: 1.1, signHeight: 0.38 });
+    ctx.place('fairyLights', { at: [-8, 0, -4], length: 16, y: 4.2, sag: 1.2 });
     ctx.place('fireflies', { area: [ctx.b.w - 4, 3, ctx.b.d - 3], count: 120 });
   },
 });

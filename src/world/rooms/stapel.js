@@ -9,5 +9,5 @@ export default defineRoom({
   keywords: ['endlos', 'stapel', 'labyrinth', 'verirrt', 'verloren', 'tief', 'unendlich', 'liminal'],
   cell: [0, -3],
   endless: true,
-  atmosphere: { skyHidden: true, fog: '#0e0b08', density: 0.07, ambient: 0.6, ambientColor: '#ffcf90', moon: 0 },
+  atmosphere: { skyHidden: true, fog: '#2e2038', density: 0.04, ambient: 1.1, ambientColor: '#ffd8c0', moon: 0 },
 });
