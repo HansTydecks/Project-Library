@@ -121,7 +121,7 @@ export default [
       }
       f.hitbox([0, 0.08, 0], [0.8, 0.2, 0.8], {
         label: 'Verlorene Schlüssel', verb: 'Durchwühlen',
-        onInteract: () => kit.services.ui.toast('Ein Schlüssel für jede Tür, die es nie gab. Und einer für den Kühlschrank von 1987.'),
+        onInteract: () => { if (!kit.services.items.give('schluessel')) kit.services.ui.toast('Ein Schlüssel für jede Tür, die es nie gab. Und einer für den Kühlschrank von 1987.'); },
       });
     },
   }),

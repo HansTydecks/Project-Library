@@ -22,9 +22,9 @@ export function createLightPool(scene) {
   // ständig zwischen zwei fast gleich weit entfernten Punkten hin- und herspringen.
   const HOLD = 4;
 
-  function score(spot, px, pz, room, held) {
+  function score(spot, px, pz, py, room, held) {
     const p = spot.pos;
-    const d = Math.hypot(p.x - px, p.z - pz);
+    const d = Math.hypot(p.x - px, p.z - pz, (p.y - py - 1.5) * 1.5);
     return d + (spot.room && spot.room !== room ? 7 : 0) - (spot.priority ?? 0) - (held.has(spot) ? HOLD : 0);
   }
 
@@ -34,7 +34,7 @@ export function createLightPool(scene) {
       acc = 0;
       const held = new Set(pool.filter((p) => p.spot && p.level > 0).map((p) => p.spot));
       const arr = [...spots].filter((s) => s.enabled !== false);
-      const sc = new Map(arr.map((s) => [s, score(s, player.x, player.z, roomId, held)]));
+      const sc = new Map(arr.map((s) => [s, score(s, player.x, player.z, player.y ?? 0, roomId, held)]));
       arr.sort((a, b) => sc.get(a) - sc.get(b));
       desired = new Set(arr.slice(0, POOL));
     }

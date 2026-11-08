@@ -144,6 +144,11 @@ Materialien sind physikalisch (`pbr(map, rauheit, { bump })` bzw. `flat(farbe, r
 
 ---
 
+**Tätige Kreaturen** (`src/props/creatures.js`): `workerGnome { task: 'hammer'|'glue'|'carry' }`, `conveyorBelt`, `bookPress`,
+`postOwls`, `bees { targets, hive }`, `queenBee`, `beehive`, `sleepingBook`, `sheepFence`, `friendSheep`, `antTrail`, `petCat`.
+Obergeschoss-Geräte (`src/props/upstairs.js`): `towerRoof`, `towerClock`, `treasureChest`, `owlMailbox`, `pigeonholes`, `plantSpot`,
+`moonScope`, `moonMobile`, `honeyJars`, `parcelStack`, `gluePot`.
+
 **Fertige verspielte Props** (frei kombinierbar): `walkingBook`, `dustBunny`, `rubberDuck`, `snail`, `paperPlanes`,
 `balloonBooks`, `bookworm`, `bubbles`, `standSign { text }`, `jumpMushroom { power }`, `floatingIsland { y, kind: 'cloud'|'book' }`,
 `goldenAcorn { kind: 'star' }` (Belohnung oben auf Plattformen), Tee (`teacup`, `teapot`, `pouringTeapot`, `orbitingCups`, `cake`),
@@ -160,6 +165,22 @@ Stufen also höchstens ~0,9 m auseinander, mit Doppelsprung ~1,6 m. Kanten bis 0
 (Treppen: Stufen < 0,3 m, siehe `spiralStairs` und die Galerie in `rooms/lesesaal.js`). Decken stoppen Sprünge automatisch.
 Glasdach: `ctx.ceiling('glassRoof', { roof: false })`. Möbel umgedreht an die Decke: ein `Frame` mit
 `makeRotationZ(Math.PI)` (siehe `rooms/teesalon.js`).
+
+## Stockwerke
+
+`FLOOR_H = 12` m pro Etage. Raum im Obergeschoss: `level: 1` in der Room-Def (Zelle darf über einem Erdgeschoss-Raum liegen);
+`ctx.floor()` legt dort automatisch einen begehbaren Boden an, `ctx.foundation()` einen Steinsockel bis aufs Dach darunter.
+Türen entstehen nur zwischen Räumen derselben Etage. Verbindung zwischen Etagen: ein mehrstöckiger Raum mit `levels: [0, 1, 2]`
+(siehe `rooms/turm.js`): `ctx.level(l, höhe)` liefert je Etage einen eigenen Kontext (Wände, Türen, Boden mit `hole`),
+dazu `spiralStairs` mit Stufen < 0,3 m. `atmosphereByLevel`, `outdoorLevels` und `levelNames` steuern Stimmung und Banner je Etage.
+Kollider reichen standardmäßig nur vom Boden bis knapp über die Decke ihrer Etage. Räume, die gerade ausgeblendet sind,
+zeigt eine schlichte Außenhülle (`src/world/shells.js`).
+
+## Tasche (Items)
+
+Item-Katalog in `src/state/items.js`. Verstecken: `ctx.place('pickup', { item: 'keks', at })`. Figuren: `gift: 'item'`
+(verschenkt beim ersten Gespräch) oder `wants: { item, egg, eggName, text, onGift }` (wünscht sich etwas → Osterei).
+Eigene Geräte mit Item-Bedarf: `needsItem()` in `src/props/upstairs.js`. `kit.services.items.give/has/take/seen`.
 
 ## Bewohner (Bekanntschaften)
 

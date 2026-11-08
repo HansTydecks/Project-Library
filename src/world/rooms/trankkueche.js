@@ -22,7 +22,8 @@ export default defineRoom({
     ctx.place('rug', { at: [0, 0, 0], width: 4, depth: 4, material: 'carpetGreen' });
     // Tränke an den Wänden
     const west = ctx.wallFrame('west', 0.42);
-    for (const u of [-5, -2, 1, 4.6]) west.place('potionShelf', { at: [u, 0, 0], width: 2.4, seed: `w${u}` });
+    // (Mitte der Westwand frei: Tür zum Wendelturm)
+    for (const u of [-5.6, -3.0, 3.0, 5.6]) west.place('potionShelf', { at: [u, 0, 0], width: 2.4, seed: `w${u}` });
     const north = ctx.wallFrame('north', 0.42);
     for (const u of [-5, 5]) north.place('potionShelf', { at: [u, 0, 0], width: 2.6, seed: `n${u}` });
     west.place('paintedEgg', { at: [5.75, 2.17, 0.15], id: 'ei-traenke' });

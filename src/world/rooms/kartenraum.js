@@ -23,7 +23,7 @@ export default defineRoom({
     ctx.place('wanderCompass', { at: [3.6, 1.02, 4.2], world: ctx.world_, secret: 'fernweh-kompass' });
     ctx.place('balloonModel', { at: [-1, 0, 1], y: 5.6, scale: 1.2, drift: 1.5 });
     ctx.place('compassRose', { at: [-4.2, 0, 4.6], radius: 1.8 });
-    ctx.place('friendOwl', { at: [-3.6, 0, 0.8], rot: 0.9, perch: 1.5, friend: 'puschel' });
+    ctx.place('friendOwl', { at: [-3.6, 0, 0.8], rot: 0.9, perch: 1.5, friend: 'puschel', gift: 'feder' });
     ctx.place('mapRolls', { at: [6.6, 0, -6.6] });
     ctx.place('mapRolls', { at: [-6.6, 0, -6.6] });
     ctx.place('globe', { at: [6, 0, 6] });

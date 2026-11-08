@@ -14,7 +14,8 @@ import { events } from './core/events.js';
 import { makeRng } from './core/rng.js';
 
 import { loadRooms, loadProps } from './world/registry.js';
-import { buildRooms, roomBounds, worldToCell, cellKey, CELL } from './world/world.js';
+import { buildRooms, roomBounds, worldToCell, cellKey, CELL, FLOOR_H, levelAt, roomLevels } from './world/world.js';
+import { createShells } from './world/shells.js';
 import { setMaxAnisotropy, signTexture, FONT_TITLE } from './world/textures.js';
 import { createShelfRegistry, populateShelves, createBookMesh, setBookGlow } from './world/books.js';
 import { fillerTitle, fillerLine } from './world/bookTitles.js';
@@ -31,6 +32,7 @@ import { openWizardDialog } from './ui/dialog.js';
 import { openJournal, openCatalog } from './ui/journal.js';
 import { createProgress, createSecrets } from './state/progress.js';
 import { createFriends } from './npc/friends.js';
+import { createItems } from './state/items.js';
 import { createSequenceWatcher, season, createRepeatCounter } from './core/eastereggs.js';
 import { createConfetti } from './world/confetti.js';
 
@@ -88,10 +90,20 @@ const index = new Map();       // 'project:id' | 'idea:id' | 'room:id' → { obj
 const rngFor = (seed) => makeRng(String(seed));
 const shelves = createShelfRegistry();
 const friends = createFriends({ progress });
+const items = createItems({
+  progress,
+  onChange: (kind, id) => {
+    ui.setInventory(items.list());
+    const it = items.get(id);
+    if (kind === 'give') { ui.toast(`${it.icon} In deiner Tasche: ${it.name}. ${it.desc}${id === 'brief' ? ' (Taste B oder antippen: lesen)' : ''}`, { ms: 6500 }); audio.play('pop'); }
+  },
+});
 // Ostereier-Zustand: Jahreszeit (?season=winter|autumn|spring zum Testen), Feier-Timer, Kakaostunde (?cocoa)
 const fx = { season: season(new Date(), params.get('season')), party: 0, cocoaHour: params.has('cocoa'), paintedEggs: 0 };
 const services = {
-  collision, lights, interaction, secrets, friends, events, progress, audio, index, fx,
+  collision, lights, interaction, secrets, friends, items, events, progress, audio, index, fx,
+  onTick: (fn) => engine.onUpdate(fn),
+  get player() { return player; },
   props: loadProps(),
   shelves,
   content: { projects, ideas },
@@ -160,17 +172,19 @@ for (const k of kits) { k.finalize(); scene.add(k.group); }
 for (const d of roomDefs) {
   const b = roomBounds(d);
   const sp = d.spawn?.at ?? [0, 0];
-  index.set(`room:${d.id}`, { pos: new THREE.Vector3(b.cx + sp[0], 1.4, b.cz + sp[1]), room: d.id });
+  index.set(`room:${d.id}`, { pos: new THREE.Vector3(b.cx + sp[0], roomLevels(d)[0] * FLOOR_H + 1.4, b.cz + sp[1]), room: d.id });
 }
 
 const sky = createSky(scene);
+const shells = createShells({ scene, kits });
 const stacks = stapelDef ? createStacks({ def: stapelDef, occ, scene, services, projects }) : null;
 const viewer = createBookViewer({ scene, camera, engine });
 
-function roomAt(x, z) {
+function roomAt(x, z, y = 0) {
   const [cx, cz] = worldToCell(x, z);
-  const id = occ.get(cellKey(cx, cz));
+  const id = occ.get(cellKey(cx, cz, levelAt(y)));
   if (id) return id;
+  if (levelAt(y) > 0) return null;
   if (stacks?.isStack(cx, cz)) return stapelDef.id;
   return null;
 }
@@ -182,7 +196,7 @@ const confetti = createConfetti(scene);
 const EGGS = {
   konami: 'Der geheime Tastentanz', federleicht: 'Der Federleicht-Zauber', hutfarbe: 'Abrakadabra (mit Hutfolgen)',
   kakao: 'Kakao vom Bibliothekar', hutflug: 'Der fliegende Hut', feier: 'Eine spontane Feier', zweiundvierzig: 'Die Antwort auf alles',
-  klingel: 'Fünfmal geklingelt', 'alle-eier': 'Alle bemalten Eier gefunden',
+  klingel: 'Fünfmal geklingelt', 'alle-eier': 'Alle bemalten Eier gefunden', sternensprung: 'Sternenstaub für den Dreifachsprung',
 };
 for (const [id, name] of Object.entries(EGGS)) secrets.register(id, name, null, 'egg');
 let featherTimer = 0;
@@ -211,6 +225,19 @@ events.on('paintedEgg', ({ total }) => {
   audio.play('chime');
   if (n >= total) { secrets.found('alle-eier'); party(15); }
 });
+events.on('party', (s) => party(typeof s === 'number' ? s : 12));
+function useItem(id) {
+  if (id === 'brief') {
+    const list = projects.filter((p) => placedWhere.has(p.id));
+    const p = list[Math.floor(Math.random() * list.length)];
+    if (p) { ui.toast('Du öffnest den Brief: »Liebe/r Besucher/in, schau dir doch mal das hier an. Herzlich, die Bibliothek.«', { ms: 6000 }); setTimeout(() => events.emit('openProject', { project: p }), 600); }
+    return;
+  }
+  const it = items.get(id);
+  if (it) ui.toast(`${it.icon} ${it.name}: ${it.desc}`, { ms: 5500 });
+}
+ui.onUseItem?.((id) => useItem(id));
+input.onPress('KeyB', () => { if (!ui.modalOpen && started) { const l = items.list(); if (l.length) useItem(l.find((i) => i.id === 'brief')?.id ?? l[l.length - 1].id); } });
 events.on('goHome', () => {
   const f = byId.get('foyer'); const b = roomBounds(f);
   player.teleport(b.cx + f.spawn.at[0], b.cz + f.spawn.at[1], f.spawn.yaw ?? 0);
@@ -230,7 +257,7 @@ const spawnRoom = byId.get(params.get('spawn')) ?? byId.get('foyer') ?? roomDefs
     const [cx, cz] = spawnRoom.cell;
     stacks.preload(cx * CELL, cz * CELL);
     player.teleport(cx * CELL, cz * CELL, 0);
-  } else player.teleport(b.cx + sp.at[0], b.cz + sp.at[1], sp.yaw ?? 0);
+  } else player.teleport(b.cx + sp.at[0], b.cz + sp.at[1], sp.yaw ?? 0, roomLevels(spawnRoom)[0] * FLOOR_H + (sp.y ?? 0));
 }
 
 // ---------------------------------------------------------------- Räume & Atmosphäre
@@ -250,23 +277,27 @@ function throughView(a, n, m) {
   return d1.axis === 'x' ? Math.abs(d1.z - d2.z) < 6 : Math.abs(d1.x - d2.x) < 6;
 }
 
-function enterRoom(id) {
-  currentRoom = id;
+let currentLevel = 0;
+function enterRoom(id, level = 0) {
+  const sameRoom = id === currentRoom;
+  currentRoom = id; currentLevel = level;
   const def = byId.get(id);
   if (!def) return;
-  const a = def.atmosphere ?? {};
+  const a = def.atmosphereByLevel?.[level] ?? def.atmosphere ?? {};
   atmoTarget.fog.set(a.fog ?? '#3a2630');
   atmoTarget.density = a.density ?? 0.014;
   atmoTarget.ambient = a.ambient ?? 1.3;
   atmoTarget.ambientColor.set(a.ambientColor ?? '#ffd8b0');
   atmoTarget.moon = a.moon ?? 0;
-  atmoTarget.outdoor = def.outdoor ? 1 : 0;
+  atmoTarget.outdoor = (def.outdoorLevels?.includes(level) ?? def.outdoor) ? 1 : 0;
   atmoTarget.skyHidden = a.skyHidden ? 1 : 0;
   const near = new Set([id, ...(neighbors.get(id) ?? [])]);
   // Nachbarn zweiten Grades nur, wenn man durch zwei Türen in einer Linie hindurchsehen kann
   for (const n of neighbors.get(id) ?? []) for (const m of neighbors.get(n) ?? []) if (m !== id && throughView(id, n, m)) near.add(m);
   activeKits = new Set(kits.filter((k) => near.has(k.id)));
   for (const k of kits) k.group.visible = activeKits.has(k);
+  shells.sync(kits);
+  if (sameRoom) { const ln = def.levelNames?.[level]; if (ln) ui.banner(def.name, ln); return; }
   const first = progress.room(id);
   ui.banner(def.name, first ? 'Neu entdeckt!' : (def.description ?? ''));
   if (first && progress.count('rooms') > 1) audio.play('chime');
@@ -334,6 +365,12 @@ events.on('crystalBall', () => {
 });
 events.on('summonWizard', () => {
   services.meet('bibliothekar');
+  if (items.has('sternenstaub')) {
+    items.take('sternenstaub'); player.setMaxAirJumps(2); secrets.found('sternensprung');
+    services.wizard?.hatColor(); party(8);
+    ui.toast('Der Bibliothekar pustet den Sternenstaub über dich: »So! Ab jetzt springst du dreimal. Zweimal davon in der Luft.«', { ms: 7000 });
+    return;
+  }
   services.wizard?.talk(3);
   services.wizard?.wave();
   const name = progress.visits > 1 ? 'Schön, dass du wieder da bist.' : 'Du bist neu hier, oder? Frag mich ruhig alles.';
@@ -351,7 +388,7 @@ events.on('summonWizard', () => {
 interaction.onChange((hit) => {
   if (!hit) return ui.setHint(null);
   const ia = hit.object.userData.interact;
-  ui.setHint({ label: typeof ia.label === 'function' ? ia.label(hit) : ia.label, verb: ia.verb });
+  ui.setHint({ label: typeof ia.label === 'function' ? ia.label(hit) : ia.label, verb: typeof ia.verb === 'function' ? ia.verb(hit) : ia.verb });
 });
 input.onPress('KeyE', () => interaction.trigger());
 input.onPress('Space', () => { if (input.state.enabled && !ui.modalOpen) player.jump(); });
@@ -377,7 +414,7 @@ ui.jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); e.stop
 
 function showJournal() {
   openJournal(ui, {
-    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, paintedEggs: fx.paintedEggs, audio,
+    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, items, paintedEggs: fx.paintedEggs, audio,
     totalBooks: projects.length, totalIdeas: ideas.length,
     onHome: () => guideTo('room:foyer', 'Foyer'),
     onCatalog: () => events.emit('openCatalog'),
@@ -430,14 +467,17 @@ ui.onAllClosed((gesture) => {
   } else pause();
 });
 ui.showHud(false);
+ui.setInventory(items.list());
+if (progress.has('secrets', 'sternensprung')) player.setMaxAirJumps(2); // Belohnung bleibt
 
 // ---------------------------------------------------------------- Loop
 const ctxObj = { player: player.pos, camera, launch: (v) => player.launch(v), get grounded() { return player.grounded; } };
 let fpsAcc = 0, fpsN = 0, fps = 0, detailAcc = 1;
 engine.onUpdate((dt, t) => {
   player.update(dt);
-  const id = roomAt(player.pos.x, player.pos.z);
-  if (id && id !== currentRoom) enterRoom(id);
+  const id = roomAt(player.pos.x, player.pos.z, player.pos.y);
+  const lvl = levelAt(player.pos.y);
+  if (id && (id !== currentRoom || lvl !== currentLevel)) enterRoom(id, lvl);
 
   // Atmosphäre sanft überblenden
   const k = 1 - Math.exp(-dt * 1.5);
@@ -465,7 +505,9 @@ engine.onUpdate((dt, t) => {
       if (!kit.details || !kit.room) continue;
       const b = roomBounds(kit.room);
       const dx = Math.max(b.minX - player.pos.x, 0, player.pos.x - b.maxX), dz = Math.max(b.minZ - player.pos.z, 0, player.pos.z - b.maxZ);
-      kit.details.visible = kit.id === currentRoom || Math.hypot(dx, dz) < 10;
+      const y0 = kit.origin.y, y1 = y0 + (kit.room.height ?? 6);
+      const dy = Math.max(y0 - player.pos.y - 1, 0, player.pos.y - y1);
+      kit.details.visible = kit.id === currentRoom || Math.hypot(dx, dz, dy) < 10;
     }
   }
   stacks?.update(dt, t, player.pos, currentRoom);
@@ -499,7 +541,7 @@ start.querySelector('.enter').classList.remove('loading');
 if (DEBUG || params.has('test')) {
   window.__lib = {
     THREE, scene, camera, player, input, interaction, events, wisp, ui, index, kits, collision, stacks, progress, librarian,
-    teleport: (x, z, yaw) => player.teleport(x, z, yaw),
+    teleport: (x, z, yaw, y) => player.teleport(x, z, yaw, y),
     look: (yaw, pitch) => player.look(yaw, pitch),
     guide: (key) => guideTo(key, key),
     roomAt: () => currentRoom,

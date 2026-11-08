@@ -3,12 +3,12 @@
 const KEY = 'magische-bibliothek:v1';
 
 export function createProgress() {
-  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], visits: 0, firstVisit: null };
+  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], items: [], itemsUsed: [], visits: 0, firstVisit: null };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) data = { ...data, ...JSON.parse(raw) };
   } catch { /* privat/blockiert */ }
-  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs'].map((k) => [k, new Set(data[k] ?? [])]));
+  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs', 'items', 'itemsUsed'].map((k) => [k, new Set(data[k] ?? [])]));
   data.visits = (data.visits ?? 0) + 1;
   data.firstVisit ??= new Date().toISOString().slice(0, 10);
 
@@ -24,6 +24,8 @@ export function createProgress() {
     room: mark('rooms'), book: mark('books'), idea: mark('ideas'), secret: mark('secrets'), curio: mark('curios'),
     friend: mark('friends'), egg: mark('eggs'),
     has: (k, id) => sets[k].has(id),
+    mark: (k, id) => mark(k)(id),
+    remove: (k, id) => { if (sets[k].delete(id)) save(); },
     count: (k) => sets[k].size,
     get visits() { return data.visits; },
     get firstVisit() { return data.firstVisit; },

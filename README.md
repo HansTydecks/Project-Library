@@ -32,6 +32,24 @@ Laufen musst du aber selbst.
 
 Im **Großen Lesesaal** führt eine Wendeltreppe hinauf auf die begehbare Galerie.
 
+## Obere Etagen
+
+Westlich der Trankküche steht der **Wendelturm**: Eine Wendeltreppe führt ins 1. Obergeschoss und weiter auf eine offene
+Aussichtsplattform mit Glocke, Fernrohr und Wetterhahn (24 m hoch). Oben warten:
+
+| Raum | Was dort ist |
+| --- | --- |
+| **Buchbinderei der Wichtel** | Wichtel hämmern, leimen und schleppen Bücher, ein Fließband (Hebel!), eine Buchpresse |
+| **Dachgarten der Bienen** | Draußen über den Dächern: Bienen fliegen Blume → Stock, Königin Summ, ein leerer Blumentopf |
+| **Eulenpost** | Eulen fliegen Briefe, Postmeisterin Federleicht am Schalter, Briefkasten zum Schreiben |
+| **Traumkammer** | Bücher schlafen in Bettchen, Schäfchenwolken springen über einen Zaun, Mond-Mobile |
+
+## Tasche & Item-Rätsel
+
+Leuchtende Kleinigkeiten kann man einstecken (Tasche unten links, im Tagebuch unter „Tasche“). Manche Bewohner verschenken
+etwas, andere wünschen sich etwas – daraus entstehen kleine Rätselketten mit Belohnungen (eine Katze, die dir folgt, eine
+singende Riesenblume, eine reparierte Turmuhr, ein Dreifachsprung …). Taste `B` liest Briefe.
+
 ## Bewohner & Ostereier
 
 Neun Bewohner wollen kennengelernt werden (Tagebuch → „Bekanntschaften“): der Bibliothekar, Frau Fingerhut (Uhrmacher-Maus),
@@ -47,7 +65,7 @@ der Stapel, ungeduldiges Klingeln – und die Bibliothek kennt den Kalender (`?s
 
 ## Steuerung
 
-`W A S D` laufen · `Shift` rennen · `Leertaste` springen (in der Luft nochmal = Doppelsprung) · Maus schauen · `E` / Klick interagieren · `Tab` Tagebuch · `M` Klang an/aus.
+`W A S D` laufen · `Shift` rennen · `Leertaste` springen (in der Luft nochmal = Doppelsprung) · `B` Brief lesen · Maus schauen · `E` / Klick interagieren · `Tab` Tagebuch · `M` Klang an/aus.
 Auf dem Handy: linker Daumen = Joystick, rechts wischen = umsehen, tippen = interagieren, ⤒-Knopf = springen.
 
 ## Lokal starten

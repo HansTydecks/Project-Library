@@ -36,7 +36,8 @@ export default defineRoom({
     ctx.place('cake', { at: [-1.5, ty, 1], secret: 'torte' });
     ctx.place('teapot', { at: [-1.5, ty, -1.2], rot: 0.4 });
     ctx.place('teapot', { at: [-1.6, ty, 3.4], rot: 2, color: 'pastelPink', scale: 0.8 });
-    ctx.place('friendTeapot', { at: [-1.5, ty, -0.25], rot: Math.PI / 2, friend: 'mirabelle' });
+    ctx.place('friendTeapot', { at: [-1.5, ty, -0.25], rot: Math.PI / 2, friend: 'mirabelle', wants: { item: 'honig', egg: 'honigtee', eggName: 'Honigtee für Mirabelle', text: 'Honig! Vom Dach? Oh, ich koche sofort einen Honigtee. Für alle! Für immer!' } });
+    ctx.place('pickup', { at: [3.55, 0.62, 6.8], item: 'keks' });
     ctx.place('sugarTower', { at: [-1.2, ty, 2.3] });
     for (const z of [-1.8, -0.4, 0.4, 2.0, 2.9, 3.8]) {
       ctx.place('teacup', { at: [-2.05, ty, z], color: z > 1 ? 'pastelMint' : 'porcelain' });

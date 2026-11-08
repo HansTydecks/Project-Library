@@ -18,6 +18,7 @@ export function createPlayer({ camera, input, collision }) {
   let vy = 0, grounded = true, airJumps = 0, airTime = 0;
   let wantJump = false;
   let gravityScale = 1; // < 1 = Federleicht-Zauber
+  let maxAir = 1;        // Sprünge in der Luft (Sternenstaub: 2)
 
   function update(dt) {
     const s = input.state;
@@ -58,12 +59,12 @@ export function createPlayer({ camera, input, collision }) {
     // Springen & Schwerkraft
     if (wantJump) {
       wantJump = false;
-      if (grounded) { vy = JUMP_V; grounded = false; airJumps = 1; for (const fn of jumpListeners) fn(false); }
+      if (grounded) { vy = JUMP_V; grounded = false; airJumps = maxAir; for (const fn of jumpListeners) fn(false); }
       else if (airJumps > 0) { vy = Math.max(vy, DOUBLE_V); airJumps--; for (const fn of jumpListeners) fn(true); }
     }
     const ground = collision.groundAt(pos.x, pos.z, RADIUS, pos.y);
     if (!grounded || pos.y > ground + 0.001) {
-      if (grounded && pos.y - ground > 0.35) { grounded = false; airJumps = 1; } // von einer Kante gelaufen
+      if (grounded && pos.y - ground > 0.35) { grounded = false; airJumps = maxAir; } // von einer Kante gelaufen
       if (grounded) pos.y = ground; // kleine Stufe hinunter: einfach folgen
       else {
         vy -= GRAVITY * gravityScale * dt;
@@ -110,10 +111,11 @@ export function createPlayer({ camera, input, collision }) {
     setGravityScale(k) { gravityScale = k; },
     get gravityScale() { return gravityScale; },
     /** Schleudert die Figur nach oben (Sprungpilze, Magie). */
-    launch(v) { vy = v; grounded = false; airJumps = 1; airTime = 0.01; },
+    launch(v) { vy = v; grounded = false; airJumps = maxAir; airTime = 0.01; },
+    setMaxAirJumps(n) { maxAir = n; },
     get grounded() { return grounded; },
-    teleport(x, z, faceYaw = yaw) {
-      pos.set(x, 0, z); vel.set(0, 0); yaw = faceYaw; pitch = 0; vy = 0; grounded = true;
+    teleport(x, z, faceYaw = yaw, y = 0) {
+      pos.set(x, y, z); vel.set(0, 0); yaw = faceYaw; pitch = 0; vy = 0; grounded = true;
       update(0);
     },
     look(newYaw, newPitch = 0) { yaw = newYaw; pitch = newPitch; },

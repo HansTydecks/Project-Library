@@ -45,6 +45,7 @@ export default defineRoom({
     ctx.place('giantPencil', { at: [-3, 0, 3.0], rot: 0.25, length: 6, radius: 0.32 });
     ctx.place('giantGlasses', { at: [-3.4, 0, -1.4], rot: 0.5 });
     ctx.place('yarnBall', { at: [-5.4, 0, -5.4], radius: 0.95 });
+    ctx.place('pickup', { at: [-3.9, 0, -4.2], item: 'wolle' });
     ctx.place('paintedEgg', { at: [-5.4, 1.86, -5.4], id: 'ei-wollknaeuel' });
     ctx.place('giantCup', { at: [0.6, 0, -4.4], radius: 1.3, height: 1.4 });
     ctx.place('rubberDuck', { at: [0.6, 0.78, -4.4], scale: 3.5, float: true, name: 'Badeente (riesig)', secret: 'riesen-ente', secretName: 'Die Ente im Riesentee', quip: 'QUAAAK. Selbst das Quietschen ist hier riesig.' });

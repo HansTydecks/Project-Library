@@ -61,11 +61,31 @@ function behave(f, kit, opts, { root, head, eyeList = [], hitSize, hitAt = [0, 0
     if (d > range + 1.5) near = false;
   });
   if (turn === 'body') yaw = base;
+  const items = kit.services.items, secrets = kit.services.secrets;
+  // opts.wants: { item, egg, eggName, text, onGift } – Figur wünscht sich ein Item (Osterei beim Übergeben)
+  // opts.gift: Item, das die Figur beim ersten Gespräch verschenkt
+  if (opts.wants?.egg) secrets.register(opts.wants.egg, opts.wants.eggName ?? `Geschenk für ${info?.name}`, kit.room?.id, 'egg');
   f.interactable(hit, {
-    label: info?.name ?? opts.friend, verb: 'Ansprechen', friend: opts.friend, range: 4,
-    onInteract: () => { onTalk?.(); kit.services.audio.play('chime'); kit.services.ui.toast(`${info?.name ?? ''}: »${fr.next(opts.friend)}«`, { ms: 6500 }); },
+    label: info?.name ?? opts.friend, friend: opts.friend, range: 4,
+    verb: () => (opts.wants && items?.has(opts.wants.item) ? `${items.get(opts.wants.item).icon} ${items.get(opts.wants.item).name} geben` : 'Ansprechen'),
+    onInteract: () => {
+      onTalk?.();
+      if (opts.wants && items?.has(opts.wants.item)) {
+        items.take(opts.wants.item);
+        kit.services.audio.play('secret');
+        kit.services.ui.toast(`${info?.name ?? ''}: »${opts.wants.text}«`, { ms: 7000 });
+        if (opts.wants.egg) secrets.found(opts.wants.egg);
+        opts.wants.onGift?.();
+        return;
+      }
+      kit.services.audio.play('chime');
+      kit.services.ui.toast(`${info?.name ?? ''}: »${fr.next(opts.friend)}«`, { ms: 6500 });
+      if (opts.gift && items && !items.seen(opts.gift)) setTimeout(() => items.give(opts.gift), 1500);
+    },
   });
 }
+
+export { behave, eyes, M, S };
 
 export default [
   // Frau Fingerhut: Uhrmacher-Maus mit Lupe und Schürze
@@ -124,7 +144,7 @@ export default [
       f.addGroup(stand);
       f.collider(0, 0, 0.4, 0.4);
       const root = new THREE.Group(); root.position.y = H + 0.02;
-      const feather = new THREE.MeshStandardMaterial({ color: '#a8845a', roughness: 0.95 });
+      const feather = new THREE.MeshStandardMaterial({ color: opts.crow ? '#3a3a4a' : '#a8845a', roughness: 0.95 });
       const body = new THREE.Group(); root.add(body);
       body.add(M(S(0.16, 16, 12), feather, [0, 0.17, 0], null, [1, 1.25, 0.95]));
       body.add(M(S(0.12, 14, 10), 'cream', [0, 0.14, 0.06], null, [1, 1.2, 0.8]));
@@ -141,6 +161,7 @@ export default [
       }
       const ey = eyes(head, { y: 0.01, z: 0.13, gap: 0.115, r: 0.035, color: 'black' });
       head.add(M(new THREE.ConeGeometry(0.018, 0.05, 6), 'orange', [0, -0.035, 0.145], [Math.PI / 2 + 0.6, 0, 0]));
+      if (!opts.crow) {
       // Monokel mit Kettchen
       head.add(M(new THREE.TorusGeometry(0.045, 0.005, 6, 20), 'gold', [0.058, 0.01, 0.168]));
       head.add(M(new THREE.CylinderGeometry(0.002, 0.002, 0.18, 3), 'gold', [0.1, -0.08, 0.13], [0.3, 0, 0.4]));
@@ -148,6 +169,11 @@ export default [
       head.add(M(new THREE.BoxGeometry(0.2, 0.015, 0.2), 'black', [0, 0.15, 0], [0, 0.78, 0]));
       head.add(M(new THREE.CylinderGeometry(0.06, 0.07, 0.05, 10), 'black', [0, 0.125, 0]));
       head.add(M(new THREE.CylinderGeometry(0.003, 0.003, 0.08, 3), 'pastelLemon', [0.07, 0.12, 0.07]));
+      } else {
+        // Turmkrähe: Schal und größerer Schnabel
+        head.add(M(new THREE.ConeGeometry(0.03, 0.11, 6), 'black', [0, -0.03, 0.17], [Math.PI / 2 + 0.2, 0, 0]));
+        body.add(M(new THREE.TorusGeometry(0.11, 0.03, 6, 16), 'candy', [0, 0.32, 0], [Math.PI / 2, 0, 0]));
+      }
       compactGroup(body); compactGroup(head, ey);
       f.object(root, [0, 0, 0], [0, opts.rot ?? 0, 0]);
       let spin = 0;

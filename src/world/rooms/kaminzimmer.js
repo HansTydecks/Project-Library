@@ -23,7 +23,7 @@ export default defineRoom({
     west.place('cuckooClock', { at: [0, 0, 0.62], y: 3.4, scale: 1.1, offset: 2, bird: 'pastelPink', secret: 'kamin-kuckuck', secretName: 'Der Kuckuck über dem Kamin' });
     ctx.place('rug', { at: [-4.2, 0, 0], width: 4, depth: 5, material: 'carpetRed' });
     ctx.place('sleepyDragon', { at: [-5.0, 0, 0.2], rot: -Math.PI / 2, secret: 'minidrache' });
-    ctx.place('cat', { at: [-4.6, 0, -1.5], rot: 1.2, fur: 'fur', name: 'Kaminkatze', quip: 'Die Katze und der Drache teilen sich den Teppich. Die Katze hat die bessere Hälfte.' });
+    ctx.place('petCat', { at: [-4.4, 0, -1.6], rot: 1.2, fur: 'fur', name: 'Kaminkatze' });
     // Sessel ums Feuer
     ctx.place('armchair', { at: [-2.3, 0, -2.4], rot: -Math.PI / 2 - 0.4, cushion: 'velvetGreen', quip: 'Dieser Sessel ist so bequem, dass er selbst eingeschlafen ist.' });
     ctx.place('armchair', { at: [-2.3, 0, 2.4], rot: -Math.PI / 2 + 0.4, cushion: 'velvet' });

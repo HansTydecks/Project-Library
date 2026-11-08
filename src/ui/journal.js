@@ -1,7 +1,7 @@
 import { el, esc } from './ui.js';
 
 /** Das Entdeckungs-Tagebuch. */
-export function openJournal(ui, { rooms, progress, secrets, friends, paintedEggs = 0, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
+export function openJournal(ui, { rooms, progress, secrets, friends, items, paintedEggs = 0, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
   const box = el('div', 'journal');
   const foundBooks = progress.count('books'), foundIdeas = progress.count('ideas');
   const sec = secrets.list('secret'), eggs = secrets.list('egg');
@@ -18,6 +18,8 @@ export function openJournal(ui, { rooms, progress, secrets, friends, paintedEggs
     <ul>${rooms.map((r) => progress.has('rooms', r.id) ? `<li>✦ ${esc(r.name)}</li>` : '<li class="unknown">??? (noch nicht betreten)</li>').join('')}</ul>
     <h3>Gelesen</h3>
     <div>${foundBooks} von ${totalBooks} Werken aufgeschlagen · ${foundIdeas} von ${totalIdeas} Ideen gelesen · ${progress.count('curios')} Kuriositäten in den Stapeln</div>
+    <h3>Tasche</h3>
+    <div>${(items?.list() ?? []).map((i) => `${i.icon} ${esc(i.name)}`).join(' · ') || '<span class="unknown">leer – Dinge zum Einstecken leuchten leise</span>'}${items?.list().some((i) => i.id === 'brief') ? ' <em>(B: Brief lesen)</em>' : ''}</div>
     <h3>Bekanntschaften (${fr.filter((f) => f.found).length}/${fr.length})</h3>
     <ul>${fr.map((f) => f.found ? `<li>☺ ${esc(f.name)} <span style="opacity:.6">· ${esc(roomName(f.room))}</span></li>` : `<li class="unknown">??? (wohnt irgendwo bei: ${esc(roomName(f.room))})</li>`).join('')}</ul>
     <h3>Geheimnisse (${sec.filter((s) => s.found).length}/${sec.length})</h3>

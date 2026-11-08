@@ -15,6 +15,7 @@ export function createUI({ root, input }) {
   const compass = root.appendChild(el('div', 'compass hidden'));
   const debug = root.appendChild(el('div', 'debug hidden'));
   const corner = root.appendChild(el('div', 'corner'));
+  const bag = root.appendChild(el('div', 'bag hidden'));
   const touchBtn = root.appendChild(el('button', 'touch-act hidden', '✋'));
   touchBtn.setAttribute('aria-label', 'Interagieren');
   const jumpBtn = root.appendChild(el('button', 'touch-jump hidden', '⤒'));
@@ -111,8 +112,15 @@ export function createUI({ root, input }) {
 
     touchButton: touchBtn,
     jumpButton: jumpBtn,
+    /** Tasche (Inventar) unten links: [{ icon, name, desc }] */
+    setInventory(list) {
+      bag.innerHTML = list.map((i) => `<span class="item" data-id="${esc(i.id)}" title="${esc(i.name)} – ${esc(i.desc)}">${i.icon}</span>`).join('');
+      bag.dataset.empty = list.length ? '0' : '1';
+    },
+    onUseItem(fn) { bag.addEventListener('click', (e) => { const id = e.target.closest('[data-id]')?.dataset.id; if (id) { e.stopPropagation(); fn(id); } }); },
     showHud(on) {
       for (const n of [cross, hint, corner]) n.classList.toggle('hidden', !on);
+      bag.classList.toggle('hidden', !on);
       jumpBtn.classList.toggle('hidden', !on || !input.state.touch);
     },
   };

@@ -19,9 +19,9 @@ export default defineRoom({
 
     // Zahnräder an den Wänden (drehen in Gegenrichtung)
     const north = ctx.wallFrame('north', 0.42), west = ctx.wallFrame('west', 0.42), south = ctx.wallFrame('south', 0.42);
-    north.place('gear', { at: [2.2, 0, 0], radius: 1.8, y: 3.2, dir: 1 });
-    north.place('gear', { at: [4.9, 0, 0], radius: 1.0, y: 4.8, dir: -1, material: 'copper' });
-    north.place('gear', { at: [-0.6, 0, 0], radius: 0.8, y: 1.5, dir: -1, material: 'copper' });
+    north.place('gear', { at: [4.0, 0, 0], radius: 1.8, y: 3.6, dir: 1 }); // Mitte frei: Tür zum Wendelturm
+    north.place('gear', { at: [6.6, 0, 0], radius: 1.0, y: 5.8, dir: -1, material: 'copper' });
+    north.place('gear', { at: [-2.4, 0, 0], radius: 0.8, y: 2.0, dir: -1, material: 'copper' });
     west.place('gear', { at: [-2, 0, 0], radius: 1.4, y: 3.6, dir: 1 });
     west.place('gear', { at: [0.4, 0, 0], radius: 0.9, y: 5.2, dir: -1, material: 'copper' });
     west.place('gear', { at: [3.6, 0, 0], radius: 1.2, y: 2.4, dir: 1 });
@@ -43,6 +43,7 @@ export default defineRoom({
     ctx.place('bankerLamp', { at: [4, 0.81, -5.3] });
     ctx.place('bookPile', { at: [2.0, 0.81, -5.0], count: 3 });
     ctx.place('friendMouse', { at: [3.0, 0.81, -5.25], friend: 'fingerhut' });
+    ctx.place('pickup', { at: [3.75, 0.81, -4.95], item: 'zahnrad' });
     ctx.place('chair', { at: [3, 0, -4.4], rot: Math.PI });
     ctx.place('snail', { at: [-1, 0, 6.6], length: 3, shell: 'pastelLemon', quip: 'Die Schnecke ist Uhrmacherin. Sie arbeitet sehr genau. Und sehr langsam.' });
     ctx.place('standSign', { at: [4.2, 0, 2.6], rot: -0.6, text: 'Bitte keine Zeit verlieren. Gefundene Zeit an der Werkbank abgeben.', size: 28, width: 1.2, signHeight: 0.42 });

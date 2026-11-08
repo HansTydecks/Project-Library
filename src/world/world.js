@@ -18,7 +18,14 @@ export const SIDES = {
   west: { dir: [-1, 0], rot: Math.PI / 2 },
 };
 
-export function cellKey(cx, cz) { return `${cx},${cz}`; }
+// Stockwerke: Ebene 0 ist das Erdgeschoss; jede weitere Ebene liegt FLOOR_H Meter höher.
+export const FLOOR_H = 12;
+/** Zellschlüssel; Ebene 0 bleibt »x,z« (rückwärtskompatibel), höhere Ebenen »x,z,L«. */
+export function cellKey(cx, cz, level = 0) { return level ? `${cx},${cz},${level}` : `${cx},${cz}`; }
+export function parseKey(k) { const [x, z, l = 0] = k.split(',').map(Number); return [x, z, l]; }
+/** Ebenen eines Raums: `levels: [0,1,2]` (Turm) oder `level: 1` (Obergeschoss), Standard 0. */
+export function roomLevels(def) { return def.levels ?? [def.level ?? 0]; }
+export function levelAt(y) { return Math.max(0, Math.floor((y + 1) / FLOOR_H)); }
 export function worldToCell(x, z) {
   return [Math.floor((x + CELL / 2) / CELL), Math.floor((z + CELL / 2) / CELL)];
 }
@@ -40,8 +47,8 @@ export function layout(defs) {
   for (const def of defs) {
     const [cx, cz] = def.cell;
     const [w, d] = def.size ?? [1, 1];
-    for (let i = 0; i < w; i++) for (let j = 0; j < d; j++) {
-      const k = cellKey(cx + i, cz + j);
+    for (const l of roomLevels(def)) for (let i = 0; i < w; i++) for (let j = 0; j < d; j++) {
+      const k = cellKey(cx + i, cz + j, l);
       if (occ.has(k)) console.warn(`[world] Zelle ${k} doppelt belegt: ${occ.get(k)} & ${def.id}`);
       occ.set(k, def.id);
     }
@@ -50,20 +57,20 @@ export function layout(defs) {
   const doors = [];
   const seen = new Set();
   for (const [k, id] of occ) {
-    const [cx, cz] = k.split(',').map(Number);
+    const [cx, cz, level] = parseKey(k);
     for (const [nx, nz, axis] of [[cx + 1, cz, 'x'], [cx, cz + 1, 'z']]) {
-      const other = occ.get(cellKey(nx, nz));
+      const other = occ.get(cellKey(nx, nz, level));
       if (!other || other === id) continue;
       const a = byId.get(id), b = byId.get(other);
       if (a.closedTo?.includes(other) || b.closedTo?.includes(id)) continue;
-      const dk = `${k}|${nx},${nz}`;
+      const dk = `${k}|${nx},${nz},${level}`;
       if (seen.has(dk)) continue;
       seen.add(dk);
       const x = axis === 'x' ? cx * CELL + CELL / 2 : cx * CELL;
       const z = axis === 'z' ? cz * CELL + CELL / 2 : cz * CELL;
       // Geheimtür: Raum mit secretDoors: ['nachbar'] → Durchgang ist hinter einem verschiebbaren Regal
       const secret = !!(a.secretDoors?.includes(other) || b.secretDoors?.includes(id));
-      doors.push({ a: id, b: other, x, z, axis, secret });
+      doors.push({ a: id, b: other, x, z, axis, secret, level, y: level * FLOOR_H });
     }
   }
   return { occ, doors, byId };
@@ -80,6 +87,22 @@ export class RoomCtx extends Frame {
     this.height = def.height ?? 6;
     this.world_ = worldInfo;
     this.rng = worldInfo.rngFor(def.id);
+    this.lvl = roomLevels(def)[0];
+  }
+
+  /** Weltbasis (y) dieser Etage. */
+  get baseY() { return this.lvl * FLOOR_H; }
+
+  /**
+   * Unter-Kontext für eine Etage eines mehrstöckigen Raums (z. B. Turm): eigene Wände/Türen,
+   * Boden auf Etagenhöhe. height = Höhe dieses Bands.
+   */
+  level(l, height = FLOOR_H) {
+    const c = Object.create(this);
+    const dy = (l - roomLevels(this.def)[0]) * FLOOR_H;
+    c.matrix = new THREE.Matrix4().makeTranslation(0, dy, 0).multiply(this.matrix);
+    c.lvl = l; c.height = height; c.floorY = dy; c.bandH = height;
+    return c;
   }
 
   get content() { return this.kit.services.content; }
@@ -105,8 +128,8 @@ export class RoomCtx extends Frame {
         nz = wz; nx = wx + (side === 'west' ? -CELL : CELL);
       }
       const [ncx, ncz] = [Math.round(nx / CELL), Math.round(nz / CELL)];
-      const neighbor = occ.get(cellKey(ncx, ncz)) ?? null;
-      const doorObj = neighbor && doors.find((d) => Math.abs(d.x - (wx + nx) / 2) < 0.01 && Math.abs(d.z - (wz + nz) / 2) < 0.01);
+      const neighbor = occ.get(cellKey(ncx, ncz, this.lvl)) ?? null;
+      const doorObj = neighbor && doors.find((d) => d.level === this.lvl && Math.abs(d.x - (wx + nx) / 2) < 0.01 && Math.abs(d.z - (wz + nz) / 2) < 0.01);
       const door = !!doorObj;
       // u-Koordinate der Zellmitte
       const lx = wx - b.cx, lz = wz - b.cz;
@@ -144,8 +167,17 @@ export class RoomCtx extends Frame {
     return spans.filter(([a, c]) => c - a > 0.5);
   }
 
-  floor(material = 'parquet', { uv = 2, y = 0 } = {}) {
-    this.add(plane(this.b.w, this.b.d, uv), material, [0, y, 0], [-Math.PI / 2, 0, 0]);
+  floor(material = 'parquet', { uv = 2, y = 0, hole = null } = {}) {
+    // hole: [x, z, w, d] – Aussparung (z. B. Treppenauge im Turm)
+    const parts = hole ? holeParts(this.b.w, this.b.d, hole) : [[0, 0, this.b.w, this.b.d]];
+    for (const [x, z, w, d] of parts) {
+      this.add(plane(w, d, uv), material, [x, y, z], [-Math.PI / 2, 0, 0]);
+      // Obergeschosse brauchen einen begehbaren Boden (unten ist der Boden implizit y = 0)
+      if (this.kit.origin.y + (this.floorY ?? 0) > 0.1) {
+        this.collider(x, z, w, d, { top: y, bottom: y - 0.4, shadow: false });
+        this.add(box(w, 0.35, d, 2), 'woodDark', [x, y - 0.2, z]);
+      }
+    }
     return this;
   }
 
@@ -167,9 +199,21 @@ export class RoomCtx extends Frame {
     return this;
   }
 
-  /** Fundament unter dem Raum (die Bibliothek schwebt auf einem Felsen über den Wolken). */
+  /** Fundament unter dem Raum (die Bibliothek schwebt auf einem Felsen über den Wolken).
+   *  Im Obergeschoss: Steinsockel bis hinunter auf das Dach des Raums darunter. */
   foundation({ depth = 30, material = 'stoneDark' } = {}) {
-    this.add(box(this.b.w, depth, this.b.d, 3), material, [0, -depth / 2 - 0.05, 0]);
+    const absY = this.kit.origin.y + (this.floorY ?? 0);
+    if (absY < 0.1) { this.add(box(this.b.w, depth, this.b.d, 3), material, [0, -depth / 2 - 0.05, 0]); return this; }
+    const { occ, byId } = this.world_;
+    const [cx0, cz0] = this.def.cell, [sw, sd] = this.def.size ?? [1, 1];
+    for (let i = 0; i < sw; i++) for (let j = 0; j < sd; j++) {
+      const below = byId.get(occ.get(cellKey(cx0 + i, cz0 + j, this.lvl - 1)));
+      const belowTop = below ? (roomLevels(below)[0] * FLOOR_H + (below.height ?? 6) + 0.6) : (this.lvl - 1) * FLOOR_H;
+      const h = absY - belowTop - 0.45;
+      if (h < 0.05) continue;
+      const lx = (cx0 + i) * CELL - this.b.cx, lz = (cz0 + j) * CELL - this.b.cz;
+      this.add(box(CELL, h, CELL, 3), material === 'stoneDark' ? 'stoneLight' : material, [lx, -0.4 - h / 2, lz]);
+    }
     return this;
   }
 
@@ -218,6 +262,18 @@ export class RoomCtx extends Frame {
     this.frame(at, rotY).add(box(w + 0.1, h + 0.1, 0.05, 0), 'woodDark', [0, 0, -0.03]);
     return m;
   }
+}
+
+/** Zerlegt ein Rechteck (w × d, zentriert) um ein Loch [x, z, hw, hd] in vier Teilflächen [x, z, w, d]. */
+function holeParts(W, D, [hx, hz, hw, hd]) {
+  const x0 = -W / 2, x1 = W / 2, z0 = -D / 2, z1 = D / 2;
+  const a = hx - hw / 2, c = hx + hw / 2, e = hz - hd / 2, g = hz + hd / 2;
+  return [
+    [(x0 + x1) / 2, (z0 + e) / 2, W, e - z0],
+    [(x0 + x1) / 2, (g + z1) / 2, W, z1 - g],
+    [(x0 + a) / 2, hz, a - x0, hd],
+    [(c + x1) / 2, hz, x1 - c, hd],
+  ].filter(([, , w, d]) => w > 0.01 && d > 0.01);
 }
 
 // --- Kantenstile ------------------------------------------------------------
@@ -320,7 +376,7 @@ export const EDGE_STYLES = {
         // Blumenkasten unter dem unteren Fenster
         if (y < 3) {
           wf.add(box(1.1, 0.18, 0.22, 0), 'woodDark', [u, y - 1.05, T + 0.17]);
-          for (let k = 0; k < 6; k++) wf.add(sphere(0.07, 6, 4), ['flowerRed', 'pastelPink', 'flowerYellow', 'pastelLilac', 'flowerWhite', 'leaves'][(k + Math.round(u * 3)) % 6], [u - 0.45 + k * 0.18, y - 0.92, T + 0.18]);
+          for (let k = 0; k < 6; k++) wf.add(sphere(0.07, 6, 4), ['flowerRed', 'pastelPink', 'flowerYellow', 'pastelLilac', 'flowerWhite', 'leaves'][(((k + Math.round(u * 3)) % 6) + 6) % 6], [u - 0.45 + k * 0.18, y - 0.92, T + 0.18]);
         }
       }
     }
@@ -376,7 +432,7 @@ export function buildRooms(defs, services, rngFor) {
   for (const def of defs) {
     if (def.endless) continue;
     const b = roomBounds(def);
-    const kit = new Kit({ id: def.id, origin: [b.cx, 0, b.cz], services, room: def });
+    const kit = new Kit({ id: def.id, origin: [b.cx, roomLevels(def)[0] * FLOOR_H, b.cz], services, room: def });
     const ctx = new RoomCtx(kit, def, worldInfo);
     try {
       def.build(ctx);
