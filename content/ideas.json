@@ -1,0 +1,14 @@
+[
+  { "id": "idee-traumtagebuch", "title": "Traumtagebuch", "text": "Morgens Träume einsprechen, die App malt daraus ein Bild.", "tags": ["ki", "kunst"], "date": "2026-10-02" },
+  { "id": "idee-regenwecker", "title": "Regenwecker", "text": "Ein Wecker, der dich mit dem Geräusch des echten Wetters draußen weckt.", "tags": ["audio", "wetter"], "date": "2026-10-05" },
+  { "id": "idee-bibliothek-multiplayer", "title": "Bibliothek mit Besuch", "text": "Andere Besucher als kleine Laternen in der Bibliothek sehen.", "tags": ["multiplayer", "three.js"], "date": "2026-10-11" },
+  { "id": "idee-pflanzen-api", "title": "Pflanzen-API", "text": "Zimmerpflanzen melden per Sensor, wenn sie Durst haben – auf Gedichtform.", "tags": ["hardware", "pflanzen"], "date": "2026-10-12" },
+  { "id": "idee-zeitkapsel", "title": "Digitale Zeitkapsel", "text": "Nachrichten an das zukünftige Ich, die sich erst in 5 Jahren öffnen.", "tags": ["archiv", "zeit"], "date": "2026-10-15" },
+  { "id": "idee-katzenkarte", "title": "Katzenkarte", "text": "Eine Karte aller Nachbarschaftskatzen mit Namen und Lieblingsplätzen.", "tags": ["karte", "katzen", "community"], "date": "2026-10-18" },
+  { "id": "idee-sound-garten", "title": "Klanggarten", "text": "Ein Garten, in dem jede Pflanze einen Ton spielt, wenn man vorbeigeht.", "tags": ["audio", "spiel"], "date": "2026-10-21" },
+  { "id": "idee-lesezeichen", "title": "Magische Lesezeichen", "text": "Lesezeichen in der Bibliothek setzen und als Link teilen.", "tags": ["bibliothek", "feature"], "date": "2026-10-24" },
+  { "id": "idee-wetterbibliothek", "title": "Wetter in der Bibliothek", "text": "Wenn es draußen regnet, regnet es auch im Mondgarten.", "tags": ["bibliothek", "wetter", "feature"], "date": "2026-10-27" },
+  { "id": "idee-rezept-ki", "title": "Kühlschrank-Koch", "text": "Foto vom Kühlschrank → drei Rezeptvorschläge.", "tags": ["ki", "kochen"], "date": "2026-10-30" },
+  { "id": "idee-briefe", "title": "Langsame Briefe", "text": "E-Mails, die so lange brauchen wie echte Post vor 100 Jahren.", "tags": ["kommunikation", "langsam"], "date": "2026-11-02" },
+  { "id": "idee-bibliothek-jahreszeiten", "title": "Jahreszeiten", "text": "Der Garten verändert sich mit der echten Jahreszeit: Schnee im Winter!", "tags": ["bibliothek", "feature"], "date": "2026-11-04" }
+]
