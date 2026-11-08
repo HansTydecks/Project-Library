@@ -34,6 +34,7 @@ export default defineRoom({
     if (ctx.kit.services.fx?.season === 'autumn') ctx.place('pumpkin', { at: [-2.6, 0, -5.4], scale: 1.6 });
     ctx.place('lilyPond', { at: [4.2, 0, -0.8], radius: 2, secret: 'opernfrosch' });
     ctx.place('snailMailbox', { at: [-6.4, 0, -3.4], rot: Math.PI / 2 });
+    ctx.place('moleGame', { at: [-3, 0, -3.4] });
     ctx.place('bench', { at: [-3.4, 0, -6.6] });
     ctx.place('fairyLights', { at: [-5, 0, -4], rot: -0.3, length: 10, y: 3.2, sag: 0.9 });
     ctx.place('fairyLights', { at: [-5.6, 0, 3.6], rot: 0.1, length: 11, y: 2.8, sag: 0.7 });

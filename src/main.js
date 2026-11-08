@@ -29,7 +29,7 @@ import { createWisp, createPathfinder } from './npc/wisp.js';
 import { createUI, el } from './ui/ui.js';
 import { openProjectBook, openFillerBook, openIdeaNote } from './ui/bookPanel.js';
 import { openWizardDialog } from './ui/dialog.js';
-import { openJournal, openCatalog } from './ui/journal.js';
+import { openJournal, openCatalog, openTravel } from './ui/journal.js';
 import { createProgress, createSecrets } from './state/progress.js';
 import { createFriends } from './npc/friends.js';
 import { createItems } from './state/items.js';
@@ -238,6 +238,36 @@ function useItem(id) {
 }
 ui.onUseItem?.((id) => useItem(id));
 input.onPress('KeyB', () => { if (!ui.modalOpen && started) { const l = items.list(); if (l.length) useItem(l.find((i) => i.id === 'brief')?.id ?? l[l.length - 1].id); } });
+// Schnellreise über den Kartentisch (Osterei »schnellreise«)
+secrets.register('schnellreise', 'Per Irrlicht-Schnellreise über die Karte gereist', 'kartenraum', 'egg');
+events.on('openTravel', () => {
+  const rooms = roomDefs.filter((r) => !r.hidden && !r.endless);
+  openTravel(ui, {
+    rooms, progress, current: currentRoom,
+    onTravel: (r) => {
+      const b = roomBounds(r), sp = r.spawn ?? { at: [0, 0], yaw: 0 };
+      player.teleport(b.cx + sp.at[0], b.cz + sp.at[1], sp.yaw ?? 0, roomLevels(r)[0] * FLOOR_H + (sp.y ?? 0));
+      audio.play('whoosh'); audio.play('magic');
+      secrets.found('schnellreise');
+      ui.toast(`Wusch! Ein Irrlicht wirbelt dich in: ${r.name}.`, { ms: 4000 });
+      if (!ui.modalOpen) resume();
+    },
+  });
+});
+// Stundenkonzert: zur vollen Stunde rufen alle Kuckucksuhren gleichzeitig (?cuckoo zum Testen)
+secrets.register('stundenkonzert', 'Das Kuckucks-Stundenkonzert zur vollen Stunde gehört', 'uhrwerk', 'egg');
+{
+  let lastHour = new Date().getHours(), test = params.has('cuckoo');
+  engine.onUpdate(() => {
+    const h = new Date().getHours();
+    if ((h === lastHour && !test) || !started) return;
+    lastHour = h; test = false;
+    events.emit('cuckooConcert');
+    audio.play('cuckoo'); setTimeout(() => audio.play('cuckoo'), 450); setTimeout(() => audio.play('cuckoo'), 900);
+    secrets.found('stundenkonzert');
+    ui.toast(`Kuckuck! Kuckuck! Es ist ${h} Uhr – und sämtliche Kuckucksuhren der Bibliothek rufen im Chor.`, { ms: 6000 });
+  });
+}
 events.on('goHome', () => {
   const f = byId.get('foyer'); const b = roomBounds(f);
   player.teleport(b.cx + f.spawn.at[0], b.cz + f.spawn.at[1], f.spawn.yaw ?? 0);

@@ -10,6 +10,7 @@ export default defineRoom({
   height: 5,
   hidden: true,
   secretDoors: ['sternwarte'],
+  closedTo: ['buecherlift'], // kein normaler Zugang vom Lift aus
   spawn: { at: [-5, 0], yaw: -Math.PI / 2 },
   atmosphere: { fog: '#3a2a48', density: 0.012, ambient: 1.35, ambientColor: '#f0d8ff', moon: 0 },
   build(ctx) {
@@ -25,6 +26,7 @@ export default defineRoom({
     ctx.place('snail', { at: [3, 0.83, 0], length: 1.4, shell: 'pastelLilac', quip: 'Die Fundbüro-Schnecke stempelt deinen Besuch. Das dauert. Komm in einer Woche wieder.' });
     ctx.place('bell', { at: [2.8, 0.83, -0.9] });
     ctx.place('bookPile', { at: [3.2, 0.83, 0.9], count: 5 });
+    ctx.place('pickup', { at: [3.3, 0.83, -0.4], item: 'fischkeks' });
     ctx.place('sockPile', { at: [-3.5, 0, -4.5], secret: 'sockenberg' });
     ctx.place('umbrellaStand', { at: [5.8, 0, -5.8] });
     ctx.place('keyHeap', { at: [-1.5, 0, 0.4] });

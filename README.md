@@ -44,6 +44,15 @@ Aussichtsplattform mit Glocke, Fernrohr und Wetterhahn (24 m hoch). Oben warten:
 | **Eulenpost** | Eulen fliegen Briefe, Postmeisterin Federleicht am Schalter, Briefkasten zum Schreiben |
 | **Traumkammer** | Bücher schlafen in Bettchen, Schäfchenwolken springen über einen Zaun, Mond-Mobile |
 
+Östlich des Sternenbalkons fährt der **Bücherlift**, ein echter Aufzug im Messingkäfig (Knopf auf der Plattform, Rufknöpfe auf
+jeder Etage), ins 1. Obergeschoss des Ostflügels und ganz hinauf ins offene **Wolkencafé**, wo Wölkchen Kakao serviert:
+
+| Raum | Was dort ist |
+| --- | --- |
+| **Luftschiffhafen** | Schwebende Plattform, Luftschiff »Wolkenwal« (mit Flugticket: Rundflug über die ganze Bibliothek), Kapitänin Möwenstein, Möwen |
+| **Musikzimmer zum Selberspielen** | Xylophon mit 8 Klangstäben, große Trommel, Harfe, Orgel – und ein Spatzenchor, der mitsingt |
+| **Pflegestation für Fabelwesen** | Baby-Drachen, Drache Funki (adoptierbar!), schlafendes Phönixküken, Quallen, Einhornfohlen, Tante Tatze |
+
 ## Tasche & Item-Rätsel
 
 Leuchtende Kleinigkeiten kann man einstecken (Tasche unten links, im Tagebuch unter „Tasche“). Manche Bewohner verschenken
@@ -52,14 +61,16 @@ singende Riesenblume, eine reparierte Turmuhr, ein Dreifachsprung …). Taste `B
 
 ## Bewohner & Ostereier
 
-Neun Bewohner wollen kennengelernt werden (Tagebuch → „Bekanntschaften“): der Bibliothekar, Frau Fingerhut (Uhrmacher-Maus),
+Zwanzig Bewohner wollen kennengelernt werden – darunter (Tagebuch → „Bekanntschaften“): der Bibliothekar, Frau Fingerhut (Uhrmacher-Maus),
 Professor Puschel (Eule mit Monokel), Mirabelle (plaudernde Teekanne), Ritter Rostfrei (auf der Galerie), Gustav (Gärtnerigel),
-Moos (Moosgolem), Lesefrida (Bücherraupe) und Pip, der Bücherwichtel in den Stapeln. Der Bibliothekar verrät auf „Wer wohnt hier?“,
+Moos (Moosgolem), Lesefrida (Bücherraupe), Pip, der Bücherwichtel in den Stapeln, Pingo (Pinguin im Lesebad) und
+Schildkröte Erna, die sehr, sehr langsam durch den Mondgarten wandert. Der Bibliothekar verrät auf „Wer wohnt hier?“,
 wo man suchen kann.
 
-Außerdem sind zwölf bemalte Eier versteckt, und es gibt Ostereier zum Selbstfinden – ein paar Hinweise ohne zu viel zu verraten:
+Außerdem sind fünfzehn bemalte Eier versteckt, und es gibt Ostereier zum Selbstfinden – ein paar Hinweise ohne zu viel zu verraten:
 alte Tastenkombinationen, Zaubersprüche beim Bibliothekar, ein Buch, das nicht ganz im Regal steht, eine Tür ganz am Ende
-der Stapel, ungeduldiges Klingeln – und die Bibliothek kennt den Kalender (`?season=winter|autumn` zum Ausprobieren).
+der Stapel, ungeduldiges Klingeln, ein bekanntes Kinderlied auf dem Xylophon, eine Wühlmaus, die sich nicht gern fangen
+lässt, jeder Sprungpilz der Bibliothek, die volle Stunde (bei den Kuckucksuhren) – und der Kartentisch kann mehr als nur zeigen. Und die Bibliothek kennt den Kalender (`?season=winter|autumn` zum Ausprobieren).
 
 Überall verstreut: Bücher mit Beinen, Staubmäuse, Quietscheenten, Papierflieger, Bücher an Luftballons und Schilder mit Ratschlägen.
 

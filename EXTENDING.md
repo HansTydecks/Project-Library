@@ -173,7 +173,10 @@ Glasdach: `ctx.ceiling('glassRoof', { roof: false })`. Möbel umgedreht an die D
 Türen entstehen nur zwischen Räumen derselben Etage. Verbindung zwischen Etagen: ein mehrstöckiger Raum mit `levels: [0, 1, 2]`
 (siehe `rooms/turm.js`): `ctx.level(l, höhe)` liefert je Etage einen eigenen Kontext (Wände, Türen, Boden mit `hole`),
 dazu `spiralStairs` mit Stufen < 0,3 m. `atmosphereByLevel`, `outdoorLevels` und `levelNames` steuern Stimmung und Banner je Etage.
-Kollider reichen standardmäßig nur vom Boden bis knapp über die Decke ihrer Etage. Räume, die gerade ausgeblendet sind,
+Kollider reichen standardmäßig nur vom Boden bis knapp über die Decke ihrer Etage (liegt eine Etage darüber, nur bis knapp
+unter deren Boden). Bewegliche Plattformen: Kollisionsbox selbst anlegen (`svc.collision.add(box, owner)`) und pro Frame mit
+`collision.moveBox(box, top, bottom)` verschieben – wer draufsteht, fährt mit (Muster: `bookLift` in `src/props/lift.js`).
+Kamerafahrten: `player.ride(path(k, outVec3), dauer, onEnd)` (Muster: Luftschiff in `src/props/airship.js`). Räume, die gerade ausgeblendet sind,
 zeigt eine schlichte Außenhülle (`src/world/shells.js`).
 
 ## Tasche (Items)
@@ -192,7 +195,9 @@ Jede Interaktion mit `friend` trägt die Figur ins Tagebuch ein.
 
 - `f.interactable(obj, { egg: 'id', eggName })` registriert ein Osterei; ausgelöst wird es mit `kit.services.secrets.found('id')`.
 - Zaubersprüche: `SPELLS` in `src/npc/librarian.js` (Muster → Text + `action`), Effekte in `SPELL_FX` in `src/main.js`.
-- Tastenfolgen & Kalender: `src/core/eastereggs.js`; Jahreszeit steht in `kit.services.fx.season`.
+- Tastenfolgen, Melodien (`MELODIES`, `matchMelody`) & Kalender: `src/core/eastereggs.js`; Jahreszeit steht in `kit.services.fx.season`.
+- Ereignisse für Props: `events.on('notePlayed' | 'cuckooConcert' | 'party', …)`; Kartentisch → `events.emit('openTravel')` (Schnellreise).
+- Testparameter: `?season=winter`, `?cocoa` (Kakaostunde), `?cuckoo` (Stundenkonzert sofort).
 - Bemalte Eier: `ctx.place('paintedEgg', { at, id: 'ei-…' })` (eindeutige `id`), die Summe zählt automatisch.
 - Geheimtür: Room-Def `secretDoors: ['nachbarId']` → auf der Nachbarseite steht ein Regal mit „falschem Buch“;
   `hidden: true` versteckt den Raum in Tagebuch, Karte und Bibliothekar, bis er betreten wurde.

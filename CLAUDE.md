@@ -11,7 +11,7 @@ die Bibliothek um Details, Räume oder Inhalte erweitern, ohne den Kern umzubaue
 
 ## Architektur (Kurzfassung)
 - `src/main.js` – verdrahtet alles: Engine, Welt, UI, Ereignisse, Loop.
-- `src/world/rooms/*.js` – ein Raum pro Datei, automatisch registriert. Raster: 16 m Zellen, Türen automatisch; Etagen à 12 m (`level`, `levels`, Wendelturm).
+- `src/world/rooms/*.js` – ein Raum pro Datei, automatisch registriert. Raster: 16 m Zellen, Türen automatisch; Etagen à 12 m (`level`, `levels`, Wendelturm, Bücherlift mit beweglichem Kollider).
 - `src/state/items.js` – Tasche/Items; `src/world/shells.js` – Außenhüllen ausgeblendeter Räume.
 - `src/props/*.js` – Details/Möbel/Geheimnisse, automatisch registriert, platziert via `ctx.place(name, opts)`.
 - `src/world/kit.js` – Kit/Frame-Baukasten: statische Geometrie wird pro Material gemergt, Füllbücher instanziert.
@@ -38,6 +38,6 @@ die Bibliothek um Details, Räume oder Inhalte erweitern, ohne den Kern umzubaue
 
 ## Ideen für nächste Ausbaustufen
 Lesezeichen/Share-Links zu Regalen, Jahreszeiten im Garten, Wetter aus echter API, Bibliothekar mit LLM-Anbindung (Serverless),
-Kartenraum: Karte anklickbar (Schnellreise per Irrlicht), 2. Obergeschoss über dem Ostflügel, Aufzug/Bücherlift, Musikinstrumente
-zum Selberspielen, Tag-/Nacht-Wechsel, mehr Haustiere, Item-Rätsel über mehrere Etagen. (Erledigt: Kaminzimmer, Kartenraum,
-Galerie-Treppe, neue Stapel-Chunks, Wendelturm + 1. OG, Haustier-Katze, Tasche.)
+2. Obergeschoss über dem Ostflügel, Tag-/Nacht-Wechsel, Unterwasser-Lesesaal, Item-Rätsel über mehrere Etagen, Wetter im
+Wolkencafé, weitere Rundflug-Routen. (Erledigt: Kaminzimmer, Kartenraum, Galerie-Treppe, neue Stapel-Chunks, Wendelturm + 1. OG,
+Haustier-Katze, Tasche, Bücherlift + Ostflügel-OG, Musikzimmer, Luftschiff-Rundflug, Schnellreise, Drache als 2. Haustier.)

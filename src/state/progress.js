@@ -3,12 +3,12 @@
 const KEY = 'magische-bibliothek:v1';
 
 export function createProgress() {
-  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], items: [], itemsUsed: [], visits: 0, firstVisit: null };
+  let data = { rooms: [], books: [], ideas: [], secrets: [], curios: [], friends: [], eggs: [], items: [], itemsUsed: [], pilze: [], visits: 0, firstVisit: null };
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) data = { ...data, ...JSON.parse(raw) };
   } catch { /* privat/blockiert */ }
-  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs', 'items', 'itemsUsed'].map((k) => [k, new Set(data[k] ?? [])]));
+  const sets = Object.fromEntries(['rooms', 'books', 'ideas', 'secrets', 'curios', 'friends', 'eggs', 'items', 'itemsUsed', 'pilze'].map((k) => [k, new Set(data[k] ?? [])]));
   data.visits = (data.visits ?? 0) + 1;
   data.firstVisit ??= new Date().toISOString().slice(0, 10);
 
