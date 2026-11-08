@@ -33,7 +33,7 @@ npm install
 npm run dev
 ```
 
-Nützliche URL-Parameter: `?spawn=garten` (direkt in einen Raum), `?debug` (FPS & Koordinaten), `?nolock` (Maus-Ziehen statt Pointer-Lock).
+Nützliche URL-Parameter: `?spawn=garten` (direkt in einen Raum), `?debug` (FPS & Koordinaten), `?nolock` (Maus-Ziehen statt Pointer-Lock), `?lowfx` (ohne Bloom/Reflexionen für schwache Geräte), `?fixedres` (keine adaptive Auflösung).
 
 ## Eigene Projekte eintragen
 

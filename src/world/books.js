@@ -59,9 +59,9 @@ export function bookDims(p) {
 export function createBookMesh(p, dims = bookDims(p)) {
   const color = projectColor(p);
   const gold = p.status !== 'wip';
-  const spine = new THREE.MeshLambertMaterial({ map: spineTexture({ title: p.title, color, gold, year: p.year }) });
-  const cover = new THREE.MeshLambertMaterial({ map: coverTexture({ title: p.title, color, gold, subtitle: p.kind === 'blog' ? 'Aus dem Blog' : (p.year ? String(p.year) : '') }) });
-  const back = new THREE.MeshLambertMaterial({ vertexColors: true });
+  const spine = new THREE.MeshStandardMaterial({ roughness: 0.6, map: spineTexture({ title: p.title, color, gold, year: p.year }) });
+  const cover = new THREE.MeshStandardMaterial({ roughness: 0.6, map: coverTexture({ title: p.title, color, gold, subtitle: p.kind === 'blog' ? 'Aus dem Blog' : (p.year ? String(p.year) : '') }) });
+  const back = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.8 });
   const mesh = new THREE.Mesh(bookGeometry(dims, color), [cover, spine, back]);
   mesh.userData.project = p;
   mesh.userData.dims = dims;

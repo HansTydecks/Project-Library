@@ -12,7 +12,10 @@ export function createSky(scene) {
     vertexShader: 'varying vec3 vP; void main(){ vP = normalize(position); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
     fragmentShader: `uniform vec3 top; uniform vec3 mid; uniform vec3 bottom; uniform vec3 hideColor; uniform float hide; varying vec3 vP;
       void main(){ float h = vP.y; vec3 c = h > 0.0 ? mix(mid, top, pow(h, 0.6)) : mix(mid, bottom, pow(-h, 0.5));
-      gl_FragColor = vec4(mix(c, hideColor, hide), 1.0); }`,
+      gl_FragColor = vec4(mix(c, hideColor, hide), 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+      }`,
   });
   const dome = new THREE.Mesh(new THREE.SphereGeometry(200, 32, 16), skyMat);
   dome.renderOrder = -10;
@@ -68,7 +71,10 @@ export function createSky(scene) {
         float d = length(vW.xz) / 220.0;
         vec3 col = mix(vec3(0.16,0.18,0.36), vec3(0.75,0.72,0.9), smoothstep(0.35, 0.95, c));
         float a = smoothstep(0.25, 0.7, c) * (1.0 - smoothstep(0.6, 1.0, d));
-        gl_FragColor = vec4(col, a * 0.95 + 0.05 * (1.0 - d)); }`,
+        gl_FragColor = vec4(pow(col, vec3(2.2)), a * 0.95 + 0.05 * (1.0 - d));
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+        }`,
   });
   const clouds = new THREE.Mesh(new THREE.PlaneGeometry(460, 460, 1, 1), cloudMat);
   clouds.rotation.x = -Math.PI / 2;
@@ -84,8 +90,8 @@ export function createSky(scene) {
     /** 0 = Himmel sichtbar, 1 = Himmel in Nebelfarbe (z.B. in den Endlosen Stapeln). */
     setHidden(v, fogColor) {
       skyMat.uniforms.hide.value = v;
-      // Nebelfarbe ist sRGB-lin. – Shader-Ausgabe wird nicht tonemapped, daher leicht abdunkeln
-      skyMat.uniforms.hideColor.value.copy(fogColor).multiplyScalar(0.9);
+      // Gleiche Farbe wie der Nebel (Shader nutzt dasselbe Tone Mapping wie die Szene)
+      skyMat.uniforms.hideColor.value.copy(fogColor);
       stars.material.opacity = 1 - v;
       moon.material.opacity = 1 - v;
       clouds.visible = v < 0.99;

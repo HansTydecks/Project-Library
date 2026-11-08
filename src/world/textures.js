@@ -265,6 +265,31 @@ export const tex = {
     g.fillStyle = grd; g.fillRect(0, 0, w, h);
   }, { repeat: false })),
 
+  // Weicher, rechteckiger Schatten (Alpha in Grün) für Kontaktschatten unter Möbeln.
+  softShadow: () => cached('softShadow', () => canvasTexture(64, 64, (g, w, h) => {
+    const img = g.createImageData(w, h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const dx = Math.max(0, Math.abs(x + 0.5 - w / 2) / (w / 2) - 0.45) / 0.55;
+      const dy = Math.max(0, Math.abs(y + 0.5 - h / 2) / (h / 2) - 0.45) / 0.55;
+      const d = Math.min(1, Math.hypot(dx, dy));
+      const a = Math.round(255 * (1 - d) ** 2);
+      const i = (y * w + x) * 4;
+      img.data[i] = img.data[i + 1] = img.data[i + 2] = a; img.data[i + 3] = 255;
+    }
+    g.putImageData(img, 0, 0);
+  }, { repeat: false, srgb: false })),
+
+  // Verlauf (oben dunkel → unten frei) für Umgebungsverdeckung an Wandfuß und Decke.
+  aoEdge: () => cached('aoEdge', () => canvasTexture(4, 64, (g, w, h) => {
+    const img = g.createImageData(w, h);
+    for (let y = 0; y < h; y++) {
+      const t = y / (h - 1);
+      const a = Math.round(255 * (1 - t) ** 2.2);
+      for (let x = 0; x < w; x++) { const i = (y * w + x) * 4; img.data[i] = img.data[i + 1] = img.data[i + 2] = a; img.data[i + 3] = 255; }
+    }
+    g.putImageData(img, 0, 0);
+  }, { repeat: false, srgb: false })),
+
   water: () => cached('water', () => canvasTexture(256, 256, (g, w, h) => {
     g.fillStyle = '#1b3d55'; g.fillRect(0, 0, w, h);
     const r = mulberry32(111);

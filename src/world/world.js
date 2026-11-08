@@ -150,7 +150,8 @@ export class RoomCtx extends Frame {
     const h = this.height;
     this.add(plane(this.b.w, this.b.d, uv), material, [0, h, 0], [Math.PI / 2, 0, 0]);
     // Dach (von außen sichtbar)
-    this.add(box(this.b.w + 0.6, 0.5, this.b.d + 0.6, 2), roof, [0, h + 0.25, 0]);
+    // Unterseite 6 cm über der Decke → kein Z-Fighting (Flackern) mit der Deckenfläche
+    this.add(box(this.b.w + 0.6, 0.5, this.b.d + 0.6, 2), roof, [0, h + 0.31, 0]);
     if (beams) {
       const n = Math.floor(this.b.d / 4);
       for (let i = 1; i < n; i++) {
@@ -163,7 +164,7 @@ export class RoomCtx extends Frame {
 
   /** Fundament unter dem Raum (die Bibliothek schwebt auf einem Felsen über den Wolken). */
   foundation({ depth = 30, material = 'stoneDark' } = {}) {
-    this.add(box(this.b.w, depth, this.b.d, 3), material, [0, -depth / 2 - 0.01, 0]);
+    this.add(box(this.b.w, depth, this.b.d, 3), material, [0, -depth / 2 - 0.05, 0]);
     return this;
   }
 
@@ -246,7 +247,16 @@ export const EDGE_STYLES = {
       if (w <= 0.01) continue;
       const uc = (u0 + u1) / 2;
       wf.add(box(w, y1 - y0, T, 2), o.outer, [uc, (y0 + y1) / 2, T / 2]);
-      wf.collider(uc, T / 2, w, T);
+      if (y0 === 0) {
+        wf.collider(uc, T / 2, w, T, { shadow: false }); // Sturz über der Tür blockiert nicht
+        // Umgebungsverdeckung: dunkler Saum am Wandfuß (Boden) …
+        if (o.ao !== false) wf.add(new THREE.PlaneGeometry(w, 0.9), 'aoFloor', [uc, 0.02, T + 0.45], [-Math.PI / 2, 0, 0]);
+      }
+      if (o.ao !== false && y1 === H) {
+        // … und unter der Decke (Wand oben + Deckenrand)
+        wf.add(new THREE.PlaneGeometry(w, 1.4), 'aoWall', [uc, H - 0.7, T + 0.012]);
+        wf.add(new THREE.PlaneGeometry(w, 1.2), 'aoWall', [uc, H - 0.012, T + 0.6], [-Math.PI / 2, Math.PI, 0]);
+      }
       // Innenfläche
       const iy0 = Math.max(y0, wh);
       if (y1 - iy0 > 0.01) wf.add(plane(w, y1 - iy0, 1.4), o.inner, [uc, (iy0 + y1) / 2, T + 0.005]);
@@ -268,7 +278,7 @@ export const EDGE_STYLES = {
       if (w <= 0.01) continue;
       const uc = (u0 + u1) / 2;
       wf.add(box(w, y1 - y0, T, 2), o.facadeMaterial ?? 'stoneLight', [uc, (y0 + y1) / 2, T / 2]);
-      wf.collider(uc, T / 2, w, T);
+      if (y0 === 0) wf.collider(uc, T / 2, w, T, { shadow: false });
     }
     // Sockel & Gesims
     wf.add(box(seg.u1 - seg.u0, 0.25, 0.25, 1), 'stoneDark', [(seg.u0 + seg.u1) / 2, H - 0.12, T + 0.12]);
@@ -302,7 +312,7 @@ export const EDGE_STYLES = {
       const w = u1 - u0, uc = (u0 + u1) / 2;
       wf.add(box(w, H, T, 1.5), 'hedge', [uc, H / 2, T / 2]);
       wf.add(box(w - 0.2, 0.3, T - 0.3, 1.5), 'hedge', [uc, H + 0.12, T / 2]);
-      wf.collider(uc, T / 2, w, T);
+      wf.collider(uc, T / 2, w, T, { shadow: false });
     }
   },
 
@@ -313,7 +323,7 @@ export const EDGE_STYLES = {
     for (let u = seg.u0 + 0.25; u < seg.u1; u += 0.5) {
       wf.add(box(0.14, H - 0.12, 0.14, 0), 'stoneLight', [u, (H) / 2, 0.2]);
     }
-    wf.collider(uc, 0.2, w, 0.4);
+    wf.collider(uc, 0.2, w, 0.4, { shadow: false });
   },
 
   none() {},

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { defineProp } from '../world/registry.js';
 import { box, cyl, sphere, cone, lathe, torus } from '../world/geo.js';
-import { mat } from '../world/materials.js';
+import { mat, hdr } from '../world/materials.js';
 import { tex } from '../world/textures.js';
 
 // Kerzen, Lampen, Kronleuchter, Laternen.
@@ -115,7 +115,7 @@ export default [
       const top = new THREE.Mesh(new THREE.ConeGeometry(0.17, 0.14, 4), frame); top.position.y = 0.23; top.rotation.y = Math.PI / 4; g.add(top);
       const bottom = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.03, 0.24), frame); bottom.position.y = -0.16; g.add(bottom);
       const ring = new THREE.Mesh(new THREE.TorusGeometry(0.04, 0.01, 4, 10), frame); ring.position.y = 0.33; g.add(ring);
-      const core = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.26, 0.17), new THREE.MeshBasicMaterial({ color: opts.color ?? '#ffb050', transparent: true, opacity: 0.85 }));
+      const core = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.26, 0.17), new THREE.MeshBasicMaterial({ color: hdr(opts.color ?? '#ffb050', 2.4), transparent: true, opacity: 0.85 }));
       g.add(core);
       if (opts.hanging) {
         const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, opts.chain ?? 1, 4), frame);

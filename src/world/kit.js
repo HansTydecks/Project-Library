@@ -80,7 +80,7 @@ export class Kit {
         const idx = Array.from(fillerGeo.index.array);
         fillerGeo.setIndex([...idx.slice(0, 18), ...idx.slice(24, 30)]);
         fillerGeo.clearGroups();
-        fillerMat = new THREE.MeshLambertMaterial({ map: tex.fillerSpine() });
+        fillerMat = new THREE.MeshStandardMaterial({ map: tex.fillerSpine(), roughness: 0.7 });
       }
       const im = new THREE.InstancedMesh(fillerGeo, fillerMat, this.fillers.length);
       const c = new THREE.Color();
@@ -161,7 +161,15 @@ export class Frame {
   world(x, y, z) { return this.point(x, y, z).add(this.kit.origin); }
 
   /** Kollisionsbox (lokal zentriert bei x,z mit Breite w (x) und Tiefe d (z)). */
-  collider(x, z, w, d) {
+  collider(x, z, w, d, { shadow = true } = {}) {
+    // Kollision ist 2D: Dinge über Kopfhöhe (Galerie-Regale, Wandbretter) blockieren nicht.
+    const base = this.point(x, 0, z).y;
+    if (base > 1.5) return this;
+    // Weicher Kontaktschatten unter allem, was auf dem Boden steht (gemergt → kaum Kosten).
+    if (shadow && Math.abs(base) < 0.05) {
+      const pad = Math.min(0.6, 0.25 + 0.15 * Math.min(w, d));
+      this.add(new THREE.PlaneGeometry(w + pad, d + pad), 'contactShadow', [x, 0.022, z], [-Math.PI / 2, 0, 0]);
+    }
     const corners = [[-w / 2, -d / 2], [w / 2, -d / 2], [-w / 2, d / 2], [w / 2, d / 2]];
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
     for (const [cx, cz] of corners) {
@@ -174,8 +182,16 @@ export class Frame {
   }
 
   /** Lichtpunkt für den Licht-Pool. */
-  light(at, { color = '#ffb36b', intensity = 6, distance = 8, flicker = false, priority = 0, onUpdate } = {}) {
+  light(at, { color = '#ffb36b', intensity = 6, distance = 8, flicker = false, priority = 0, onUpdate, pool = true } = {}) {
     const spot = { pos: this.world(...at), color, intensity, distance, flicker, priority, room: this.kit.room?.id ?? this.kit.id, onUpdate };
+    // Gemalter Lichtkegel auf dem Boden unter hängenden Lampen: hält entfernte Bereiche warm,
+    // auch wenn gerade keine echte Lichtquelle aus dem Pool dort ist.
+    const p = this.point(...at);
+    if (pool && p.y > 2.2) {
+      const r = Math.min(distance * 0.42, 4.5);
+      this.kit._addGeo(new THREE.PlaneGeometry(r * 2, r * 2), 'lightPool',
+        new THREE.Matrix4().makeRotationX(-Math.PI / 2).setPosition(p.x, 0.03, p.z));
+    }
     this.kit.spots.push(spot);
     return spot;
   }

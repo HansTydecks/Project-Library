@@ -97,8 +97,8 @@ den Endlosen Stapeln – dort keine Räume platzieren.
 | `place(prop, { at, rot, … })` | Prop platzieren |
 | `add(geo, mat, at, rot, scale)` | statische Geometrie (wird zusammengeführt) |
 | `object(mesh, at, rot)` | dynamisches Objekt |
-| `collider(x, z, w, d)` | Kollisionsbox |
-| `light(at, { color, intensity, distance, flicker })` | Lichtpunkt (vom Licht-Pool bedient) |
+| `collider(x, z, w, d, { shadow })` | Kollisionsbox (2D; über 1,5 m Höhe ignoriert). Auf dem Boden entsteht automatisch ein weicher Kontaktschatten (`shadow: false` schaltet ihn ab) |
+| `light(at, { color, intensity, distance, flicker, pool })` | Lichtpunkt (vom Licht-Pool bedient). Hängende Lichter (> 2,2 m) malen zusätzlich einen Lichtkegel auf den Boden (`pool: false` schaltet ihn ab) |
 | `glow(at, { color, size })` | leuchtender Halo |
 | `hitbox(at, size, { label, verb, onInteract, secret })` | unsichtbare Interaktionszone |
 | `sign(text, at, rotY)` | beschriftetes Schild |
@@ -139,6 +139,8 @@ export default defineProp({
 
 **Materialien**: `src/world/materials.js` (Schlüssel wie `wood`, `brass`, `velvet`, `wpGreen` …). Neue Materialien dort ergänzen –
 Texturen werden prozedural in `src/world/textures.js` gemalt (keine externen Bilddateien nötig).
+Materialien sind physikalisch (`pbr(map, rauheit, { bump })` bzw. `flat(farbe, rauheit)`); Leuchtendes nutzt
+`hdr(farbe, faktor)` mit Faktor > 1, damit der Bloom (`src/core/post.js`) es zum Glühen bringt.
 
 ---
 
@@ -162,5 +164,5 @@ Sprüche & Spezialfragen: `src/npc/librarian.js` (testbar, ohne three.js). Neue 
 - **Warm & gemütlich**: Kerzen-/Lampenlicht (`#ffb36b`), dunkles Holz, Messing, Samt. Draußen: kühles Mondlicht.
 - **Magisch, nicht gruselig**: Liminal-Momente dürfen seltsam sein, aber freundlich.
 - **Humor**: Der Bibliothekar ist liebevoll-verschroben. Kurze, augenzwinkernde Texte.
-- **Performance**: Lichter nur über `light()` (Licht-Pool, max. 10 aktive), viel statische Geometrie über `add()`,
+- **Performance**: Lichter nur über `light()` (Licht-Pool, max. 12 aktive), viel statische Geometrie über `add()`,
   hohe Regalreihen als Buchwand-Textur (passiert automatisch über 2,4 m).
