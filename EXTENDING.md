@@ -238,3 +238,6 @@ Sprüche & Spezialfragen: `src/npc/librarian.js` (testbar, ohne three.js). Neue 
 - **Humor**: Der Bibliothekar ist liebevoll-verschroben. Kurze, augenzwinkernde Texte.
 - **Performance**: Lichter nur über `light()` (Licht-Pool, max. 12 aktive), viel statische Geometrie über `add()`,
   hohe Regalreihen als Buchwand-Textur (passiert automatisch über 2,4 m).
+  Kleine Einzelobjekte (`f.object`/`f.mesh`/`f.glow`, Radius ≤ 0,8 m) blendet `core/detail.js` je nach Größe ab
+  8–30 m Entfernung aus (über Kamera-Layer, `visible` bleibt frei). Ausnahme: `obj.userData.keepDetail = true`.
+  Vergleich: `?nocull`. Draw Calls ehrlich messen: `window.__lib.engine.renderer.info.render.calls` (nicht die Debug-Zeile).

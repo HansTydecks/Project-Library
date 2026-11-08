@@ -18,6 +18,7 @@ die Bibliothek um Details, Räume oder Inhalte erweitern, ohne den Kern umzubaue
 - `src/world/kit.js` – Kit/Frame-Baukasten: statische Geometrie wird pro Material gemergt, Füllbücher instanziert.
 - `src/world/endless/stacks.js` – prozedurale, gestreamte Chunks nördlich der Eingangszelle.
 - `src/core/lights.js` – fester Pool von 12 PointLights (mit Hysterese); Räume melden nur Lichtpunkte an.
+- `src/core/detail.js` – blendet kleine Einzelobjekte in der Ferne aus (spart Draw Calls beim Blick durch Türen; `?nocull`).
 - `src/core/post.js` – Bloom, Farbstimmung, Vignette, Filmkorn; `engine.js` regelt die Auflösung adaptiv.
 - `content/*.json` – Projekte und Ideen (die einzigen Inhaltsdaten).
 - Ausführlich: `EXTENDING.md`.
