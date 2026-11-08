@@ -127,6 +127,7 @@ populateShelves({
   projects,
   onRealBook(p, frame, pos, dims, shelf) {
     const mesh = createBookMesh(p, dims);
+    mesh.userData.keepVisible = true; // echte Werke bleiben auch aus der Ferne sichtbar
     frame.object(mesh, pos);
     const copy = shelf?.mode === 'newest';
     frame.interactable(mesh, {
@@ -375,7 +376,7 @@ ui.showHud(false);
 
 // ---------------------------------------------------------------- Loop
 const ctxObj = { player: player.pos, camera, launch: (v) => player.launch(v), get grounded() { return player.grounded; } };
-let fpsAcc = 0, fpsN = 0, fps = 0;
+let fpsAcc = 0, fpsN = 0, fps = 0, detailAcc = 1;
 engine.onUpdate((dt, t) => {
   player.update(dt);
   const id = roomAt(player.pos.x, player.pos.z);
@@ -400,6 +401,16 @@ engine.onUpdate((dt, t) => {
   sky.setHidden(atmo.skyHidden, atmo.fog);
 
   for (const kit of activeKits) kit.update(dt, t, ctxObj);
+  detailAcc += dt;
+  if (detailAcc > 0.3) {
+    detailAcc = 0;
+    for (const kit of activeKits) {
+      if (!kit.details || !kit.room) continue;
+      const b = roomBounds(kit.room);
+      const dx = Math.max(b.minX - player.pos.x, 0, player.pos.x - b.maxX), dz = Math.max(b.minZ - player.pos.z, 0, player.pos.z - b.maxZ);
+      kit.details.visible = kit.id === currentRoom || Math.hypot(dx, dz) < 10;
+    }
+  }
   stacks?.update(dt, t, player.pos, currentRoom);
   lights.update(dt, t, player.pos, currentRoom);
   interaction.update(dt);

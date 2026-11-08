@@ -23,6 +23,14 @@ Laufen musst du aber selbst.
 | **Sternwarte** | Sternendecke, Planetenmaschine zum Anschubsen, Kometen, Wolkentreppe zu einem gefallenen Stern |
 | **Stube der Riesin** | Alles XXL: Bücher als Treppe zum Riesenregal, Bleistift, Brille, Teetasse mit Riesenente |
 | **Leuchtender Pilzhain** | Riesenpilze, Sprungpilze, Wolkeninseln, Opernfrosch im Seerosenteich, Schneckenpost |
+| **Kaminzimmer der schläfrigen Sessel** | Knisternder Kamin, schnarchender Minidrache, Strickzeug mit Eigenleben, Bücherturm zum Kaminsims |
+| **Kartenraum** | Übersichtskarte, die sich selbst aus dem Raster zeichnet (mit „Du bist hier“), Fernweh-Kompass zum nächsten unentdeckten Raum |
+| **Wintergarten der singenden Blumen** | Glasdach, Blumen, die dir nachschauen und singen, Kakteen mit Hut, Schmetterlinge, Hängematte |
+| **Spielzeugkammer** | Bücherzug auf Schienen, Klötzchenturm zum Teddy, Schaukelpferd, höflicher Springteufel |
+| **Lesebad** | Becken, auf dem man laufen kann, Bücherflöße, Enten-Armada mit Kapitänin, Schaumbad |
+| **Uhrmacherwerkstatt der verlorenen Minuten** | Drehende Zahnräder, Zahnrad-Treppe, Kuckucksuhren, Bodenuhr mit echter Zeit |
+
+Im **Großen Lesesaal** führt eine Wendeltreppe hinauf auf die begehbare Galerie.
 
 Überall verstreut: Bücher mit Beinen, Staubmäuse, Quietscheenten, Papierflieger, Bücher an Luftballons und Schilder mit Ratschlägen.
 

@@ -125,7 +125,7 @@ export default [
     create(f, opts, kit) {
       const g = new THREE.Group();
       if (opts.kind === 'star') {
-        const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), new THREE.MeshBasicMaterial({ color: hdr('#ffe68a', 2.5) }));
+        const star = new THREE.Mesh(new THREE.OctahedronGeometry(0.16, 0), new THREE.MeshBasicMaterial({ color: hdr('#ffe68a', 1.8) }));
         star.scale.set(1, 1.4, 0.5); g.add(star);
       } else {
         const nut = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), mat('gold')); nut.scale.y = 1.3; g.add(nut);

@@ -57,7 +57,7 @@ export function createPost({ renderer, scene, camera }) {
   const composer = new EffectComposer(renderer, target);
   composer.addPass(new RenderPass(scene, camera));
 
-  const bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.75, 0.7, 0.78);
+  const bloom = new UnrealBloomPass(new THREE.Vector2(size.x / 2, size.y / 2), 0.5, 0.6, 0.9) // dezent: glühen ja, blenden nein;
   composer.addPass(bloom);
 
   const grade = new ShaderPass(GradeShader);

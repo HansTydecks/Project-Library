@@ -35,5 +35,6 @@ die Bibliothek um Details, Räume oder Inhalte erweitern, ohne den Kern umzubaue
 - Nach Änderungen: `npm test` und `npm run build`; visuell prüfen mit Playwright + `?nolock&debug&spawn=<raum>` (`window.__lib` bietet `teleport`, `look`, `start`).
 
 ## Ideen für nächste Ausbaustufen
-Lesezeichen/Share-Links zu Regalen, Jahreszeiten im Garten, Wetter aus echter API, Kamin-Lesezimmer, Kartenraum mit
-Übersichtskarte, Treppe zur Galerie, mehr Chunk-Typen in den Stapeln, Bibliothekar mit LLM-Anbindung (Serverless).
+Lesezeichen/Share-Links zu Regalen, Jahreszeiten im Garten, Wetter aus echter API, Bibliothekar mit LLM-Anbindung (Serverless),
+Kartenraum: Karte anklickbar (Schnellreise per Irrlicht), Turmzimmer mit zweiter Etage, Musikinstrumente zum Selberspielen,
+Tag-/Nacht-Wechsel, Haustiere, die einem folgen. (Erledigt: Kaminzimmer, Kartenraum, Galerie-Treppe, neue Stapel-Chunks.)

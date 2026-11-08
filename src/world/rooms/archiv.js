@@ -42,6 +42,8 @@ export default defineRoom({
     ctx.place('dustBunny', { at: [4.5, 0, -4.5], area: 2, color: '#c8c0b0' });
     ctx.place('standSign', { at: [-2.4, 0, -5.4], rot: 0.4, text: 'Hier wird nichts weggeworfen. Auch nicht dieses Schild.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('snail', { at: [3, 0, 6.6], length: 3, shell: 'pastelSky', quip: 'Die Archivschnecke sortiert alphabetisch. Sie ist bei »A«.' });
+    ctx.wallFrame('east', 0.42).place('cuckooClock', { at: [5.4, 0, 0], y: 3.0, offset: 4, bird: 'pastelMint' });
+    ctx.place('butterflies', { at: [0, 0, 0], area: [6, 1.5, 6], count: 3, y: 2.2 });
     ctx.place('dust', { area: [14, 4.5, 14] });
     ctx.add(box(0.8, 0.02, 0.6, 0), 'paper', [-1.2, 0.012, 1.2], [0, 0.4, 0]);
   },

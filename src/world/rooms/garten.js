@@ -58,6 +58,9 @@ export default defineRoom({
     ctx.place('snail', { at: [-6, 0, -6.6], length: 3 });
     ctx.place('standSign', { at: [1.8, 0, 3.6], rot: 0.2, text: 'Rasen betreten erlaubt. Hüpfen ausdrücklich erwünscht.', size: 30, width: 1.1, signHeight: 0.38 });
     ctx.place('fairyLights', { at: [-8, 0, -4], length: 16, y: 4.2, sag: 1.2 });
+    ctx.place('butterflies', { at: [0, 0, 0], area: [30, 2, 12], count: 10, y: 0.8 });
+    ctx.place('kite', { at: [-14, 0, 3], y: 7.5, color: '#ffd86a' });
+    ctx.place('kite', { at: [10, 0, -2], y: 8.5, color: '#8ad8ff', rot: 0.8 });
     ctx.place('fireflies', { area: [ctx.b.w - 4, 3, ctx.b.d - 3], count: 120 });
   },
 });

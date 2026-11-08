@@ -97,6 +97,16 @@ export class Kit {
       this.group.add(im);
       this.services.onFillerMesh?.(im, this);
     }
+    // Alles Bewegliche/Einzelne (nicht Gemergte) in eine Untergruppe: kann bei großer Entfernung
+    // ausgeblendet werden (spart Draw Calls beim Blick durch mehrere Türen).
+    const merged = new Set(this.blockers);
+    this.details = new THREE.Group();
+    this.details.name = `${this.id}:details`;
+    for (const c of [...this.group.children]) {
+      if (merged.has(c) || c === this.fillerMesh || (c.isMesh && c.matrixAutoUpdate === false) || c.userData.keepVisible) continue;
+      this.details.add(c);
+    }
+    this.group.add(this.details);
     for (const s of this.spots) this.services.lights.add(s);
     for (const o of this.interactables) this.services.interaction.add(o);
     this.group.updateMatrixWorld(true);
