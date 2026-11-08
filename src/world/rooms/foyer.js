@@ -70,6 +70,8 @@ export default defineRoom({
     ctx.place('balloonBooks', { at: [-4.2, 0, 0.5], y: 3.6, count: 3, radius: 0.9 });
     ctx.place('paperPlanes', { at: [0, 0, 2], y: 4.0, radius: 4.5, count: 3 });
     ctx.wallFrame('south', 0.42).place('cuckooClock', { at: [-4.6, 0, 0], y: 3.4, scale: 1.1, offset: 1, secret: 'foyer-kuckuck', secretName: 'Der Kuckuck, der Besucher zählt', quip: '»Kuckuck! Du bist Besucher Nummer … äh … viele!«' });
+    ctx.place('paintedEgg', { at: [-6.6, 2.55, -6.6], id: 'ei-standuhr' });
+    if (ctx.kit.services.fx?.season === 'autumn') for (const x of [-1.6, 1.6]) ctx.place('pumpkin', { at: [x, 0, 7.0], scale: 0.9 });
     ctx.place('dust', { area: [14, 5, 14] });
 
     // Säulen

@@ -71,6 +71,8 @@ export default defineRoom({
     ctx.place('standSign', { at: [-17.6, 0, 14.4], rot: Math.PI * 0.85, text: 'Zur Galerie ↑ (Bitte nicht übers Geländer lehnen. Außer zum Winken.)', size: 26, width: 1.3, signHeight: 0.42 });
     // Oben auf der Galerie
     ctx.place('cat', { at: [6, gy + 0.1, -hd + 1.4], rot: 0.3, fur: 'beard', name: 'Galeriekatze', secret: 'galeriekatze', secretName: 'Die Katze auf der Galerie', quip: 'Die Galeriekatze hat den besten Überblick. Sie zählt die Leser. Du bist Nummer eins.' });
+    ctx.place('paintedEgg', { at: [21, gy + 0.1, -hd + 1.5], id: 'ei-galerie' });
+    ctx.place('friendKnight', { at: [-11, gy + 0.1, -hd + 1.5], friend: 'rostfrei' });
     ctx.place('bookPile', { at: [-6, gy + 0.1, -hd + 1.5], count: 5 });
     ctx.place('candle', { at: [-hw + 1.3, gy + 0.1, 4], height: 0.3, intensity: 3 });
     // Obere Regale auf der Galerie
@@ -122,7 +124,7 @@ export default defineRoom({
     ctx.place('dust', { area: [40, 8, 28], count: 500 });
 
     // Tor zu den Endlosen Stapeln
-    ctx.sign('Endlose Stapel – Betreten auf eigene Gefahr', [0, 4.2, -hd + 0.5], 0, { w: 4.6, h: 0.55, size: 44 });
+    ctx.sign('Endlose Stapel – Betreten auf eigene Gefahr', [0, 4.75, -hd + 0.5], 0, { w: 4.6, h: 0.55, size: 44 });
     ctx.place('signpost', { at: [2.6, 0, -hd + 2.6], signs: [['Endlose Stapel', Math.PI / 2], ['Foyer', -Math.PI / 2]] });
 
     // Kleine Wunder zwischen den Regalen

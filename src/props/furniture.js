@@ -1,11 +1,22 @@
 import * as THREE from 'three';
 import { defineProp } from '../world/registry.js';
-import { box, cyl, sphere, plane, lathe } from '../world/geo.js';
+import { box, cyl, sphere, plane, lathe, torus } from '../world/geo.js';
 import { mat } from '../world/materials.js';
 
+// Gedrechselte Beine (Lathe-Profil) – statisch gemergt, also fast gratis
+const legProfiles = new Map();
+function legGeo(h, t) {
+  const k = `${h.toFixed(3)}|${t}`;
+  if (!legProfiles.has(k)) {
+    const r = t / 2;
+    const pts = [[0, 0], [r * 0.7, 0], [r * 0.8, h * 0.05], [r * 0.55, h * 0.12], [r * 0.5, h * 0.45], [r * 0.85, h * 0.55], [r * 0.6, h * 0.62], [r * 0.7, h * 0.85], [r, h * 0.9], [r, h], [0, h]];
+    legProfiles.set(k, lathe(pts, 8));
+  }
+  return legProfiles.get(k);
+}
 function legs(f, w, d, h, m = 'woodDark', t = 0.07) {
   for (const [x, z] of [[-w / 2 + t, -d / 2 + t], [w / 2 - t, -d / 2 + t], [-w / 2 + t, d / 2 - t], [w / 2 - t, d / 2 - t]]) {
-    f.add(box(t, h, t, 0), m, [x, h / 2, z]);
+    f.add(legGeo(h, t * 1.3), m, [x, 0, z]);
   }
 }
 
@@ -17,6 +28,10 @@ export default [
       f.add(box(w, 0.06, d, 1), opts.material ?? 'woodRed', [0, h, 0]);
       f.add(box(w - 0.2, 0.1, d - 0.2, 1), 'woodDark', [0, h - 0.08, 0]);
       legs(f, w - 0.1, d - 0.1, h - 0.03);
+      // Zierleiste an der Kante + Schubladenknäufe
+      f.add(box(w + 0.02, 0.025, 0.025, 1), 'woodDark', [0, h - 0.035, d / 2]);
+      f.add(box(w + 0.02, 0.025, 0.025, 1), 'woodDark', [0, h - 0.035, -d / 2]);
+      for (const x of [-w / 4, w / 4]) f.add(sphere(0.02, 6, 4), 'brass', [x, h - 0.09, d / 2 - 0.09]);
       if (opts.felt) f.add(plane(w - 0.3, d - 0.3, 0), 'velvetGreen', [0, h + 0.031, 0], [-Math.PI / 2, 0, 0]);
       f.collider(0, 0, w, d, { top: h + 0.03 }); // man kann auf Tische springen
     },
@@ -33,6 +48,9 @@ export default [
       f.add(box(0.05, 0.5, 0.05, 0), m, [0.2, 0.75, -0.21]);
       f.add(box(0.44, 0.18, 0.04, 0), m, [0, 0.88, -0.21]);
       f.add(box(0.3, 0.05, 0.03, 0), m, [0, 0.68, -0.21]);
+      for (const x of [-0.09, 0, 0.09]) f.add(cyl(0.012, 0.012, 0.12, 6), m, [x, 0.74, -0.21]);
+      for (const x of [-0.2, 0.2]) f.add(sphere(0.035, 8, 6), m, [x, 1.01, -0.21]);
+      f.add(torus(0.21, 0.012, 4, 16), opts.cushion ?? 'velvet', [0, 0.51, 0], [Math.PI / 2, 0, Math.PI / 4], [1, 1, 0.5]);
       f.collider(0, 0, 0.5, 0.5, { top: 0.5 });
     },
   }),
@@ -46,6 +64,10 @@ export default [
       f.add(box(0.18, 0.32, 0.8, 0), c, [-0.42, 0.6, 0]);
       f.add(box(0.18, 0.32, 0.8, 0), c, [0.42, 0.6, 0]);
       f.add(box(0.64, 0.1, 0.6, 0), c, [0, 0.52, 0.06]);
+      // Gepolsterte Armrollen, Chesterfield-Knöpfe, Keder
+      for (const x of [-0.42, 0.42]) f.add(cyl(0.1, 0.1, 0.82, 10), c, [x, 0.76, 0.0], [Math.PI / 2, 0, 0]);
+      for (const x of [-0.25, 0, 0.25]) for (const y of [0.6, 0.85]) f.add(sphere(0.022, 6, 4), 'brass', [x + (y > 0.7 ? 0.125 : 0) * (x < 0.2 ? 1 : 0), y, -0.225]);
+      f.add(cyl(0.025, 0.025, 0.9, 6), 'woodDark', [0, 0.06, 0.43], [0, 0, Math.PI / 2]);
       for (const x of [-0.4, 0.4]) for (const z of [-0.36, 0.36]) f.add(cyl(0.04, 0.03, 0.06, 6), 'woodDark', [x, 0.03, z]);
       // Wolldecke
       f.add(box(0.7, 0.03, 0.5, 0), opts.blanket ?? 'cloth', [0.05, 0.58, 0.1], [0, 0.2, 0.05]);
@@ -68,6 +90,9 @@ export default [
       f.add(box(0.2, 0.3, 0.9, 0), c, [-w / 2 + 0.1, 0.6, 0]);
       f.add(box(0.2, 0.3, 0.9, 0), c, [w / 2 - 0.1, 0.6, 0]);
       for (let i = 0; i < 2; i++) f.add(box(w / 2 - 0.25, 0.1, 0.62, 0), c, [(i - 0.5) * (w / 2 - 0.15), 0.52, 0.07]);
+      for (const x of [-w / 2 + 0.1, w / 2 - 0.1]) f.add(cyl(0.12, 0.12, 0.9, 10), c, [x, 0.76, 0], [Math.PI / 2, 0, 0]);
+      for (let i = 0; i < 5; i++) f.add(sphere(0.022, 6, 4), 'brass', [-w / 2 + 0.45 + i * (w - 0.9) / 4, 0.85, -0.235]);
+      for (const x of [-w / 2 + 0.15, w / 2 - 0.15]) for (const z of [-0.35, 0.35]) f.add(cyl(0.04, 0.03, 0.06, 6), 'woodDark', [x, 0.03, z]);
       f.add(box(0.36, 0.3, 0.1, 0), 'velvet', [-w / 2 + 0.4, 0.7, -0.2], [0, 0.3, 0.2]);
       f.collider(0, 0, w, 0.95, { top: 0.5 });
     },

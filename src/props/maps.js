@@ -51,6 +51,7 @@ export default [
         for (let i = 0; i <= rows; i++) { g.beginPath(); g.moveTo(0, i * px); g.lineTo(w, i * px); g.stroke(); }
         g.fillStyle = '#3a2410';
         for (const def of byId.values()) {
+          if (def.hidden && !kit.services.progress.has('rooms', def.id)) { const [hx, hz] = def.cell; g.fillStyle = '#e8d8b0'; g.fillRect((hx - mb.minX) * px + 2, (hz - mb.minZ) * px + 2, px - 4, px - 4); g.fillStyle = '#3a2410'; g.font = `28px ${FONT_TITLE}`; g.fillText('???', (hx - mb.minX + 0.5) * px, (hz - mb.minZ + 0.5) * px); continue; }
           const [x, z] = def.cell, [sw, sd] = def.size ?? [1, 1];
           const cx = (x - mb.minX + sw / 2) * px, cz = (z - mb.minZ + sd / 2) * px;
           g.font = `${sw > 1 ? 22 : 16}px ${FONT_TITLE}`;
@@ -109,7 +110,7 @@ export default [
       compactGroup(needle);
       f.object(needle, [0, 0.13, 0]);
       const glow = f.glow([0, 0.2, 0], { color: '#ffd86a', size: 0.7, opacity: 0.35 });
-      const rooms = [...byId.values()].filter((d) => !d.endless).map((d) => { const b = roomBounds(d); return { id: d.id, name: d.name, x: b.cx, z: b.cz }; });
+      const rooms = [...byId.values()].filter((d) => !d.endless && !d.hidden).map((d) => { const b = roomBounds(d); return { id: d.id, name: d.name, x: b.cx, z: b.cz }; });
       const wp = f.world(0, 0, 0);
       let target = null, acc = 1, ang = 0;
       const pick = (player) => {

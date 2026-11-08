@@ -36,11 +36,13 @@ export default defineRoom({
     ctx.place('cake', { at: [-1.5, ty, 1], secret: 'torte' });
     ctx.place('teapot', { at: [-1.5, ty, -1.2], rot: 0.4 });
     ctx.place('teapot', { at: [-1.6, ty, 3.4], rot: 2, color: 'pastelPink', scale: 0.8 });
+    ctx.place('friendTeapot', { at: [-1.5, ty, -0.25], rot: Math.PI / 2, friend: 'mirabelle' });
     ctx.place('sugarTower', { at: [-1.2, ty, 2.3] });
     for (const z of [-1.8, -0.4, 0.4, 2.0, 2.9, 3.8]) {
       ctx.place('teacup', { at: [-2.05, ty, z], color: z > 1 ? 'pastelMint' : 'porcelain' });
       ctx.place('teacup', { at: [-0.95, ty, z + 0.3], color: z > 1 ? 'porcelain' : 'pastelPink' });
     }
+    ctx.place('paintedEgg', { at: [-1.5, 0, 2.6], id: 'ei-teetisch' });
     ctx.place('bookPile', { at: [-1.2, ty, -2], count: 3 });
 
     // Kopfüber-Ecke: Tisch und Stühle kleben an der Decke
@@ -71,7 +73,7 @@ export default defineRoom({
     ctx.place('pottedPlant', { at: [-6.8, 0, 6.8], scale: 1.2, leaf: 'leavesPink' });
     ctx.place('painting', { at: [2.5, 3.2, ctx.hd - 0.46], rot: Math.PI, motif: 'cat', title: 'Lady Earl Grey', caption: 'Sie trinkt ihren Tee nur bei exakt 82 Grad. Und nur aus deiner Tasse.' });
     ctx.place('dustBunny', { at: [-1.5, 0, 0.5], area: 2.5, color: '#f0c8e0', secret: 'staubmaus-tee' });
-    ctx.sign('Teesalon – Hier ist immer Viertel nach Teezeit', [0, 4.2, ctx.hd - 0.46], Math.PI, { w: 4.4, h: 0.55, size: 40 });
+    ctx.sign('Teesalon – Hier ist immer Viertel nach Teezeit', [0, 4.7, ctx.hd - 0.46], Math.PI, { w: 4.4, h: 0.55, size: 40 });
     for (const [x, z, r] of [[-7.55, -3, Math.PI / 2], [-7.55, 4, Math.PI / 2]]) ctx.place('sconce', { at: [x, 2.6, z], rot: r, light: false });
     ctx.place('dust', { area: [14, 5, 14] });
   },

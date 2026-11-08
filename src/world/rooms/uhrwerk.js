@@ -29,6 +29,7 @@ export default defineRoom({
     const steps = [[-2.0, 3.4, 0.8], [-4.0, 2.0, 1.6], [-5.6, 0.2, 2.4], [-5.6, -1.8, 3.2], [-4.6, -3.6, 4.0]];
     for (const [x, z, y] of steps) ctx.place('gear', { at: [x, y, z], flat: true, radius: 0.75, thick: 0.18, spin: 0.15 });
     ctx.place('gear', { at: [-4.6, 4.7, -5.7], flat: true, radius: 1.3, thick: 0.2, material: 'copper' });
+    ctx.place('paintedEgg', { at: [-5.6, 3.38, -1.8], id: 'ei-zahnrad' });
     north.place('cuckooClock', { at: [-4.6, 0, 0], y: 5.9, scale: 1.4, bird: 'pastelSky', secret: 'hoechster-kuckuck', quip: '»Kuckuck! Du bist ganz oben angekommen. Hier oben geht die Zeit etwas langsamer – genieß sie.«' });
     // Kuckucksuhren an der Südwand
     [-5, -2.2, 2.2, 5].forEach((u, i) => south.place('cuckooClock', { at: [u, 0, 0], y: 2.3 + (i % 2) * 0.5, offset: i * 2.3, bird: ['pastelLemon', 'pastelPink', 'pastelMint', 'pastelLilac'][i] }));
@@ -41,6 +42,7 @@ export default defineRoom({
     ctx.place('hourglass', { at: [3.4, 0.81, -5.6] });
     ctx.place('bankerLamp', { at: [4, 0.81, -5.3] });
     ctx.place('bookPile', { at: [2.0, 0.81, -5.0], count: 3 });
+    ctx.place('friendMouse', { at: [3.0, 0.81, -5.25], friend: 'fingerhut' });
     ctx.place('chair', { at: [3, 0, -4.4], rot: Math.PI });
     ctx.place('snail', { at: [-1, 0, 6.6], length: 3, shell: 'pastelLemon', quip: 'Die Schnecke ist Uhrmacherin. Sie arbeitet sehr genau. Und sehr langsam.' });
     ctx.place('standSign', { at: [4.2, 0, 2.6], rot: -0.6, text: 'Bitte keine Zeit verlieren. Gefundene Zeit an der Werkbank abgeben.', size: 28, width: 1.2, signHeight: 0.42 });

@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { Kit, Frame } from './kit.js';
-import { box, plane } from './geo.js';
+import { box, plane, sphere } from './geo.js';
 import { mat } from './materials.js';
 import { signTexture } from './textures.js';
 
@@ -61,7 +61,9 @@ export function layout(defs) {
       seen.add(dk);
       const x = axis === 'x' ? cx * CELL + CELL / 2 : cx * CELL;
       const z = axis === 'z' ? cz * CELL + CELL / 2 : cz * CELL;
-      doors.push({ a: id, b: other, x, z, axis });
+      // Geheimtür: Raum mit secretDoors: ['nachbar'] → Durchgang ist hinter einem verschiebbaren Regal
+      const secret = !!(a.secretDoors?.includes(other) || b.secretDoors?.includes(id));
+      doors.push({ a: id, b: other, x, z, axis, secret });
     }
   }
   return { occ, doors, byId };
@@ -104,11 +106,12 @@ export class RoomCtx extends Frame {
       }
       const [ncx, ncz] = [Math.round(nx / CELL), Math.round(nz / CELL)];
       const neighbor = occ.get(cellKey(ncx, ncz)) ?? null;
-      const door = neighbor && doors.some((d) => Math.abs(d.x - (wx + nx) / 2) < 0.01 && Math.abs(d.z - (wz + nz) / 2) < 0.01);
+      const doorObj = neighbor && doors.find((d) => Math.abs(d.x - (wx + nx) / 2) < 0.01 && Math.abs(d.z - (wz + nz) / 2) < 0.01);
+      const door = !!doorObj;
       // u-Koordinate der Zellmitte
       const lx = wx - b.cx, lz = wz - b.cz;
       const u = { north: lx, south: -lx, east: lz, west: -lz }[side];
-      out.push({ u0: u - CELL / 2, u1: u + CELL / 2, u, neighbor, door: door ? u : null });
+      out.push({ u0: u - CELL / 2, u1: u + CELL / 2, u, neighbor, door: door ? u : null, secret: !!doorObj?.secret });
     }
     out.sort((a, c) => a.u0 - c.u0);
     return out;
@@ -228,6 +231,19 @@ function wallPieces(seg, height, withDoor) {
   return pieces;
 }
 
+/** Schild über der Tür mit dem Namen des Nachbarraums (Orientierung + Detail). */
+function doorPlaque(wf, seg, ctx, { bg = '#2a1a10', ink = '#f0cf74', depth = WALL_T } = {}) {
+  if (seg.door == null || seg.secret || !ctx?.world_?.byId) return;
+  const nb = ctx.world_.byId.get(seg.neighbor);
+  if (!nb || nb.hidden) return;
+  const name = nb.name.length > 30 ? nb.name.replace(/ der .*| des .*/, '') : nb.name;
+  const s = ctx.kit.services.makeSign(`→ ${name}`, { w: 768, h: 112, size: 50, bg, ink });
+  s.scale.set(1.9, 0.28, 1);
+  wf.object(s, [seg.door, DOOR_H + 0.62, depth + 0.075]);
+  wf.add(box(2.0, 0.36, 0.04, 0), 'woodDark', [seg.door, DOOR_H + 0.62, depth + 0.045]);
+  for (const sx of [-1, 1]) wf.add(sphere(0.03, 6, 4), 'brass', [seg.door + sx * 0.92, DOOR_H + 0.62, depth + 0.07]);
+}
+
 function doorCasing(wf, seg, trim, depth = WALL_T) {
   if (seg.door == null) return;
   const u = seg.door, t = 0.16;
@@ -243,7 +259,7 @@ function doorCasing(wf, seg, trim, depth = WALL_T) {
 }
 
 export const EDGE_STYLES = {
-  wall(wf, seg, o) {
+  wall(wf, seg, o, ctx) {
     const H = o.height, T = WALL_T;
     const wh = o.wainscot ? 1.15 : 0;
     for (const [u0, u1, y0, y1] of wallPieces(seg, H, true)) {
@@ -272,9 +288,12 @@ export const EDGE_STYLES = {
       if (o.trim && y1 === H) wf.add(box(w, 0.22, 0.14, 1), o.trim, [uc, H - 0.11, T + 0.07]);
     }
     doorCasing(wf, seg, o.trim ?? 'woodDark');
+    doorPlaque(wf, seg, ctx);
+    // Geheimtür: Auf der »bekannten« Seite steht ein verschiebbares Regal in der Öffnung
+    if (seg.secret && !ctx.def.secretDoors) wf.place('secretShelf', { at: [seg.door, 0, WALL_T + 0.24], id: `geheimregal-${ctx.def.id}` });
   },
 
-  facade(wf, seg, o) {
+  facade(wf, seg, o, ctx) {
     // Steinfassade (von außen gesehen) mit leuchtenden Fenstern
     const H = o.facadeHeight ?? 9, T = WALL_T;
     for (const [u0, u1, y0, y1] of wallPieces(seg, H, true)) {
@@ -298,10 +317,26 @@ export const EDGE_STYLES = {
         wf.add(box(1.0, 0.06, 0.08, 0), 'woodDark', [u, y + 0.2, T + 0.04]);
         // Rundbogen-Andeutung
         wf.add(box(1.2, 0.14, 0.12, 0), 'stoneDark', [u, y + 0.92, T + 0.06]);
+        // Blumenkasten unter dem unteren Fenster
+        if (y < 3) {
+          wf.add(box(1.1, 0.18, 0.22, 0), 'woodDark', [u, y - 1.05, T + 0.17]);
+          for (let k = 0; k < 6; k++) wf.add(sphere(0.07, 6, 4), ['flowerRed', 'pastelPink', 'flowerYellow', 'pastelLilac', 'flowerWhite', 'leaves'][(k + Math.round(u * 3)) % 6], [u - 0.45 + k * 0.18, y - 0.92, T + 0.18]);
+        }
+      }
+    }
+    // Efeu-Ranken an der Fassade (deterministisch aus der Position)
+    for (let k = 0; k < 3; k++) {
+      const u0 = seg.u + ((Math.sin(seg.u * 12.9 + k * 7.3) * 0.5 + 0.5) * 12 - 6);
+      if (seg.door != null && Math.abs(u0 - seg.door) < 2) continue;
+      for (let j = 0; j < 14; j++) {
+        const yy = 0.2 + j * 0.32, uu = u0 + Math.sin(j * 1.3 + k) * 0.35;
+        if (yy > H - 0.6) break;
+        wf.add(sphere(0.16 + (j % 3) * 0.04, 6, 4), j % 4 ? 'leaves' : 'hedge', [uu, yy, T + 0.04], [0, 0, 0], [1, 1, 0.35]);
       }
     }
     if (seg.door != null) {
       doorCasing(wf, seg, 'stoneDark');
+      doorPlaque(wf, seg, ctx, { bg: '#e8dcc0', ink: '#3a2410' });
       wf.glow([seg.door - 1.7, 2.8, T + 0.35], { color: '#ffaa55', size: 0.9, opacity: 0.8 });
       wf.glow([seg.door + 1.7, 2.8, T + 0.35], { color: '#ffaa55', size: 0.9, opacity: 0.8 });
       wf.add(box(0.12, 0.3, 0.12, 0), 'glowWarm', [seg.door - 1.7, 2.8, T + 0.35]);

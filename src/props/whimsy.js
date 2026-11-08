@@ -67,6 +67,7 @@ export default [
       let a = Math.random() * 6, pause = 0, quip = 0;
       kit.onUpdate((dt, t) => {
         if (pause > 0) { pause -= dt; const k = Math.sin(t * 9) * 0.5; lp.rotation.y = 0.6 + k; rp.rotation.y = -0.6 - k; return; }
+        if (kit.services.fx?.party > t) { g.rotation.y += dt * 8; g.position.y = c0.y + Math.abs(Math.sin(t * 10)) * 0.25; return; } // Feier: Tanz!
         a += dt * speed / R * 2;
         const ang = baseRot + a;
         g.position.set(c0.x + Math.cos(ang) * R, c0.y + Math.abs(Math.sin(t * 9)) * 0.03, c0.z - Math.sin(ang) * R);
@@ -325,6 +326,57 @@ export default [
       const lines = ['»Ich lese nicht, ich verkoste.«', '»Kapitel 3 war etwas trocken. Mit Pfeffer ginge es.«', '»Psst. Ich bin bei der spannenden Stelle.«'];
       let i = 0;
       f.interactable(hit, { label: 'Bücherwurm', verb: 'Stören', secret: opts.secret, secretName: 'Der Bücherwurm mit Brille', onInteract: () => kit.services.ui.toast(lines[i++ % lines.length]) });
+    },
+  }),
+
+  // Bemaltes Ei – zwölf Stück sind in der Bibliothek versteckt (opts.id eindeutig!)
+  defineProp({
+    name: 'paintedEgg',
+    create(f, opts, kit) {
+      const fx = kit.services.fx; if (fx) fx.paintedEggs++;
+      const prog = kit.services.progress;
+      const cols = ['pastelPink', 'pastelSky', 'pastelLemon', 'pastelMint', 'pastelLilac', 'pastelPeach'];
+      const seed = [...opts.id].reduce((a, c) => a + c.charCodeAt(0), 0);
+      const g = new THREE.Group();
+      g.add(new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 12), mat(cols[seed % cols.length])));
+      g.children[0].scale.y = 1.3;
+      for (const y of [-0.04, 0.04]) { const band = new THREE.Mesh(new THREE.TorusGeometry(y ? 0.087 : 0.088, 0.01, 6, 20), mat(cols[(seed + 2) % cols.length])); band.rotation.x = Math.PI / 2; band.position.y = y; g.add(band); }
+      for (let i = 0; i < 6; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.014, 6, 5), mat('white')); const a = (i / 6) * Math.PI * 2; d.position.set(Math.cos(a) * 0.088, 0, Math.sin(a) * 0.088); g.add(d); }
+      compactGroup(g);
+      const hit = grab(g, [0.3, 0.35, 0.3]);
+      f.object(g, [0, 0.12, 0]);
+      const sp = f.glow([0, 0.15, 0], { color: '#fff0c0', size: 0.4, opacity: 0.25 });
+      if (prog.has('eggs', opts.id)) { g.visible = false; sp.visible = false; }
+      const y0 = g.position.y;
+      kit.onUpdate((dt, t) => { g.rotation.z = Math.sin(t * 2 + seed) * 0.12; g.position.y = y0 + Math.abs(Math.sin(t * 1.3 + seed)) * 0.01; });
+      f.interactable(hit, {
+        label: 'Ein bemaltes Ei', verb: 'Einsammeln', range: 3.5, filter: () => g.visible,
+        onInteract: () => {
+          if (!prog.egg(opts.id)) return;
+          g.visible = false; sp.visible = false;
+          kit.services.audio.play('pop');
+          kit.services.events.emit('paintedEgg', { id: opts.id, total: fx?.paintedEggs ?? 12 });
+        },
+      });
+    },
+  }),
+
+  // Freundlicher Kürbis mit Lächeln (Osterei im Oktober)
+  defineProp({
+    name: 'pumpkin',
+    create(f, opts, kit) {
+      const s = opts.scale ?? 1;
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        f.add(new THREE.SphereGeometry(0.16 * s, 10, 8), 'orange', [Math.cos(a) * 0.1 * s, 0.17 * s, Math.sin(a) * 0.1 * s], [0, -a, 0], [0.7, 1, 1]);
+      }
+      f.add(new THREE.CylinderGeometry(0.025 * s, 0.035 * s, 0.1 * s, 6), 'leaves', [0, 0.36 * s, 0], [0.2, 0, 0.1]);
+      // Gesicht: lächelnd, nicht gruselig
+      for (const sx of [-1, 1]) f.add(new THREE.CircleGeometry(0.035 * s, 10), 'glowWarm', [sx * 0.08 * s, 0.22 * s, 0.255 * s]);
+      f.add(new THREE.TorusGeometry(0.07 * s, 0.018 * s, 4, 12, Math.PI), 'glowWarm', [0, 0.15 * s, 0.25 * s], [0, 0, Math.PI]);
+      f.glow([0, 0.2 * s, 0.3 * s], { color: '#ffb050', size: 0.6 * s, opacity: 0.35 });
+      f.collider(0, 0, 0.45 * s, 0.45 * s, { top: 0.35 * s });
+      f.hitbox([0, 0.2 * s, 0], [0.5 * s, 0.4 * s, 0.5 * s], { label: 'Fröhlicher Kürbis', verb: 'Zurücklächeln', onInteract: () => kit.services.ui.toast('Der Kürbis lächelt breiter. Er ist sehr stolz auf seine Zähne. Er hat keine.') });
     },
   }),
 

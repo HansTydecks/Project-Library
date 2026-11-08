@@ -1,11 +1,14 @@
 import { el, esc } from './ui.js';
 
 /** Das Entdeckungs-Tagebuch. */
-export function openJournal(ui, { rooms, progress, secrets, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
+export function openJournal(ui, { rooms, progress, secrets, friends, paintedEggs = 0, totalBooks, totalIdeas, onHome, onCatalog, audio, onReset }) {
   const box = el('div', 'journal');
   const foundBooks = progress.count('books'), foundIdeas = progress.count('ideas');
-  const sec = secrets.list();
-  const pct = Math.round(((foundBooks + foundIdeas + sec.filter((s) => s.found).length) / Math.max(1, totalBooks + totalIdeas + sec.length)) * 100);
+  const sec = secrets.list('secret'), eggs = secrets.list('egg');
+  const fr = friends?.list() ?? [];
+  const roomName = (id) => rooms.find((r) => r.id === id)?.name ?? 'irgendwo';
+  const done = foundBooks + foundIdeas + sec.filter((s) => s.found).length + eggs.filter((s) => s.found).length + fr.filter((f) => f.found).length;
+  const pct = Math.round((done / Math.max(1, totalBooks + totalIdeas + sec.length + eggs.length + fr.length)) * 100);
   box.innerHTML = `
     <h2>Dein Tagebuch</h2>
     <div style="font-style:italic;margin-bottom:10px">Besuch Nr. ${progress.visits} · erster Besuch am ${esc(progress.firstVisit)}</div>
@@ -15,15 +18,20 @@ export function openJournal(ui, { rooms, progress, secrets, totalBooks, totalIde
     <ul>${rooms.map((r) => progress.has('rooms', r.id) ? `<li>✦ ${esc(r.name)}</li>` : '<li class="unknown">??? (noch nicht betreten)</li>').join('')}</ul>
     <h3>Gelesen</h3>
     <div>${foundBooks} von ${totalBooks} Werken aufgeschlagen · ${foundIdeas} von ${totalIdeas} Ideen gelesen · ${progress.count('curios')} Kuriositäten in den Stapeln</div>
+    <h3>Bekanntschaften (${fr.filter((f) => f.found).length}/${fr.length})</h3>
+    <ul>${fr.map((f) => f.found ? `<li>☺ ${esc(f.name)} <span style="opacity:.6">· ${esc(roomName(f.room))}</span></li>` : `<li class="unknown">??? (wohnt irgendwo bei: ${esc(roomName(f.room))})</li>`).join('')}</ul>
     <h3>Geheimnisse (${sec.filter((s) => s.found).length}/${sec.length})</h3>
     <ul>${sec.map((s) => s.found ? `<li>★ ${esc(s.name)}</li>` : '<li class="unknown">??? </li>').join('')}</ul>
+    <h3>Ostereier (${eggs.filter((s) => s.found).length}/${eggs.length})</h3>
+    <ul>${eggs.map((s) => s.found ? `<li>🥚 ${esc(s.name)}</li>` : '<li class="unknown">??? (gut versteckt)</li>').join('')}</ul>
+    <div>Bemalte Eier eingesammelt: ${progress.count('eggs')} von ${paintedEggs}</div>
     <div class="row">
       <button data-a="catalog">Zettelkatalog öffnen</button>
       <button data-a="home">Irrlicht nach Hause rufen</button>
       <button data-a="sound">${audio.enabled ? 'Klänge aus' : 'Klänge an'}</button>
       <button data-a="close">Schließen</button>
     </div>
-    <div style="margin-top:14px;font-size:14px;opacity:.6">Steuerung: WASD laufen · Shift rennen · Maus schauen · E interagieren · Tab Tagebuch · M Klang · <a href="#" data-a="reset" style="color:inherit">Fortschritt zurücksetzen</a></div>`;
+    <div style="margin-top:14px;font-size:14px;opacity:.6">Steuerung: WASD laufen · Shift rennen · Leertaste springen · Maus schauen · E interagieren · Tab Tagebuch · M Klang · <a href="#" data-a="reset" style="color:inherit">Fortschritt zurücksetzen</a></div>`;
   const close = ui.openModal(box);
   box.querySelector('[data-a=close]').addEventListener('click', () => close(true));
   box.querySelector('[data-a=home]').addEventListener('click', () => { close(true); onHome(); });

@@ -51,9 +51,9 @@ export class Kit {
     this.buckets.get(m).push(g);
   }
 
-  _collider(minX, maxX, minZ, maxZ, top, bottom) {
+  _collider(minX, maxX, minZ, maxZ, top, bottom, owner) {
     const o = this.origin;
-    this.services.collision.add({ minX: minX + o.x, maxX: maxX + o.x, minZ: minZ + o.z, maxZ: maxZ + o.z, top: top + o.y, bottom: bottom + o.y }, this.colliderOwner);
+    this.services.collision.add({ minX: minX + o.x, maxX: maxX + o.x, minZ: minZ + o.z, maxZ: maxZ + o.z, top: top + o.y, bottom: bottom + o.y }, owner ?? this.colliderOwner);
   }
 
   onUpdate(fn) { this.updaters.push(fn); }
@@ -186,7 +186,7 @@ export class Frame {
    * Kollisionsbox. Ohne `top` unendlich hoch (Wand). Mit `top` (Höhe der Oberkante über dem Frame)
    * kann man daraufspringen; mit `bottom` schwebt sie (man läuft darunter durch).
    */
-  collider(x, z, w, d, { shadow = true, top, bottom } = {}) {
+  collider(x, z, w, d, { shadow = true, top, bottom, owner } = {}) {
     const base = this.point(x, 0, z).y;
     // Dinge ohne Höhe über Kopfhöhe (Galerie-Regale, Wandbretter) blockieren nicht.
     // (auch umgedrehte Möbel an der Decke – nur schwebende Plattformen mit `bottom` zählen dort)
@@ -203,7 +203,7 @@ export class Frame {
       minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
       minZ = Math.min(minZ, p.z); maxZ = Math.max(maxZ, p.z);
     }
-    this.kit._collider(minX, maxX, minZ, maxZ, top === undefined ? Infinity : base + top, bottom === undefined ? -Infinity : base + bottom);
+    this.kit._collider(minX, maxX, minZ, maxZ, top === undefined ? Infinity : base + top, bottom === undefined ? -Infinity : base + bottom, owner);
     return this;
   }
 
@@ -242,6 +242,14 @@ export class Frame {
       secrets.register(opts.secret, opts.secretName ?? opts.label, kit.room?.id);
       const orig = opts.onInteract;
       ia.onInteract = (hit) => { orig?.(hit); secrets.found(opts.secret); };
+    }
+    if (opts.friend) {
+      const orig = ia.onInteract;
+      ia.onInteract = (hit) => { orig?.(hit); kit.services.meet?.(opts.friend); };
+    }
+    if (opts.egg) {
+      // Osterei: eigene Kategorie im Tagebuch
+      kit.services.secrets.register(opts.egg, opts.eggName ?? opts.label, kit.room?.id, 'egg');
     }
     obj.userData.interact = ia;
     kit.interactables.push(obj);

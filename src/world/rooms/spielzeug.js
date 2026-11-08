@@ -29,6 +29,7 @@ export default defineRoom({
     ctx.place('teddy', { at: [6.6, sy, 0.4], rot: -Math.PI / 2, secret: 'klotzteddy' });
     // Spielsachen
     ctx.place('rockingHorse', { at: [-5.6, 0, -5.4], rot: 0.6, secret: 'schaukelpferd' });
+    ctx.place('paintedEgg', { at: [6.6, 0, -6.6], id: 'ei-spielzeug' });
     ctx.place('jackInTheBox', { at: [-6, 0, 5.6], secret: 'springteufel' });
     ctx.place('spinningTop', { at: [0.6, 0, 0.4], color: 'pastelSky' });
     ctx.place('spinningTop', { at: [-0.8, 0, -0.6], color: 'pastelPink' });

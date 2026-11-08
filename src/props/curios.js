@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { defineProp } from '../world/registry.js';
 import { box, cyl, sphere, cone, lathe, torus } from '../world/geo.js';
 import { mat } from '../world/materials.js';
+import { compactGroup } from '../world/kit.js';
 import { canvasTexture, FONT_TITLE } from '../world/textures.js';
 
 // Kuriositäten & Geheimnisse. Jedes Ding darf eine kleine Geschichte haben.
@@ -203,6 +204,17 @@ export default [
       const head = new THREE.Mesh(new THREE.SphereGeometry(0.1, 12, 10), fur); head.position.set(0.26, 0.08, 0.06); head.scale.set(1, 0.85, 1); g.add(head);
       for (const z of [0.0, 0.11]) { const ear = new THREE.Mesh(new THREE.ConeGeometry(0.035, 0.07, 4), fur); ear.position.set(0.27, 0.16, z); g.add(ear); }
       const tail = new THREE.Mesh(new THREE.TorusGeometry(0.17, 0.03, 6, 14, Math.PI * 1.1), fur); tail.rotation.x = Math.PI / 2; tail.position.set(-0.05, 0.04, 0.0); g.add(tail);
+      // Details: Ohren innen rosa, Näschen, geschlossene Augen, Schnurrhaare, Pfoten, Schwanzspitze, ggf. Streifen
+      const deco = new THREE.Group(); g.add(deco);
+      const add = (geo, m, p, r, sc) => { const o = new THREE.Mesh(geo, typeof m === 'string' ? mat(m) : m); o.position.set(...p); if (r) o.rotation.set(...r); if (sc) o.scale.set(...sc); deco.add(o); };
+      for (const z of [0.0, 0.11]) add(new THREE.ConeGeometry(0.02, 0.045, 4), 'pastelPink', [0.285, 0.155, z], [0, 0, -0.15]);
+      add(new THREE.SphereGeometry(0.012, 6, 4), 'pastelPink', [0.355, 0.075, 0.055]);
+      for (const z of [0.02, 0.09]) add(new THREE.TorusGeometry(0.014, 0.0035, 4, 8, Math.PI), 'black', [0.34, 0.1, z], [0, Math.PI / 2, Math.PI]);
+      for (const zs of [-1, 1]) for (const k of [-1, 0, 1]) add(new THREE.BoxGeometry(0.1, 0.0015, 0.0015), 'white', [0.36, 0.065 + k * 0.008, 0.055 + zs * 0.05], [0, zs * 0.5, k * 0.1]);
+      for (const [x, z] of [[0.18, -0.06], [0.18, 0.16], [-0.12, -0.12], [-0.14, 0.14]]) add(new THREE.SphereGeometry(0.035, 8, 6), fur, [x, 0.02, z], null, [1.3, 0.6, 1]);
+      add(new THREE.SphereGeometry(0.034, 8, 6), opts.tip ?? 'white', [-0.05 + Math.cos(Math.PI * 1.1) * 0.17, 0.04, -Math.sin(Math.PI * 1.1) * 0.17]);
+      if (opts.stripes !== false && (opts.fur ?? 'fur') === 'fur') for (const x of [-0.12, -0.02, 0.08]) add(new THREE.TorusGeometry(0.19, 0.012, 4, 16, Math.PI), 'orange', [x, 0.1, 0], [0, Math.PI / 2, 0], [1, 0.55, 0.9]);
+      compactGroup(deco);
       f.object(g, [0, 0, 0]);
       let purr = 0;
       kit.onUpdate((dt, t) => {
@@ -262,7 +274,7 @@ export default [
       f.add(sphere(0.012, 6, 4), 'brass', [0, 0.1, 0]);
       f.hitbox([0, 0.06, 0], [0.18, 0.15, 0.18], {
         label: 'Tischglocke', verb: 'Läuten', range: 2.5,
-        onInteract: () => { kit.services.audio?.play('bell'); kit.services.events.emit('summonWizard'); },
+        onInteract: () => { kit.services.audio?.play('bell'); kit.services.events.emit('bellRung'); kit.services.events.emit('summonWizard'); },
       });
     },
   }),

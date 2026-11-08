@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { defineProp } from '../world/registry.js';
-import { box, cyl } from '../world/geo.js';
+import { box, cyl, sphere } from '../world/geo.js';
 import { fillRow } from '../world/books.js';
 import { signTexture } from '../world/textures.js';
 import { makeRng } from '../core/rng.js';
@@ -25,9 +25,29 @@ function bookcase(f, opts, kit) {
     if (k > 0) f.add(box(W - 2 * side, 0.03, D - 0.03, 1), m, [0, y, 0.0]);
     rows.push({ frame: f, y: y + 0.015, x0: -W / 2 + side + 0.01, x1: W / 2 - side - 0.01, depth: D - 0.04, maxH: rowH - 0.06, worldY: y, texture: opts.texture === true || (opts.texture !== false && f.point(0, y, 0).y > (opts.textureAbove ?? 2.4)) });
   }
-  // Kleine Messing-Details
+  // Kleine Messing-Details, Pilaster, Kranzgesims, Sockelleiste
   f.add(box(0.05, 0.05, 0.02, 0), 'brass', [-W / 2 + side / 2, H - 0.3, D / 2 + 0.005]);
   f.add(box(0.05, 0.05, 0.02, 0), 'brass', [W / 2 - side / 2, H - 0.3, D / 2 + 0.005]);
+  for (const s of [-1, 1]) {
+    f.add(box(0.09, H - plinth - 0.05, 0.025, 1), 'woodDark', [s * (W / 2 - 0.045), (H + plinth) / 2, D / 2 + 0.012]);
+    f.add(box(0.11, 0.06, 0.04, 0), m, [s * (W / 2 - 0.045), H - 0.12, D / 2 + 0.02]);
+  }
+  f.add(box(W + 0.2, 0.05, D + 0.14, 1), m, [0, H + 0.105, 0.03]);
+  f.add(box(W + 0.04, 0.03, 0.03, 1), 'brass', [0, plinth + 0.005, D / 2 + 0.02]);
+  // Fundstücke oben auf dem Regal (deterministisch je Regal)
+  if (opts.trinkets !== false && !opts.label) {
+    const tr = makeRng(`trinket:${kit.id}:${f.point(0, 0, 0).toArray().map((v) => v.toFixed(1)).join(',')}`);
+    const y = H + 0.13;
+    const n = tr.int(0, 2);
+    for (let i = 0; i < n; i++) {
+      const x = tr.range(-W / 2 + 0.25, W / 2 - 0.25), kind = tr.int(0, 4);
+      if (kind === 0) { f.add(cyl(0.07, 0.055, 0.12, 8), 'terracotta', [x, y + 0.06, 0]); for (let k = 0; k < 4; k++) f.add(sphere(0.06, 6, 4), tr.pick(['leaves', 'leavesPink']), [x + Math.cos(k * 1.6) * 0.04, y + 0.17, Math.sin(k * 1.6) * 0.04]); }
+      else if (kind === 1) { f.add(cyl(0.05, 0.06, 0.02, 8), 'woodDark', [x, y + 0.01, 0]); f.add(sphere(0.08, 10, 8), 'pastelSky', [x, y + 0.12, 0]); }
+      else if (kind === 2) { for (let k = 0; k < 3; k++) f.add(box(0.22 - k * 0.03, 0.05, 0.16, 0), tr.pick(['woodRed', 'velvetBlue', 'velvetGreen', 'velvet']), [x, y + 0.025 + k * 0.05, 0], [0, k * 0.2, 0]); }
+      else if (kind === 3) { f.add(cyl(0.05, 0.05, 0.015, 8), 'brass', [x, y + 0.008, 0]); f.add(cyl(0.022, 0.022, 0.14, 8), 'wax', [x, y + 0.08, 0]); }
+      else { f.add(box(0.09, 0.012, 0.09, 0), 'woodDark', [x, y + 0.006, 0]); f.add(new THREE.ConeGeometry(0.035, 0.07, 8), 'glass', [x, y + 0.045, 0], [Math.PI, 0, 0]); f.add(new THREE.ConeGeometry(0.035, 0.07, 8), 'glass', [x, y + 0.115, 0]); f.add(box(0.09, 0.012, 0.09, 0), 'woodDark', [x, y + 0.155, 0]); }
+    }
+  }
   f.collider(0, 0, W, D);
 
   if (opts.label) {

@@ -30,6 +30,9 @@ import { openProjectBook, openFillerBook, openIdeaNote } from './ui/bookPanel.js
 import { openWizardDialog } from './ui/dialog.js';
 import { openJournal, openCatalog } from './ui/journal.js';
 import { createProgress, createSecrets } from './state/progress.js';
+import { createFriends } from './npc/friends.js';
+import { createSequenceWatcher, season, createRepeatCounter } from './core/eastereggs.js';
+import { createConfetti } from './world/confetti.js';
 
 const params = new URLSearchParams(location.search);
 const DEBUG = params.has('debug');
@@ -72,7 +75,7 @@ const progress = createProgress();
 const ui = createUI({ root: uiRoot, input });
 const secrets = createSecrets({
   progress,
-  onFound: (s) => { ui.toast(`✦ Geheimnis entdeckt: ${s.name}`, { secret: true, ms: 5500 }); audio.play('secret'); },
+  onFound: (s) => { ui.toast(s.kind === 'egg' ? `🥚 Osterei gefunden: ${s.name}` : `✦ Geheimnis entdeckt: ${s.name}`, { secret: true, ms: 5500 }); audio.play('secret'); },
 });
 
 const hemi = new THREE.HemisphereLight('#ffd8b0', '#6a4868', 0.5);
@@ -84,13 +87,24 @@ scene.add(moon);
 const index = new Map();       // 'project:id' | 'idea:id' | 'room:id' → { obj?, pos?, room }
 const rngFor = (seed) => makeRng(String(seed));
 const shelves = createShelfRegistry();
+const friends = createFriends({ progress });
+// Ostereier-Zustand: Jahreszeit (?season=winter|autumn|spring zum Testen), Feier-Timer, Kakaostunde (?cocoa)
+const fx = { season: season(new Date(), params.get('season')), party: 0, cocoaHour: params.has('cocoa'), paintedEggs: 0 };
 const services = {
-  collision, lights, interaction, secrets, events, progress, audio, index,
+  collision, lights, interaction, secrets, friends, events, progress, audio, index, fx,
   props: loadProps(),
   shelves,
   content: { projects, ideas },
   ui,
   rng: rngFor,
+  /** Figur kennenlernen (einmalig gefeiert). */
+  meet(id) {
+    if (!friends.meet(id)) return false;
+    const f = friends.get(id);
+    ui.toast(`☺ Neue Bekanntschaft: ${f.name}`, { secret: true, ms: 5000 });
+    audio.play('chime');
+    return true;
+  },
   makeSign(text, opts) {
     return new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshLambertMaterial({ map: signTexture(text, opts), emissive: '#2a1a0a', transparent: true }));
   },
@@ -162,7 +176,48 @@ function roomAt(x, z) {
 }
 
 const player = createPlayer({ camera, input, collision });
-const librarian = createLibrarian({ projects, ideas, rooms: roomDefs });
+const confetti = createConfetti(scene);
+
+// ---------------------------------------------------------------- Ostereier
+const EGGS = {
+  konami: 'Der geheime Tastentanz', federleicht: 'Der Federleicht-Zauber', hutfarbe: 'Abrakadabra (mit Hutfolgen)',
+  kakao: 'Kakao vom Bibliothekar', hutflug: 'Der fliegende Hut', feier: 'Eine spontane Feier', zweiundvierzig: 'Die Antwort auf alles',
+  klingel: 'Fünfmal geklingelt', 'alle-eier': 'Alle bemalten Eier gefunden',
+};
+for (const [id, name] of Object.entries(EGGS)) secrets.register(id, name, null, 'egg');
+let featherTimer = 0;
+function party(seconds = 12) { fx.party = engine.time + seconds; confetti.burst(player.pos, seconds); audio.play('secret'); }
+const SPELL_FX = {
+  feather: () => { player.setGravityScale(0.4); featherTimer = 30; secrets.found('federleicht'); },
+  hat: () => { services.wizard?.hatColor(); secrets.found('hutfarbe'); audio.play('magic'); },
+  cocoa: () => { services.wizard?.cocoa(); secrets.found('kakao'); },
+  hatFly: () => { services.wizard?.hatFly(); secrets.found('hutflug'); audio.play('whoosh'); },
+  party: () => { party(); secrets.found('feier'); },
+  fortyTwo: () => secrets.found('zweiundvierzig'),
+};
+const konami = createSequenceWatcher((name) => {
+  if (name !== 'konami' || !started) return;
+  party(15); secrets.found('konami');
+  ui.toast('↑↑↓↓←→←→BA – Die Bücher tanzen! Der Bibliothekar tut so, als hätte er nichts gesehen.', { ms: 6000 });
+});
+window.addEventListener('keydown', (e) => { if (!(e.target instanceof HTMLInputElement)) konami.push(e.code); });
+const bellCounter = createRepeatCounter(5, 40);
+events.on('bellRung', () => {
+  if (bellCounter(engine.time)) { secrets.found('klingel'); setTimeout(() => ui.toast('Der Bibliothekar seufzt liebevoll: »Ja-ha, ich bin ja schon da! Seit 900 Jahren.«', { ms: 6000 }), 400); }
+});
+events.on('paintedEgg', ({ total }) => {
+  const n = progress.count('eggs');
+  ui.toast(n >= total ? 'Alle bemalten Eier gefunden! Die Bibliothek feiert dich.' : `Ein bemaltes Ei! (${n} von ${total})`, { ms: 4500 });
+  audio.play('chime');
+  if (n >= total) { secrets.found('alle-eier'); party(15); }
+});
+events.on('goHome', () => {
+  const f = byId.get('foyer'); const b = roomBounds(f);
+  player.teleport(b.cx + f.spawn.at[0], b.cz + f.spawn.at[1], f.spawn.yaw ?? 0);
+  audio.play('whoosh');
+  ui.toast('Die Tür führt … direkt ins Foyer. Der Bibliothekar zwinkert. »Willkommen zurück.«', { ms: 6000 });
+});
+const librarian = createLibrarian({ projects, ideas, rooms: roomDefs.filter((r) => !r.hidden) });
 const findPath = createPathfinder({ doors, byId, roomAt });
 const wisp = createWisp({ scene, lights, findPath });
 
@@ -278,10 +333,12 @@ events.on('crystalBall', () => {
   setTimeout(() => guideTo(`project:${p.id}`, p.title), 600);
 });
 events.on('summonWizard', () => {
+  services.meet('bibliothekar');
   services.wizard?.talk(3);
   services.wizard?.wave();
   const name = progress.visits > 1 ? 'Schön, dass du wieder da bist.' : 'Du bist neu hier, oder? Frag mich ruhig alles.';
   openWizardDialog(ui, {
+    onAction: (a) => SPELL_FX[a]?.(),
     librarian, describe, greeting: `${librarian.greet()} ${name}`,
     onGuide: guideDoc,
     onOpen: (d) => {
@@ -320,7 +377,7 @@ ui.jumpButton.addEventListener('touchstart', (e) => { e.preventDefault(); e.stop
 
 function showJournal() {
   openJournal(ui, {
-    rooms: roomDefs, progress, secrets, audio,
+    rooms: roomDefs.filter((r) => !r.hidden || progress.has('rooms', r.id)), progress, secrets, friends, paintedEggs: fx.paintedEggs, audio,
     totalBooks: projects.length, totalIdeas: ideas.length,
     onHome: () => guideTo('room:foyer', 'Foyer'),
     onCatalog: () => events.emit('openCatalog'),
@@ -415,6 +472,8 @@ engine.onUpdate((dt, t) => {
   lights.update(dt, t, player.pos, currentRoom);
   interaction.update(dt);
   wisp.update(dt, t, player.pos);
+  confetti.update(dt, t, player.pos);
+  if (featherTimer > 0) { featherTimer -= dt; if (featherTimer <= 0) { player.setGravityScale(1); ui.toast('Der Federleicht-Zauber verfliegt. Du wiegst wieder so viel wie vorher. (Nicht mehr!)'); } }
   sky.update(dt, t, camera);
 
   if (currentRoom === stapelDef?.id) {

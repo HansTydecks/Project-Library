@@ -101,6 +101,7 @@ export function createWisp({ scene, lights, findPath }) {
 export function createPathfinder({ doors, byId, roomAt }) {
   const adj = new Map();
   for (const d of doors) {
+    if (d.secret) continue; // Geheimtüren kennt das Irrlicht nicht
     for (const [a, b] of [[d.a, d.b], [d.b, d.a]]) {
       if (!adj.has(a)) adj.set(a, []);
       adj.get(a).push({ to: b, door: d });

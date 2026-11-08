@@ -161,6 +161,21 @@ Stufen also höchstens ~0,9 m auseinander, mit Doppelsprung ~1,6 m. Kanten bis 0
 Glasdach: `ctx.ceiling('glassRoof', { roof: false })`. Möbel umgedreht an die Decke: ein `Frame` mit
 `makeRotationZ(Math.PI)` (siehe `rooms/teesalon.js`).
 
+## Bewohner (Bekanntschaften)
+
+Steckbrief in `src/npc/friends.js` ergänzen (`id`, `name`, `room`, `lines`), Figur als Prop bauen (Muster: `src/props/friends.js`,
+gemeinsames Verhalten über `behave()`: schaut zum Spieler, blinzelt, grüßt, erzählt) und im Raum mit `friend: '<id>'` platzieren.
+Jede Interaktion mit `friend` trägt die Figur ins Tagebuch ein.
+
+## Ostereier
+
+- `f.interactable(obj, { egg: 'id', eggName })` registriert ein Osterei; ausgelöst wird es mit `kit.services.secrets.found('id')`.
+- Zaubersprüche: `SPELLS` in `src/npc/librarian.js` (Muster → Text + `action`), Effekte in `SPELL_FX` in `src/main.js`.
+- Tastenfolgen & Kalender: `src/core/eastereggs.js`; Jahreszeit steht in `kit.services.fx.season`.
+- Bemalte Eier: `ctx.place('paintedEgg', { at, id: 'ei-…' })` (eindeutige `id`), die Summe zählt automatisch.
+- Geheimtür: Room-Def `secretDoors: ['nachbarId']` → auf der Nachbarseite steht ein Regal mit „falschem Buch“;
+  `hidden: true` versteckt den Raum in Tagebuch, Karte und Bibliothekar, bis er betreten wurde.
+
 ## 4. Geheimnisse
 
 Jede Interaktion mit `secret: 'eindeutige-id'` wird automatisch registriert, im Tagebuch als „???“ gezählt und beim

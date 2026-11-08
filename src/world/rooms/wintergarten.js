@@ -28,6 +28,7 @@ export default defineRoom({
     // Gießkanne über dem Beet
     ctx.place('flowers', { at: [-4.5, 0, -2], width: 4, depth: 2.4 });
     ctx.place('wateringCan', { at: [-4.5, 0, -2], y: 1.9, color: 'pastelPink' });
+    ctx.place('friendGolem', { at: [-2, 0, -3.9], rot: 0.5, friend: 'moos' });
     ctx.place('hammock', { at: [-2.5, 0, 2.8], length: 3, secret: 'hängematte' });
     ctx.place('butterflies', { at: [0, 0, 0], area: [12, 2.5, 12], count: 10, y: 0.8 });
     ctx.place('tree', { at: [6.4, 0, 6.4], lanterns: true });
